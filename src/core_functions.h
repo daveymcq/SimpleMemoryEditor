@@ -221,7 +221,7 @@ long long PeekDecimal(HANDLE process, unsigned char *address, unsigned short dat
 BOOL PokeFloat(HANDLE process, unsigned long long address, float val, unsigned short data_size)
 {
     unsigned long long bytes_read = 0;
-    if (WriteProcessMemory(process, (LPVOID)address, (LPCVOID)&val, data_size, (SIZE_T*)&bytes_read) != 0)
+    if (WriteProcessMemory(process, (LPVOID)address, (LPCVOID)&val, data_size, (SIZE_T *)&bytes_read) != 0)
         return (bytes_read == data_size);
     return FALSE;
 }
@@ -229,7 +229,7 @@ BOOL PokeFloat(HANDLE process, unsigned long long address, float val, unsigned s
 BOOL PokeDouble(HANDLE process, unsigned long long address, double val, unsigned short data_size)
 {
     unsigned long long bytes_read = 0;
-    if (WriteProcessMemory(process, (LPVOID)address, (LPCVOID)&val, data_size, (SIZE_T*)&bytes_read) != 0)
+    if (WriteProcessMemory(process, (LPVOID)address, (LPCVOID)&val, data_size, (SIZE_T *)&bytes_read) != 0)
         return (bytes_read == data_size);
     return FALSE;
 }
@@ -237,7 +237,7 @@ BOOL PokeDouble(HANDLE process, unsigned long long address, double val, unsigned
 BOOL PokeDecimal(HANDLE process, unsigned long long address, long long val, unsigned short data_size)
 {
     unsigned long long bytes_read = 0;
-    if (WriteProcessMemory(process, (LPVOID)address, (LPCVOID)&val, data_size, (SIZE_T*)&bytes_read) != 0)
+    if (WriteProcessMemory(process, (LPVOID)address, (LPCVOID)&val, data_size, (SIZE_T *)&bytes_read) != 0)
         return (bytes_read == data_size);
     return FALSE;
 }
