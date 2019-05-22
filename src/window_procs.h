@@ -135,7 +135,7 @@ LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM 
 
             else if((LOWORD(wParam) == ID_PROCESSES) && (HIWORD(wParam) == LBN_SELCHANGE))
             {
-                ProcessComboboxChangeEvent();
+                ProcessListboxChangeEvent();
             }
 
         break;

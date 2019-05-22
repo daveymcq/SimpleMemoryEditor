@@ -324,7 +324,7 @@ void CreateChangeValueDialogUI(void)
 // LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 
-void ProcessComboboxChangeEvent(void)
+void ProcessListboxChangeEvent(void)
 {
     selected_process_index = (int)SendMessage(ProcessSelection, LB_GETCURSEL, 0, 0);
 
