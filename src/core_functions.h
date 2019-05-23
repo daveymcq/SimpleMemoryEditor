@@ -5,7 +5,7 @@
 // Resets all previosly filtered addresses.
 
 
-void ResetScan(MEMORY_BLOCK *mblock, BOOL reset_pid, BOOL disable_thread_monitor)
+void ResetScan(MEMORY_BLOCK *mblock, BOOL reset_pid, BOOL disable_process_monitor)
 {
     MEMORY_BLOCK *mb = mblock;
 
@@ -50,7 +50,7 @@ void ResetScan(MEMORY_BLOCK *mblock, BOOL reset_pid, BOOL disable_thread_monitor
     TerminateThread(FreezeThread, 0);
     CloseHandle(FreezeThread);
 
-    if(disable_thread_monitor)
+    if(disable_process_monitor)
     {
         TerminateThread(MonitorSelectedProcessThread, 0);
         CloseHandle(MonitorSelectedProcessThread);
@@ -144,7 +144,7 @@ BOOL GetProcessNameAndID(void)
     {
         if(pe.th32ProcessID == GetCurrentProcessId()) continue;
 
-        _snprintf((char *)processes[number_of_processes], MAX_PATH, "%s", pe.szExeFile);
+        _snprintf(processes[number_of_processes], sizeof(processes[number_of_processes]), "%s", pe.szExeFile);
 
         process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pe.th32ProcessID);
 
@@ -155,7 +155,8 @@ BOOL GetProcessNameAndID(void)
             {
                 if(platform == is64bit)
                 {
-                    _snprintf(pids[number_of_processes++], MAX_PATH, "%u", pe.th32ProcessID);
+                    _snprintf(pids[number_of_processes], sizeof(pids[number_of_processes]), "%u", pe.th32ProcessID);
+                    number_of_processes++;
                 }
             }
 
