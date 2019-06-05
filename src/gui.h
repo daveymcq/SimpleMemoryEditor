@@ -306,16 +306,19 @@ void CreateChangeValueDialogUI(void)
          wc.style            = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
 
-         RegisterClassEx(&wc);
+         UnregisterClass(wc.lpszClassName, 0);
 
-         ChangeValueDlg = CreateWindowEx(WS_EX_DLGMODALFRAME, wc.lpszClassName, title,
-                                         WS_VISIBLE | WS_SYSMENU | WS_OVERLAPPED, CW_USEDEFAULT,
-                                         CW_USEDEFAULT, 300, 75, 0, 0, 0, 0);
-
-         if(ChangeValueDlg)
+         if(RegisterClassEx(&wc))
          {
-              SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-              SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+             ChangeValueDlg = CreateWindowEx(WS_EX_DLGMODALFRAME, wc.lpszClassName, title,
+                                             WS_VISIBLE | WS_SYSMENU | WS_OVERLAPPED, CW_USEDEFAULT,
+                                             CW_USEDEFAULT, 300, 75, 0, 0, 0, 0);
+
+             if(ChangeValueDlg)
+             {
+                  SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+                  SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+             }
          }
     }
 }
