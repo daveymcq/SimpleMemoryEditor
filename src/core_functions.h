@@ -126,8 +126,6 @@ BOOL GetProcessNameAndID(void)
     HANDLE snapshot, process;
     PROCESSENTRY32 pe;
 
-    memset(processes, 0, sizeof(processes));
-
     snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
     if(snapshot == INVALID_HANDLE_VALUE) return FALSE;
@@ -165,7 +163,9 @@ BOOL GetProcessNameAndID(void)
 
     } while(Process32Next(snapshot, &pe));
 
+    process_count = number_of_processes;
     number_of_processes = 0;
+
     CloseHandle(snapshot);
 
     return TRUE;

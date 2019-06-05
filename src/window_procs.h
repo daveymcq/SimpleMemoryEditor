@@ -16,7 +16,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     switch(Msg)
     {
         case WM_CREATE:
-
+           
            CreateMainDialogUI(hWnd);
 
         break;
@@ -78,6 +78,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
             else if(LOWORD(wParam) == ID_SELECT_PROCESS)
             {
+                GetProcessNameAndID();
                 CreateChooseProcessDialogUI();
             }
 
@@ -141,8 +142,6 @@ LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM 
         break;
 
         case WM_CREATE:
-
-            GetProcessNameAndID();
 
         break;
 

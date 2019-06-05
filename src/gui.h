@@ -254,32 +254,36 @@ void CreateChooseProcessDialogUI(void)
     wc.hIconSm          = LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(AppIcon));
     wc.style            = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
-    RegisterClassEx(&wc);
+    UnregisterClass(wc.lpszClassName, 0);
 
-    PidDlg = CreateWindowEx(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, title,
-                            WS_VISIBLE | WS_SYSMENU | WS_OVERLAPPED, CW_USEDEFAULT,
-                            CW_USEDEFAULT, 295, 400, 0, 0, 0, 0);
-
-
-    if(PidDlg)
+    if(RegisterClassEx(&wc))
     {
-       EnableWindow(MainWindow, FALSE);
-       ProcessSelection = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTBOX, 0,
-                                       WS_VSCROLL | LBS_NOTIFY | LBS_DISABLENOSCROLL | WS_VISIBLE | WS_CHILD,
-                                       10, 10, 270, 300, PidDlg, (HMENU)ID_PROCESSES, GetModuleHandle(0), 0);
 
-       ChooseProcess = CreateWindow("button", "Select Process", WS_CHILD | WS_VISIBLE,
-                                    10, 310, 270, 50, PidDlg, (HMENU)ID_CHOOSE_PROCESS, GetModuleHandle(0), 0);
-       SendMessage(ProcessSelection, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-       SendMessage(ChooseProcess, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+        PidDlg = CreateWindowEx(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, title,
+                                WS_VISIBLE | WS_SYSMENU | WS_OVERLAPPED, CW_USEDEFAULT,
+                                CW_USEDEFAULT, 295, 400, 0, 0, 0, 0);
 
-       EnableWindow(ChooseProcess, 0);
 
-       for(i = 0; i < ARRAYSIZE(processes); i++)
-       {
-           SendMessage(ProcessSelection, LB_ADDSTRING, 0, (LPARAM)processes[i]);
+        if(PidDlg)
+        {
+           EnableWindow(MainWindow, FALSE);
+           ProcessSelection = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTBOX, 0,
+                                           WS_VSCROLL | LBS_NOTIFY | LBS_DISABLENOSCROLL | WS_VISIBLE | WS_CHILD,
+                                           10, 10, 270, 300, PidDlg, (HMENU)ID_PROCESSES, GetModuleHandle(0), 0);
+
+           ChooseProcess = CreateWindow("button", "Select Process", WS_CHILD | WS_VISIBLE,
+                                        10, 310, 270, 50, PidDlg, (HMENU)ID_CHOOSE_PROCESS, GetModuleHandle(0), 0);
+           SendMessage(ProcessSelection, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+           SendMessage(ChooseProcess, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+
+           EnableWindow(ChooseProcess, FALSE);
+
+           for(i = 0; i < process_count; i++)
+           {
+               SendMessage(ProcessSelection, LB_ADDSTRING, 0, (LPARAM)processes[i]);
+           }
        }
-   }
+    }
 }
 
 void CreateChangeValueDialogUI(void)
