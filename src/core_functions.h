@@ -38,6 +38,7 @@ void ResetScan(MEMORY_BLOCK *mblock, BOOL reset_pid, BOOL disable_process_monito
     {
         char msg[] =  "*No Process Selected*";
         SendMessage(Pid, WM_SETTEXT, 0, (LPARAM)msg);
+        EnableWindow(ChoosePid, TRUE);
     }
 
     ListView_DeleteAllItems(ListView);
