@@ -30,7 +30,7 @@ const char *search_conditions[] = { "Search Equality", "Search Increased", "Sear
 
 static char processes[1024][256], pids[1024][256];
 static char frozen_addresses[FREEZE_LIMIT][256];
-static char frozen_values[128 * 1024][256];
+static char frozen_values[FREEZE_LIMIT][256]; 
 
 static HWND ListView, Scan, Value, ChangeValue, Pid, ChoosePid, DataSize, DataSizeLabel,
             PidLabel, ValueLabel, SearchConditionLabel, SearchCondition, NewScan, PidDlg,
