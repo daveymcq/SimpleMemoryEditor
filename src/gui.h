@@ -5,10 +5,6 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
-char val_header[] = "Value";
-char addr_header[] = "Address";
-static unsigned short i;
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +12,10 @@ static unsigned short i;
 
 void CreateMainDialogUI(HWND hWnd)
 {
+    unsigned int i;
+    char val_header[] = "Value";
+    char addr_header[] = "Address";
+
     MenuBar = CreateMenu();
     FileMenu = CreateMenu();
     HelpMenu = CreateMenu();
@@ -277,6 +277,8 @@ void CreateChooseProcessDialogUI(void)
            SendMessage(ChooseProcess, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
 
            EnableWindow(ChooseProcess, FALSE);
+
+           unsigned int i;
 
            for(i = 0; i < process_count; i++)
            {
