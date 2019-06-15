@@ -263,7 +263,6 @@ MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, u
         mb->matches             = mb->size;
         mb->next                = 0;
 
-        if(mb->buffer) memset(mb->buffer, 0, mb->size);
         if(mb->match_flag) memset(mb->match_flag, 1, mb->size);
     }
 
@@ -418,7 +417,6 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
         mb->matches = 0;
 
         int selection_id = (int)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
-        memset(data_size, 0, sizeof(data_size));
         _snprintf(data_size, sizeof(data_size), "%s", data_sizes[selection_id]);
         mb->data_size = (unsigned short)atoi(data_size);
 
@@ -426,7 +424,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
         {
             bytes_to_read = (bytes_left > sizeof(buffer)) ? sizeof(buffer) : bytes_left;
 
-            ReadProcessMemory(mb->process, mb->address + total_read, buffer, bytes_to_read, (SIZE_T*)&bytes_read);
+            ReadProcessMemory(mb->process, mb->address + total_read, buffer, bytes_to_read, (SIZE_T *)&bytes_read);
             if(bytes_read != bytes_to_read) break;
 
             double tmpval, prevval;
