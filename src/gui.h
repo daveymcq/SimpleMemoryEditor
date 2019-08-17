@@ -8,10 +8,18 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+RECT GetWindowLocation(HWND hWnd)
+{
+    RECT Rect;
+    GetWindowRect(hWnd, &Rect);
+    MapWindowPoints(HWND_DESKTOP, GetParent(hWnd), (LPPOINT) &Rect, 2);
+    return Rect;
+}
+
 // LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 void CreateMainDialogUI(HWND hWnd)
-{    
+{
     unsigned int i;
     char val_header[] = "Value";
     char addr_header[] = "Address";
@@ -90,6 +98,19 @@ void CreateMainDialogUI(HWND hWnd)
     SendMessage(Value, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
     SendMessage(SearchCondition, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
     SendMessage(SearchConditionLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+}
+
+
+void CenterWindow(HWND hWnd)
+{
+    RECT c;
+
+    GetWindowRect(hWnd, &c);
+
+    DWORD X =  (((GetSystemMetrics(SM_CXSCREEN)) - (c.right)) / 2);
+    DWORD Y =  (((GetSystemMetrics(SM_CYSCREEN)) - (c.bottom)) / 2);
+
+    MoveWindow(hWnd, X, Y, c.right - c.left, c.bottom - c.top, TRUE);
 }
 
 
@@ -284,7 +305,7 @@ void CreateChooseProcessDialogUI(void)
            {
                SendMessage(ProcessSelection, LB_ADDSTRING, 0, (LPARAM)processes[i]);
            }
-       }
+        }
     }
 }
 
@@ -318,8 +339,8 @@ void CreateChangeValueDialogUI(void)
 
              if(ChangeValueDlg)
              {
-                  SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-                  SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+                 SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+                 SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
              }
          }
     }

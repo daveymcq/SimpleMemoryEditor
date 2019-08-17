@@ -16,8 +16,9 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     switch(Msg)
     {
         case WM_CREATE:
-           
+
            CreateMainDialogUI(hWnd);
+           CenterWindow(hWnd);
 
         break;
 
@@ -127,6 +128,12 @@ LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM 
 
         break;
 
+        case WM_CREATE:
+
+            CenterWindow(hWnd);
+
+        break;
+
         case WM_COMMAND:
 
             if(LOWORD(wParam) == ID_CHOOSE_PROCESS)
@@ -138,10 +145,6 @@ LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM 
             {
                 ProcessListboxChangeEvent();
             }
-
-        break;
-
-        case WM_CREATE:
 
         break;
 
@@ -175,6 +178,7 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
         case WM_CREATE:
 
             CreateChangeValueDialogUIChildren(hWnd);
+            CenterWindow(hWnd);
 
         break;
 

@@ -1,6 +1,16 @@
 #ifndef _CORE_FUNCTIONS_H
 #define _CORE_FUNCTIONS_H
 
+// Debugging code //
+
+void __DEBUG_INT(long long X)
+{
+    char msg[1024];
+    _snprintf(msg, sizeof(msg), "%lld", X);
+    MessageBox(0, msg, 0, MB_OK);
+}
+
+// Initialize local variables.
 
 void Init()
 {
