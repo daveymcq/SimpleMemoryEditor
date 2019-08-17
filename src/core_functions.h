@@ -2,6 +2,14 @@
 #define _CORE_FUNCTIONS_H
 
 
+void Init()
+{
+    Width = 625;
+    Height = 425;
+    FirstScanNotRun = TRUE;
+    SelectedItem = -1;
+}
+
 // Resets all previosly filtered addresses.
 
 
@@ -346,7 +354,7 @@ BOOL SelectedAddressFrozen(void)
 
     char address[256];
 
-    ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address)); 
+    ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
 
     for(i = 0; i < addresses_frozen; i++)
     {

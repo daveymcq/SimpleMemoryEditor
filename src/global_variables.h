@@ -30,7 +30,10 @@ const char *search_conditions[] = { "Search Equality", "Search Increased", "Sear
 
 static char processes[1024][256], pids[1024][256];
 static char frozen_addresses[FREEZE_LIMIT][256];
-static char frozen_values[FREEZE_LIMIT][256]; 
+static char frozen_values[FREEZE_LIMIT][256];
+
+static DWORD Width;
+static DWORD Height;
 
 static HWND ListView, Scan, Value, ChangeValue, Pid, ChoosePid, DataSize, DataSizeLabel,
             PidLabel, ValueLabel, SearchConditionLabel, SearchCondition, NewScan, PidDlg,
@@ -40,7 +43,7 @@ static HWND ListView, Scan, Value, ChangeValue, Pid, ChoosePid, DataSize, DataSi
 static LVCOLUMN Column;
 static LVITEM Item;
 
-static LRESULT SelectedItem = -1;
+static LRESULT SelectedItem;
 
 static HANDLE ScanThread;
 static HANDLE FreezeThread;
@@ -64,7 +67,7 @@ static unsigned int addresses_frozen;
 static BOOL is64bit;
 static BOOL SelectedProcessOpen;
 static BOOL ScanRunning;
-static BOOL FirstScanNotRun = TRUE;
+static BOOL FirstScanNotRun;
 
 static HMENU MenuBar;
 static HMENU FileMenu;

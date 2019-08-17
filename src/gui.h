@@ -11,7 +11,7 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 // LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 void CreateMainDialogUI(HWND hWnd)
-{
+{    
     unsigned int i;
     char val_header[] = "Value";
     char addr_header[] = "Address";
@@ -340,11 +340,11 @@ void ProcessListboxChangeEvent(void)
     if(selected_process_index > -1)
     {
         char selected_process[256];
-        memset(selected_process, 0, sizeof(selected_process)); 
+        memset(selected_process, 0, sizeof(selected_process));
 
         _snprintf(selected_process, sizeof(selected_process), "%s", pids[selected_process_index]);
-        
-        if(lstrlen(selected_process)) 
+
+        if(lstrlen(selected_process))
             EnableWindow(ChooseProcess, TRUE);
         else
             EnableWindow(ChooseProcess, FALSE);

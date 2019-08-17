@@ -29,6 +29,8 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+    Init();
+
     INITCOMMONCONTROLSEX icc;
     icc.dwICC = ICC_WIN95_CLASSES;
     icc.dwSize = sizeof(icc);
@@ -56,7 +58,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             {
                 MainWindow = CreateWindowEx(WS_EX_STATICEDGE, wc.lpszClassName, title,
                                             WS_VISIBLE | WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX,
-                                            CW_USEDEFAULT, CW_USEDEFAULT, 625, 425, 0, 0, hInstance, 0);
+                                            CW_USEDEFAULT, CW_USEDEFAULT, Width, Height, 0, 0, hInstance, 0);
                 if(MainWindow)
                 {
                     MSG Msg;
