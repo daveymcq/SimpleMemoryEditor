@@ -64,10 +64,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
             else if(LOWORD(wParam) == ID_HELP_ABOUT)
             {
-                EnableWindow(MainWindow, FALSE);
                 MessageBox(0, "A basic memory editing utility.", title, MB_OK);
-                EnableWindow(MainWindow, TRUE);
-                SetForegroundWindow(MainWindow);
             }
 
             else if(LOWORD(wParam) == ID_SCAN)
