@@ -37,26 +37,6 @@ unsigned int StringLength(char *str)
     return length;
 }
 
-
-// Absolute value
-
-
-unsigned int Abs(int number)
-{
-    unsigned int result = 0;
-    
-    if(number >= 0)
-    {
-        result = number;
-    }
-    else 
-    {
-        result = -number;
-    }
-    
-    return result;
-}
-
 // Convert string to 64 bit integer
 
 
@@ -66,15 +46,52 @@ long long StringToInt64(char *number, unsigned short base)
 
     switch(base)
     {
-       case 10:
-       {
+        case 2:
+        {
             char *pstr = number;
             unsigned int place_values = StringLength(pstr);
 
             while(place_values)
             {
                 unsigned char data;
-                
+
+                if((*pstr >= '0') && (*pstr <= '1'))
+                {
+                    data = (unsigned char)(*pstr & 0xF);
+                }
+                else
+                {
+                    result = -1LL;
+                    break;
+                }
+
+                unsigned long long power = 1LL;
+                unsigned int i;
+
+                for(i = power; i < place_values; i++)
+                {
+                    power *= base;
+                }
+
+                result += (long long)(data * power);
+
+                place_values--;
+                pstr++;
+            }
+        }
+
+            break;
+
+
+        case 10:
+        {
+            char *pstr = number;
+            unsigned int place_values = StringLength(pstr);
+
+            while(place_values)
+            {
+                unsigned char data;
+
                 if((*pstr <= '9') && (*pstr >= '0'))
                 {
                     data = (unsigned char)(*pstr & 0xF);
@@ -84,7 +101,7 @@ long long StringToInt64(char *number, unsigned short base)
                     result = -1LL;
                     break;
                 }
-                
+
                 unsigned long long power = 1LL;
                 unsigned int i;
 
@@ -92,31 +109,31 @@ long long StringToInt64(char *number, unsigned short base)
                 {
                     power *= base;
                 }
-             
+
                 result += (long long)(data * power);
-      
+
                 place_values--;
                 pstr++;
             }
-        } 
-        
-        break; 
+        }
+
+            break;
 
         case 16:
         {
             char *pstr = number;
-            
+
             if((*pstr == '0') && (*(pstr + 1) == 'x'))
             {
                 pstr += 2;
             }
-            
+
             unsigned int place_values = StringLength(pstr);
 
             while(place_values)
-            {   
+            {
                 unsigned char data;
-                
+
                 if((*pstr <= 'f') && (*pstr >= 'A'))
                 {
                     data = (unsigned char)((*pstr | 0x20) - 0x57);
@@ -130,7 +147,7 @@ long long StringToInt64(char *number, unsigned short base)
                     result = -1LL;
                     break;
                 }
-                
+
                 unsigned long long power = 1LL;
                 unsigned int i;
 
@@ -138,24 +155,23 @@ long long StringToInt64(char *number, unsigned short base)
                 {
                     power *= base;
                 }
-                
+
                 result += (long long)(data * power);
 
                 place_values--;
                 pstr++;
             }
         }
-        
-        break;
+
+            break;
 
         default:
             result = -1LL;
-        break;
+            break;
     }
 
     return result;
 }
-
 
 // Resets all previosly filtered addresses.
 
