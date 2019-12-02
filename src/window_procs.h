@@ -18,7 +18,6 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
         case WM_CREATE:
 
            CreateMainDialogUI(hWnd);
-           CenterWindow(hWnd);
 
         break;
 

@@ -29,7 +29,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    Init();
+    Init(); 
 
     INITCOMMONCONTROLSEX icc;
     icc.dwICC = ICC_WIN95_CLASSES;
@@ -37,40 +37,40 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     if(InitCommonControlsEx(&icc))
     {
-        if(IsWow64Process(GetCurrentProcess(), &is64bit))
+        WNDCLASSEX wc;
+
+        wc.cbSize = sizeof(wc);
+        wc.cbClsExtra = 0;
+        wc.cbWndExtra = 0;
+        wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
+        wc.hCursor = LoadCursor(hInstance, IDC_ARROW);
+        wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(AppIcon));
+        wc.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(AppIcon));
+        wc.hInstance = hInstance;
+        wc.lpfnWndProc = MainWndProc;
+        wc.lpszClassName = "Main";
+        wc.lpszMenuName = 0;
+        wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+
+        if(RegisterClassEx(&wc))
         {
-            WNDCLASSEX wc;
-
-            wc.cbSize = sizeof(wc);
-            wc.cbClsExtra = 0;
-            wc.cbWndExtra = 0;
-            wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
-            wc.hCursor = LoadCursor(hInstance, IDC_ARROW);
-            wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(AppIcon));
-            wc.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(AppIcon));
-            wc.hInstance = hInstance;
-            wc.lpfnWndProc = MainWndProc;
-            wc.lpszClassName = "Main";
-            wc.lpszMenuName = 0;
-            wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-
-            if(RegisterClassEx(&wc))
+            MainWindow = CreateWindowEx(WS_EX_STATICEDGE, wc.lpszClassName, title,
+                                        WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX, CW_USEDEFAULT, 
+                                        CW_USEDEFAULT, Width, Height, 0, 0, hInstance, 0);
+            if(MainWindow)
             {
-                MainWindow = CreateWindowEx(WS_EX_STATICEDGE, wc.lpszClassName, title,
-                                            WS_VISIBLE | WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX,
-                                            CW_USEDEFAULT, CW_USEDEFAULT, Width, Height, 0, 0, hInstance, 0);
-                if(MainWindow)
+                ShowWindow(MainWindow, nCmdShow);
+                UpdateWindow(MainWindow);
+                 
+                MSG Msg;
+
+                while(GetMessage(&Msg, 0, 0, 0) > 0)
                 {
-                    MSG Msg;
-
-                    while(GetMessage(&Msg, 0, 0, 0) > 0)
-                    {
-                        TranslateMessage(&Msg);
-                        DispatchMessage(&Msg);
-                    }
-
-                    return (int)Msg.wParam;
+                    TranslateMessage(&Msg);
+                    DispatchMessage(&Msg);
                 }
+
+                return (int)Msg.wParam;
             }
         }
     }

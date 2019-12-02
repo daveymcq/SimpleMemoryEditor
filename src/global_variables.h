@@ -51,7 +51,6 @@ static HANDLE MonitorSelectedProcessThread;
 static HANDLE Process;
 
 static HFONT font;
-
 static NONCLIENTMETRICS metrics;
 
 static int selected_process_index;
@@ -64,7 +63,6 @@ static unsigned int number_of_processes;
 static unsigned int process_count;
 static unsigned int addresses_frozen;
 
-static BOOL is64bit;
 static BOOL SelectedProcessOpen;
 static BOOL ScanRunning;
 static BOOL FirstScanNotRun;

@@ -12,13 +12,150 @@ void __DEBUG_INT(long long X)
 
 // Initialize local variables.
 
-void Init()
+void Init(void)
 {
     Width = 625;
     Height = 425;
     FirstScanNotRun = TRUE;
     SelectedItem = -1;
 }
+
+
+// Find length of string.
+
+unsigned int StringLength(char *str)
+{
+    unsigned int length = 0;
+    char *pstr = str;
+
+    while(*pstr)
+    {
+        ++length;
+        pstr++;
+    }
+
+    return length;
+}
+
+
+// Absolute value
+
+
+unsigned int Abs(int number)
+{
+    unsigned int result = 0;
+    
+    if(number >= 0)
+    {
+        result = number;
+    }
+    else 
+    {
+        result = -number;
+    }
+    
+    return result;
+}
+
+// Convert string to 64 bit integer
+
+
+long long StringToInt64(char *number, unsigned short base)
+{
+    long long result = 0LL;
+
+    switch(base)
+    {
+       case 10:
+       {
+            char *pstr = number;
+            unsigned int place_values = StringLength(pstr);
+
+            while(place_values)
+            {
+                unsigned char data;
+                
+                if((*pstr <= '9') && (*pstr >= '0'))
+                {
+                    data = (unsigned char)(*pstr & 0xF);
+                }
+                else
+                {
+                    result = -1LL;
+                    break;
+                }
+                
+                unsigned long long power = 1LL;
+                unsigned int i;
+
+                for(i = power; i < place_values; i++)
+                {
+                    power *= base;
+                }
+             
+                result += (long long)(data * power);
+      
+                place_values--;
+                pstr++;
+            }
+        } 
+        
+        break; 
+
+        case 16:
+        {
+            char *pstr = number;
+            
+            if((*pstr == '0') && (*(pstr + 1) == 'x'))
+            {
+                pstr += 2;
+            }
+            
+            unsigned int place_values = StringLength(pstr);
+
+            while(place_values)
+            {   
+                unsigned char data;
+                
+                if((*pstr <= 'f') && (*pstr >= 'A'))
+                {
+                    data = (unsigned char)((*pstr | 0x20) - 0x57);
+                }
+                else if((*pstr <= '9') && (*pstr >= '0'))
+                {
+                    data = (unsigned char)(*pstr & 0xF);
+                }
+                else
+                {
+                    result = -1LL;
+                    break;
+                }
+                
+                unsigned long long power = 1LL;
+                unsigned int i;
+
+                for(i = power; i < place_values; i++)
+                {
+                    power *= base;
+                }
+                
+                result += (long long)(data * power);
+
+                place_values--;
+                pstr++;
+            }
+        }
+        
+        break;
+
+        default:
+            result = -1LL;
+        break;
+    }
+
+    return result;
+}
+
 
 // Resets all previosly filtered addresses.
 
@@ -163,19 +300,12 @@ BOOL GetProcessNameAndID(void)
 
         _snprintf(processes[number_of_processes], sizeof(processes[number_of_processes]), "%s", pe.szExeFile);
 
-        process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pe.th32ProcessID);
+        process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pe.th32ProcessID); 
 
         if(process)
         {
-            BOOL platform;
-            if(IsWow64Process(process, &platform))
-            {
-                if(platform == is64bit)
-                {
-                    _snprintf(pids[number_of_processes], sizeof(pids[number_of_processes]), "%u", pe.th32ProcessID);
-                    number_of_processes++;
-                }
-            }
+            _snprintf(pids[number_of_processes], sizeof(pids[number_of_processes]), "%u", pe.th32ProcessID);
+            number_of_processes++; 
 
             CloseHandle(process);
         }
@@ -391,7 +521,7 @@ void WINAPI FreezeAddresses(void)
             for(i = 0; i < addresses_frozen; i++)
             {
                 double value = strtod(frozen_values[i], 0);
-                unsigned long long address = _strtoui64(frozen_addresses[i], 0, 16);
+                unsigned long long address = StringToInt64(frozen_addresses[i], 16);
 
                 switch(type)
                 {
@@ -599,9 +729,9 @@ void WINAPI ProcessScan(void)
         MessageBox(0, msg, title, MB_OK);
     }
 
-    else if((lstrlen(pid) && lstrlen(data_size) && lstrlen(val)) && (lstrcmp(pid, "*No Process Selected*") != 0))
+    else if((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (lstrcmp(pid, "*No Process Selected*") != 0))
     {
-        scanner = (scanner) ? scanner : CreateMemoryScanner((unsigned int)atoi(pid), (unsigned short)atoi(data_size));
+        scanner = (scanner) ? scanner : CreateMemoryScanner((unsigned int)StringToInt64(pid, 10), (unsigned short)StringToInt64(data_size, 10)); 
 
         if(scanner)
         {
@@ -635,7 +765,7 @@ void WINAPI ProcessScan(void)
                         switch(selected_search_condition)
                         {
                             case SEARCH_EQUALS:
-                                UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_DECIMAL, _strtoi64(val, 0, 10));
+                                UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_DECIMAL, StringToInt64(val, 10));
                                 DisplayScanResults(scanner);
                             break;
 
@@ -745,7 +875,7 @@ BOOL UpdateValue(void)
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
     SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
 
-    unsigned long long addr = _strtoui64(address, 0, 16);
+    unsigned long long addr = StringToInt64(address, 16);
     double v = (double)atof(val);
 
     LVITEM Item;
