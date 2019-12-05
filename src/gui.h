@@ -137,6 +137,7 @@ void ProcessListViewRightClickEvent(HWND hWnd)
     if(SelectedItem != -1)
     {
         POINT pos;
+
         if(GetCursorPos(&pos))
         {
             char buffer[256];
@@ -417,6 +418,7 @@ void ProcessChooseProcessButtonEvent(void)
 
             CloseHandle(process);
         }
+
         else
         {
             error = TRUE;

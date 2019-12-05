@@ -40,7 +40,7 @@ unsigned int StringLength(char *str)
 // Convert string to 64 bit integer
 
 
-long long StringToInt64(char *number, unsigned short base)
+long long StringToInt64(char *number, unsigned short base = 10)
 {
     long long result = 0LL;
 
@@ -173,6 +173,33 @@ long long StringToInt64(char *number, unsigned short base)
     return result;
 }
 
+
+BOOL AddressNotDiscarded(MEMORY_BLOCK *mblock, unsigned long long offset)
+{
+    MEMORY_BLOCK *mb = mblock;
+
+    if(mb)
+    {
+        BOOL not_discarded = (mb->match_flag[(offset) / 8] & (1 << ((offset) % 8))); 
+        return not_discarded;
+    }
+
+    return FALSE;
+}
+
+BOOL DiscardAddress(MEMORY_BLOCK *mblock, unsigned long long offset)
+{
+    MEMORY_BLOCK *mb = mblock;
+
+    if(mb)
+    {
+        mb->match_flag[(offset) / 8] &= ~(1 << ((offset) % 8));
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 // Resets all previosly filtered addresses.
 
 
@@ -195,7 +222,7 @@ void ResetScan(MEMORY_BLOCK *mblock, BOOL reset_pid, BOOL disable_process_monito
 
     while(mb)
     {
-        memset(mb->match_flag, 1, mb->size);
+        memset(mb->match_flag, 0xff, mb->size / 8); 
         mb->matches = mb->size;
         mb = mb->next;
     }
@@ -423,11 +450,11 @@ MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, u
         mb->data_size           = data_size;
         mb->address             = (unsigned char *)mbi->BaseAddress;
         mb->buffer              = (unsigned char *)malloc(mbi->RegionSize);
-        mb->match_flag          = (unsigned char *)malloc(mbi->RegionSize);
-        mb->matches             = mb->size;
+        mb->match_flag          = (unsigned char *)malloc(mbi->RegionSize / 8);
+        mb->matches             = (unsigned int)mbi->RegionSize;
         mb->next                = 0;
 
-        if(mb->match_flag) memset(mb->match_flag, 1, mb->size);
+        if(mb->match_flag) memset(mb->match_flag, 0xff, mbi->RegionSize / 8);
     }
 
     return mb;
@@ -486,10 +513,10 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
             address = (unsigned char *)mbi.BaseAddress + mbi.RegionSize;
         }
     }
+
     else
     {
         EnableWindow(ChoosePid, FALSE);
-
         ResetScan(0, TRUE, TRUE);
         EnableWindow(MainWindow, FALSE);
 
@@ -497,9 +524,8 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
 
         EnableWindow(MainWindow, TRUE);
         EnableWindow(ChoosePid, TRUE);
-
-        SetForegroundWindow(MainWindow);
     }
+
     return ret;
 }
 
@@ -572,109 +598,113 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
 
     while(mb)
     {
-        char data_size[256];
-        static unsigned char buffer[128 * 1024];
-        static unsigned long long total_read, bytes_left, bytes_to_read, bytes_read;
-
-        bytes_left = mb->size;
-        total_read = 0;
-        mb->matches = 0;
-
-        int selection_id = (int)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
-        _snprintf(data_size, sizeof(data_size), "%s", data_sizes[selection_id]);
-        mb->data_size = (unsigned short)atoi(data_size);
-
-        while(bytes_left)
+        if(mb->matches)
         {
-            bytes_to_read = (bytes_left > sizeof(buffer)) ? sizeof(buffer) : bytes_left;
+            char data_size[256];
+            static unsigned char buffer[128 * 1024];
+            static unsigned long long total_read, bytes_left, bytes_to_read, bytes_read;
 
-            ReadProcessMemory(mb->process, mb->address + total_read, buffer, bytes_to_read, (SIZE_T *)&bytes_read);
-            if(bytes_read != bytes_to_read) break;
+            bytes_left = mb->size;
+            total_read = 0;
+            mb->matches = 0;
 
-            double tmpval, prevval;
-            unsigned int offset;
-            BOOL match;
+            int selection_id = (int)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
+            _snprintf(data_size, sizeof(data_size), "%s", data_sizes[selection_id]);
+            mb->data_size = (unsigned short)StringToInt64(data_size, 10); 
 
-            for(offset = 0; offset < bytes_read; offset += mb->data_size)
+            while(bytes_left)
             {
-                if(mb->match_flag[total_read + offset])
+                bytes_to_read = (bytes_left > sizeof(buffer)) ? sizeof(buffer) : bytes_left;
+
+                ReadProcessMemory(mb->process, mb->address + total_read, buffer, bytes_to_read, (SIZE_T *)&bytes_read);
+
+                if(bytes_read != bytes_to_read) break;
+
+                double tmpval, prevval;
+                unsigned int offset;
+                BOOL match;
+
+                for(offset = 0; offset < bytes_read; offset += mb->data_size)
                 {
-                    if(type == TYPE_DECIMAL)
+                    if(AddressNotDiscarded(mb, total_read + offset)) 
                     {
-                        switch(mb->data_size)
+                        if(type == TYPE_DECIMAL)
                         {
-                            case sizeof(char):
-                                tmpval = *((char *)&buffer[offset]);
-                                prevval = *((char *)&mb->buffer[total_read + offset]);
-                            break;
+                            switch(mb->data_size)
+                            {
+                                case sizeof(char):
+                                    tmpval = *((char *)&buffer[offset]);
+                                    prevval = *((char *)&mb->buffer[total_read + offset]);
+                                    break;
 
-                            case sizeof(short):
-                                tmpval = *((short *)&buffer[offset]);
-                                prevval = *((short *)&mb->buffer[total_read + offset]);
-                            break;
+                                case sizeof(short):
+                                    tmpval = *((short *)&buffer[offset]);
+                                    prevval = *((short *)&mb->buffer[total_read + offset]);
+                                    break;
 
-                            case sizeof(int):
-                                tmpval = *((int *)&buffer[offset]);
-                                prevval = *((int *)&mb->buffer[total_read + offset]);
-                            break;
+                                case sizeof(int):
+                                    tmpval = *((int *)&buffer[offset]);
+                                    prevval = *((int *)&mb->buffer[total_read + offset]);
+                                    break;
 
-                            case sizeof(long long):
-                                tmpval = *((long long *)&buffer[offset]);
-                                prevval = *((long long *)&mb->buffer[total_read + offset]);
-                            break;
+                                case sizeof(long long):
+                                    tmpval = *((long long *)&buffer[offset]);
+                                    prevval = *((long long *)&mb->buffer[total_read + offset]);
+                                    break;
 
+                            }
                         }
-                    }
 
-                    else if(type == TYPE_FLOAT)
-                    {
-                        if(mb->data_size == sizeof(float))
+                        else if(type == TYPE_FLOAT)
                         {
-                            tmpval = *((float *)&buffer[offset]);
-                            prevval = *((float *)&mb->buffer[total_read + offset]);
+                            if(mb->data_size == sizeof(float))
+                            {
+                                tmpval = *((float *)&buffer[offset]);
+                                prevval = *((float *)&mb->buffer[total_read + offset]);
+                            }
                         }
-                    }
 
-                    else if(type == TYPE_DOUBLE)
-                    {
-                        if(mb->data_size == sizeof(double))
+                        else if(type == TYPE_DOUBLE)
                         {
-                            tmpval = *((double *)&buffer[offset]);
-                            prevval = *((double *)&mb->buffer[total_read + offset]);
+                            if(mb->data_size == sizeof(double))
+                            {
+                                tmpval = *((double *)&buffer[offset]);
+                                prevval = *((double *)&mb->buffer[total_read + offset]);
+                            }
                         }
+
+                        switch(condition)
+                        {
+                            case SEARCH_EQUALS:
+                                match = (tmpval == val);
+                                break;
+
+                            case SEARCH_INCREASED:
+                                match = (tmpval > prevval);
+                                break;
+
+                            case SEARCH_DECREASED:
+                                match = (tmpval < prevval);
+                                break;
+                        }
+
+                        if(match) 
+                            mb->matches++;
+                        else 
+                            DiscardAddress(mb, total_read + offset);
                     }
-
-                    switch(condition)
-                    {
-                        case SEARCH_EQUALS:
-                            match = (tmpval == val);
-                        break;
-
-                        case SEARCH_INCREASED:
-                            match = (tmpval > prevval);
-                        break;
-
-                        case SEARCH_DECREASED:
-                            match = (tmpval < prevval);
-                        break;
-                    }
-
-                    if(match)
-                        ++mb->matches;
-                    else
-                        mb->match_flag[total_read + offset] = 0;
                 }
+
+                memcpy(mb->buffer + total_read, buffer, bytes_read);
+
+                bytes_left -= bytes_read;
+                total_read += bytes_read;
             }
 
-            memcpy(mb->buffer + total_read, buffer, bytes_read);
-
-            bytes_left -= bytes_read;
-            total_read += bytes_read;
+            mb->size = total_read;
         }
 
-        mb->size = total_read;
-        mb = mb->next;
-
+        mb = mb->next; 
     }
 }
 
@@ -692,7 +722,7 @@ void DisplayScanResults(MEMORY_BLOCK *mblock)
 
         for(offset = 0; offset < mb->size; offset += mb->data_size)
         {
-            if(mb->match_flag[offset])
+            if(AddressNotDiscarded(mb, offset))
             {
                 char address[256], val[256];
 
@@ -868,13 +898,7 @@ void WINAPI ProcessScan(void)
                     EnableWindow(NewScan, TRUE);
                     EnableWindow(ChangeValue, TRUE);
                     EnableWindow(ChoosePid, TRUE);
-
-                    EnableWindow(MainWindow, FALSE);
-                    MessageBox(0, message, title, MB_OK);
-                    EnableWindow(MainWindow, TRUE);
-
-                    SetForegroundWindow(MainWindow);
-
+                    MessageBox(MainWindow, message, title, MB_OK); 
                 }
             }
         }
