@@ -520,7 +520,7 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
         ResetScan(0, TRUE, TRUE);
         EnableWindow(MainWindow, FALSE);
 
-        MessageBox(0, "Error: Failed to open process.", title, MB_OK);
+        MessageBox(MainWindow, "Error: Failed to open process.", title, MB_OK);
 
         EnableWindow(MainWindow, TRUE);
         EnableWindow(ChoosePid, TRUE);
@@ -540,7 +540,7 @@ BOOL SelectedAddressFrozen(void)
 
     for(i = 0; i < addresses_frozen; i++)
     {
-        if(strcmp(frozen_addresses[i], address) == 0)
+        if(lstrcmp(frozen_addresses[i], address) == 0)
         {
             frozen = TRUE;
             break;
@@ -772,7 +772,7 @@ void WINAPI ProcessScan(void)
     if(!IsNumeric(val))
     {
         char msg[] = "Search value must be in decimal format";
-        MessageBox(0, msg, title, MB_OK);
+        MessageBox(MainWindow, msg, title, MB_OK);
     }
 
     else if((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (lstrcmp(pid, "*No Process Selected*") != 0))
@@ -898,7 +898,10 @@ void WINAPI ProcessScan(void)
                     EnableWindow(NewScan, TRUE);
                     EnableWindow(ChangeValue, TRUE);
                     EnableWindow(ChoosePid, TRUE);
-                    MessageBox(MainWindow, message, title, MB_OK); 
+                    EnableWindow(MainWindow, FALSE);
+                    MessageBox(MainWindow, message, title, MB_OK);
+                    EnableWindow(MainWindow, TRUE);
+                    SetForegroundWindow(MainWindow);
                 }
             }
         }
@@ -937,7 +940,7 @@ BOOL UpdateValue(void)
         {
             DestroyWindow(ChangeValueDlg);
             EnableWindow(MainWindow, FALSE);
-            MessageBox(0, "Memory was updated successfully.", "Success!", MB_OK);
+            MessageBox(MainWindow, "Memory was updated successfully.", "Success!", MB_OK);
             EnableWindow(MainWindow, TRUE);
             SetForegroundWindow(MainWindow);
             SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
@@ -953,7 +956,7 @@ BOOL UpdateValue(void)
             memset(error, 0, sizeof(error));
             _snprintf(error, sizeof(error), "Memory operation failed! (%d)", GetLastError());
             EnableWindow(MainWindow, FALSE);
-            MessageBox(0, error, "Error!", MB_OK);
+            MessageBox(MainWindow, error, "Error!", MB_OK);
             EnableWindow(MainWindow, TRUE);
             SetForegroundWindow(MainWindow);
 
@@ -967,7 +970,7 @@ BOOL UpdateValue(void)
         {
             DestroyWindow(ChangeValueDlg);
             EnableWindow(MainWindow, FALSE);
-            MessageBox(0, "Memory was updated successfully.", "Success!", MB_OK);
+            MessageBox(MainWindow, "Memory was updated successfully.", "Success!", MB_OK);
             EnableWindow(MainWindow, TRUE);
             SetForegroundWindow(MainWindow);
             SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
@@ -983,7 +986,7 @@ BOOL UpdateValue(void)
             memset(error, 0, sizeof(error));
             _snprintf(error, sizeof(error), "Memory operation failed! (%d)", GetLastError());
             EnableWindow(MainWindow, FALSE);
-            MessageBox(0, error, "Error!", MB_OK);
+            MessageBox(MainWindow, error, "Error!", MB_OK);
             EnableWindow(MainWindow, TRUE);
             SetForegroundWindow(MainWindow);
 
@@ -997,7 +1000,7 @@ BOOL UpdateValue(void)
         {
             DestroyWindow(ChangeValueDlg);
             EnableWindow(MainWindow, FALSE);
-            MessageBox(0, "Memory was updated successfully.", "Success!", MB_OK);
+            MessageBox(MainWindow, "Memory was updated successfully.", "Success!", MB_OK);
             EnableWindow(MainWindow, TRUE);
             SetForegroundWindow(MainWindow);
 
@@ -1014,9 +1017,9 @@ BOOL UpdateValue(void)
             memset(error, 0, sizeof(error));
             _snprintf(error, sizeof(error), "Memory operation failed! (%d)", GetLastError());
             EnableWindow(MainWindow, FALSE);
-            MessageBox(0, error, "Error!", MB_OK);
+            MessageBox(MainWindow, error, "Error!", MB_OK);
             EnableWindow(MainWindow, TRUE);
-            SetForegroundWindow(MainWindow);
+            SetForegroundWindow(MainWindow); 
 
             return FALSE;
         }
