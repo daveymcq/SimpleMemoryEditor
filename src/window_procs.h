@@ -18,6 +18,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
         case WM_CREATE:
 
            CreateMainDialogUI(hWnd);
+           CenterWindow(hWnd);
 
         break;
 
@@ -63,7 +64,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
             else if(LOWORD(wParam) == ID_HELP_ABOUT)
             {
-                MessageBox(0, "A basic memory editing utility.", title, MB_OK);
+                CreateAboutDialog(hWnd);
             }
 
             else if(LOWORD(wParam) == ID_SCAN)
@@ -126,7 +127,7 @@ LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM 
 
         case WM_CREATE:
 
-            CenterWindow(hWnd);
+            CenterWindow(hWnd, MainWindow); 
 
         break;
 

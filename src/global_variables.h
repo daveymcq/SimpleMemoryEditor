@@ -21,14 +21,17 @@
 #define ID_UNFREEZE_VALUE (WM_USER + 1017)
 
 #define MEM_WRITABLE (PAGE_READWRITE | PAGE_WRITECOPY | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)
-#define FREEZE_LIMIT (128 * 1024)
+#define FREEZE_LIMIT (1024 * 128)
+#define PROCESS_LIMIT (1024)
 
 const char *title = "Simple Memory Editor";
 const char *data_sizes[] = { "1", "2", "4", "8", "4", "8" };
 const char *data_types[] = { "Character", "Short Integer", "Integer", "Long Integer", "Float", "Double" };
 const char *search_conditions[] = { "Search Equality", "Search Increased", "Search Decreased" };
 
-static char processes[1024][256], pids[1024][256];
+static char processes[PROCESS_LIMIT][256];
+static char pids[PROCESS_LIMIT][256];
+
 static char frozen_addresses[FREEZE_LIMIT][256];
 static char frozen_values[FREEZE_LIMIT][256];
 

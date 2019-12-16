@@ -8,13 +8,6 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-RECT GetWindowLocation(HWND hWnd)
-{
-    RECT Rect;
-    GetWindowRect(hWnd, &Rect);
-    MapWindowPoints(HWND_DESKTOP, GetParent(hWnd), (LPPOINT) &Rect, 2);
-    return Rect;
-}
 
 // LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
@@ -84,7 +77,7 @@ void CreateMainDialogUI(HWND hWnd)
 
     Scan = CreateWindow("button", "Scan Memory", WS_VISIBLE | WS_CHILD, 10, 315, 600, 50, hWnd, (HMENU)ID_SCAN, GetModuleHandle(0), 0);
 
-    EnableWindow(Scan, 0);
+    EnableWindow(Scan, FALSE);
 
     SendMessage(ChangeValue, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
     SendMessage(ChoosePid, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
@@ -101,16 +94,16 @@ void CreateMainDialogUI(HWND hWnd)
 }
 
 
-void CenterWindow(HWND hWnd)
+void CenterWindow(HWND hWnd, HWND Parent = 0)
 {
-    RECT c;
+    RECT window;
 
-    GetWindowRect(hWnd, &c);
+    GetWindowRect(hWnd, &window);
 
-    DWORD X =  (((GetSystemMetrics(SM_CXSCREEN)) - (c.right)) / 2);
-    DWORD Y =  (((GetSystemMetrics(SM_CYSCREEN)) - (c.bottom)) / 2);
+    DWORD X =  (((GetSystemMetrics(SM_CXSCREEN)) - (window.right)) / 2);
+    DWORD Y =  (((GetSystemMetrics(SM_CYSCREEN)) - (window.bottom)) / 2);
 
-    MoveWindow(hWnd, X, Y, c.right - c.left, c.bottom - c.top, TRUE);
+    MoveWindow(hWnd, X, Y, window.right - window.left, window.bottom - window.top, TRUE);
 }
 
 
@@ -206,9 +199,9 @@ void ProcessFreezeValueButtonEvent(void)
 
     for(i = 0; i < addresses_frozen; i++)
     {
-        if(strcmp(frozen_addresses[i], address) == 0)
+        if(lstrcmp(frozen_addresses[i], address) == 0)
         {
-            if(strcmp(frozen_values[i], value) == 0)
+            if(lstrcmp(frozen_values[i], value) == 0)
             {
                 frozen = TRUE;
                 break;
@@ -246,9 +239,9 @@ void ProcessUnfreezeValueButtonEvent(void)
 
     for(i = 0; i < addresses_frozen; i++)
     {
-        if(strcmp(frozen_addresses[i], address) == 0)
+        if(lstrcmp(frozen_addresses[i], address) == 0)
         {
-            if(strcmp(frozen_values[i], value) == 0)
+            if(lstrcmp(frozen_values[i], value) == 0)
             {
                 memset(&frozen_addresses[i], 0, sizeof(frozen_addresses[i]));
                 memset(&frozen_values[i], 0, sizeof(frozen_values[i]));
@@ -257,6 +250,13 @@ void ProcessUnfreezeValueButtonEvent(void)
     }
 
     EnableWindow(ChangeValue, TRUE);
+}
+
+void CreateAboutDialog(HWND hWnd)
+{
+    EnableWindow(hWnd, FALSE); 
+    MessageBox(hWnd, "A basic memory editing utility.", title, MB_OK);
+    EnableWindow(hWnd, TRUE); 
 }
 
 void CreateChooseProcessDialogUI(void)
@@ -282,30 +282,36 @@ void CreateChooseProcessDialogUI(void)
     {
 
         PidDlg = CreateWindowEx(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, title,
-                                WS_VISIBLE | WS_SYSMENU | WS_OVERLAPPED, CW_USEDEFAULT,
+                                WS_SYSMENU | WS_OVERLAPPED, CW_USEDEFAULT,
                                 CW_USEDEFAULT, 295, 400, 0, 0, 0, 0);
 
 
         if(PidDlg)
         {
-           EnableWindow(MainWindow, FALSE);
-           ProcessSelection = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTBOX, 0,
-                                           WS_VSCROLL | LBS_NOTIFY | LBS_DISABLENOSCROLL | WS_VISIBLE | WS_CHILD,
-                                           10, 10, 270, 300, PidDlg, (HMENU)ID_PROCESSES, GetModuleHandle(0), 0);
 
-           ChooseProcess = CreateWindow("button", "Select Process", WS_CHILD | WS_VISIBLE,
-                                        10, 310, 270, 50, PidDlg, (HMENU)ID_CHOOSE_PROCESS, GetModuleHandle(0), 0);
-           SendMessage(ProcessSelection, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-           SendMessage(ChooseProcess, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+            ShowWindow(PidDlg, SW_SHOW);
+            UpdateWindow(PidDlg);
+ 
+            EnableWindow(MainWindow, FALSE);
 
-           EnableWindow(ChooseProcess, FALSE);
+            ProcessSelection = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTBOX, 0,
+                                              WS_VSCROLL | LBS_NOTIFY | LBS_DISABLENOSCROLL | WS_VISIBLE | WS_CHILD,
+                                              10, 10, 270, 300, PidDlg, (HMENU)ID_PROCESSES, GetModuleHandle(0), 0);
+  
+            ChooseProcess = CreateWindow("button", "Select Process", WS_CHILD | WS_VISIBLE,
+                                         10, 310, 270, 50, PidDlg, (HMENU)ID_CHOOSE_PROCESS, GetModuleHandle(0), 0);
 
-           unsigned int i;
+            SendMessage(ProcessSelection, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+            SendMessage(ChooseProcess, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
 
-           for(i = 0; i < process_count; i++)
-           {
-               SendMessage(ProcessSelection, LB_ADDSTRING, 0, (LPARAM)processes[i]);
-           }
+            EnableWindow(ChooseProcess, FALSE);
+
+            unsigned int i;
+
+            for(i = 0; i < process_count; i++)
+            {
+                SendMessage(ProcessSelection, LB_ADDSTRING, 0, (LPARAM)processes[i]);
+            }
         }
     }
 }
@@ -334,12 +340,15 @@ void CreateChangeValueDialogUI(void)
 
          if(RegisterClassEx(&wc))
          {
-             ChangeValueDlg = CreateWindowEx(WS_EX_DLGMODALFRAME, wc.lpszClassName, title,
-                                             WS_VISIBLE | WS_SYSMENU | WS_OVERLAPPED, CW_USEDEFAULT,
+             ChangeValueDlg = CreateWindowEx(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, 
+                                             title, WS_SYSMENU | WS_OVERLAPPED, CW_USEDEFAULT,
                                              CW_USEDEFAULT, 300, 75, 0, 0, 0, 0);
 
              if(ChangeValueDlg)
              {
+                 ShowWindow(ChangeValueDlg, SW_SHOW);
+                 UpdateWindow(ChangeValueDlg);
+
                  SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
                  SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
              }
