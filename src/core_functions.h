@@ -1,14 +1,14 @@
 #ifndef _CORE_FUNCTIONS_H
 #define _CORE_FUNCTIONS_H
 
-// Debugging code //
+// Debugging code
 
-void __DEBUG_INT(long long X)
-{
-    char msg[1024];
-    _snprintf(msg, sizeof(msg), "%lld", X);
-    MessageBox(0, msg, 0, MB_OK);
-}
+//  void __DEBUG_INT(long long X)
+//  {
+//      char msg[1024];
+//      _snprintf(msg, sizeof(msg), "%lld", X);
+//      MessageBox(0, msg, 0, MB_OK);
+//  }
 
 // Initialize local variables.
 
@@ -19,7 +19,6 @@ void Init(void)
     FirstScanNotRun = TRUE;
     SelectedItem = -1;
 }
-
 
 // Find length of string.
 
@@ -38,7 +37,6 @@ unsigned int StringLength(char *str)
 }
 
 // Convert string to 64 bit integer
-
 
 long long StringToInt64(char *number, unsigned short base = 10)
 {
@@ -173,6 +171,7 @@ long long StringToInt64(char *number, unsigned short base = 10)
     return result;
 }
 
+// Checks if the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address was cleared in the previous scan. 
 
 BOOL AddressNotDiscarded(MEMORY_BLOCK *mblock, unsigned long long offset)
 {
@@ -186,6 +185,8 @@ BOOL AddressNotDiscarded(MEMORY_BLOCK *mblock, unsigned long long offset)
 
     return FALSE;
 }
+
+// Clears the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address.
 
 BOOL DiscardAddress(MEMORY_BLOCK *mblock, unsigned long long offset)
 {
@@ -201,7 +202,6 @@ BOOL DiscardAddress(MEMORY_BLOCK *mblock, unsigned long long offset)
 }
 
 // Resets all previosly filtered addresses.
-
 
 void ResetScan(MEMORY_BLOCK *mblock, BOOL reset_pid, BOOL disable_process_monitor)
 {
@@ -278,7 +278,6 @@ void WINAPI MonitorSelectedProcess(void)
 
 // Checks if a string is a decimal.
 
-
 BOOL IsNumeric(char *str)
 {
     BOOL numeric = (str) ? TRUE : FALSE;
@@ -317,8 +316,7 @@ unsigned int GetMatchCount(MEMORY_BLOCK *mblock)
 }
 
 
-// Finds all running processes on machine and exListViewContextMenucts the process id.
-
+// Finds all running processes on machine and finds their process id.
 
 BOOL GetProcessNameAndID(void)
 {
@@ -363,9 +361,7 @@ BOOL GetProcessNameAndID(void)
     return TRUE;
 }
 
-
 // Populates the ListView with the results of the scan.
-
 
 void AddItemToListView(char *address, char *val)
 {
@@ -383,9 +379,7 @@ void AddItemToListView(char *address, char *val)
     SendMessage(ListView, LVM_SETITEM, 0, (LPARAM)&Item);
 }
 
-
 // A set of helper functions that reads/writes the memory at the address specified.
-
 
 float PeekFloat(HANDLE process, unsigned char *address, unsigned short data_size)
 {
@@ -435,9 +429,7 @@ BOOL PokeDecimal(HANDLE process, unsigned long long address, long long val, unsi
     return FALSE;
 }
 
-
 // Constructs and allocates the MEMORY_BLOCK linked list structure.
-
 
 MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, unsigned short data_size)
 {
@@ -460,9 +452,7 @@ MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, u
     return mb;
 }
 
-
 // Cleans up the memory allocated by CreateMemoryScanner().
-
 
 void FreeMemoryScanner(MEMORY_BLOCK *mblock)
 {
@@ -482,7 +472,6 @@ void FreeMemoryScanner(MEMORY_BLOCK *mblock)
 }
 
 // Finds the initial valid memory information and sets up for UpdateMemoryBlock().
-
 
 MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
 {
@@ -587,9 +576,7 @@ void WINAPI FreezeAddresses(void)
     }
 }
 
-
 // Filters memory information aquired by CreateMemoryScanner() and subsequent calls to this function.
-
 
 void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE type, double val)
 {
@@ -708,9 +695,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
     }
 }
 
-
 // Add scan results to user interface.
-
 
 void DisplayScanResults(MEMORY_BLOCK *mblock)
 {
@@ -753,9 +738,7 @@ void DisplayScanResults(MEMORY_BLOCK *mblock)
     }
 }
 
-
 // The thread function responsible for performing the scan.
-
 
 void WINAPI ProcessScan(void)
 {
@@ -909,7 +892,6 @@ void WINAPI ProcessScan(void)
 }
 
 // Once an address is found, this function updates the value at that address.
-
 
 BOOL UpdateValue(void)
 {

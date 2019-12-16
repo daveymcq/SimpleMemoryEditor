@@ -4,10 +4,11 @@
 /* ************************************************************************************ */
 
 
+/* ************************************************************************************ */
+
 LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-
 
 // The window procedure for the main window.
 
@@ -112,7 +113,6 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 // The window procedure for the process selection dialog.
 
-
 LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
     switch(Msg)
@@ -157,9 +157,7 @@ LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM 
 
 /* ************************************************************************************ */
 
-
 // The window procedure for the dialog that modifies the value of a scan result.
-
 
 LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {

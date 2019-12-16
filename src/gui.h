@@ -8,7 +8,6 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 void CreateMainDialogUI(HWND hWnd)
@@ -93,7 +92,6 @@ void CreateMainDialogUI(HWND hWnd)
     SendMessage(SearchConditionLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
 }
 
-
 void CenterWindow(HWND hWnd, HWND Parent = 0)
 {
     RECT window;
@@ -105,7 +103,6 @@ void CenterWindow(HWND hWnd, HWND Parent = 0)
 
     MoveWindow(hWnd, X, Y, window.right - window.left, window.bottom - window.top, TRUE);
 }
-
 
 void ProcessListViewLeftClickEvent(void)
 {
@@ -226,7 +223,6 @@ void ProcessFreezeValueButtonEvent(void)
 
     EnableWindow(ChangeValue, FALSE);
 }
-
 
 void ProcessUnfreezeValueButtonEvent(void)
 {
@@ -363,7 +359,6 @@ void CreateChangeValueDialogUI(void)
 
 // LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
-
 void ProcessListboxChangeEvent(void)
 {
     selected_process_index = (int)SendMessage(ProcessSelection, LB_GETCURSEL, 0, 0);
@@ -446,7 +441,6 @@ void ProcessChooseProcessButtonEvent(void)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-
 
 void CreateChangeValueDialogUIChildren(HWND hWnd)
 {
