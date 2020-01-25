@@ -1,6 +1,8 @@
 #ifndef _CORE_FUNCTIONS_H
 #define _CORE_FUNCTIONS_H
 
+#include "McQlib.h"
+
 // Debugging code
 
 //  void __DEBUG_INT(long long X)
@@ -18,157 +20,6 @@ void Init(void)
     Height = 425;
     FirstScanNotRun = TRUE;
     SelectedItem = -1;
-}
-
-// Find length of string.
-
-unsigned int StringLength(char *str)
-{
-    unsigned int length = 0;
-    char *pstr = str;
-
-    while(*pstr)
-    {
-        ++length;
-        pstr++;
-    }
-
-    return length;
-}
-
-// Convert string to 64 bit integer
-
-long long StringToInt64(char *number, unsigned short base = 10)
-{
-    long long result = 0LL;
-
-    switch(base)
-    {
-        case 2:
-        {
-            char *pstr = number;
-            unsigned int place_values = StringLength(pstr);
-
-            while(place_values)
-            {
-                unsigned char data;
-
-                if((*pstr >= '0') && (*pstr <= '1'))
-                {
-                    data = (unsigned char)(*pstr & 0xF);
-                }
-                else
-                {
-                    result = -1LL;
-                    break;
-                }
-
-                unsigned long long power = 1LL;
-                unsigned int i;
-
-                for(i = power; i < place_values; i++)
-                {
-                    power *= base;
-                }
-
-                result += (long long)(data * power);
-
-                place_values--;
-                pstr++;
-            }
-        }
-
-            break;
-
-
-        case 10:
-        {
-            char *pstr = number;
-            unsigned int place_values = StringLength(pstr);
-
-            while(place_values)
-            {
-                unsigned char data;
-
-                if((*pstr <= '9') && (*pstr >= '0'))
-                {
-                    data = (unsigned char)(*pstr & 0xF);
-                }
-                else
-                {
-                    result = -1LL;
-                    break;
-                }
-
-                unsigned long long power = 1LL;
-                unsigned int i;
-
-                for(i = power; i < place_values; i++)
-                {
-                    power *= base;
-                }
-
-                result += (long long)(data * power);
-
-                place_values--;
-                pstr++;
-            }
-        }
-
-            break;
-
-        case 16:
-        {
-            char *pstr = number;
-
-            if((*pstr == '0') && (*(pstr + 1) == 'x'))
-            {
-                pstr += 2;
-            }
-
-            unsigned int place_values = StringLength(pstr);
-
-            while(place_values)
-            {
-                unsigned char data;
-
-                if((*pstr <= 'f') && (*pstr >= 'A'))
-                {
-                    data = (unsigned char)((*pstr | 0x20) - 0x57);
-                }
-                else if((*pstr <= '9') && (*pstr >= '0'))
-                {
-                    data = (unsigned char)(*pstr & 0xF);
-                }
-                else
-                {
-                    result = -1LL;
-                    break;
-                }
-
-                unsigned long long power = 1LL;
-                unsigned int i;
-
-                for(i = power; i < place_values; i++)
-                {
-                    power *= base;
-                }
-
-                result += (long long)(data * power);
-
-                place_values--;
-                pstr++;
-            }
-        }
-
-            break;
-
-        default:
-            result = -1LL;
-            break;
-    }
-
-    return result;
 }
 
 // Checks if the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address was cleared in the previous scan. 
@@ -274,29 +125,6 @@ void WINAPI MonitorSelectedProcess(void)
             break;
         }
     }
-}
-
-// Checks if a string is a decimal.
-
-BOOL IsNumeric(char *str)
-{
-    BOOL numeric = (str) ? TRUE : FALSE;
-    char *tmpstr = str;
-    unsigned int index = 0;
-
-    while((*tmpstr) && (numeric))
-    {
-        numeric = (((*tmpstr >= 48) && (*tmpstr <= 57)) ||
-                   ((index == 0) && (*tmpstr == 45)) ||
-                   ((*tmpstr == 46)));
-
-        if(!numeric) break;
-
-        index++;
-        tmpstr++;
-    }
-
-    return numeric;
 }
 
 // Finds the number of matches from the last scan.
@@ -552,7 +380,7 @@ void WINAPI FreezeAddresses(void)
             for(i = 0; i < addresses_frozen; i++)
             {
                 double value = strtod(frozen_values[i], 0);
-                unsigned long long address = StringToInt64(frozen_addresses[i], 16);
+                unsigned long long address = StringToUnsignedInteger(frozen_addresses[i], FMT_INT_HEXADECIMAL);
 
                 switch(type)
                 {
@@ -597,7 +425,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
 
             int selection_id = (int)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
             _snprintf(data_size, sizeof(data_size), "%s", data_sizes[selection_id]);
-            mb->data_size = (unsigned short)StringToInt64(data_size, 10); 
+            mb->data_size = (unsigned short)StringToUnsignedInteger(data_size, FMT_INT_DECIMAL); 
 
             while(bytes_left)
             {
@@ -752,7 +580,7 @@ void WINAPI ProcessScan(void)
     int selection_id = (int)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
     if(selection_id > -1) _snprintf(data_size, sizeof(data_size), "%s", data_sizes[selection_id]);
 
-    if(!IsNumeric(val))
+    if(!IsDecimal(val))
     {
         char msg[] = "Search value must be in decimal format";
         MessageBox(MainWindow, msg, title, MB_OK);
@@ -760,7 +588,7 @@ void WINAPI ProcessScan(void)
 
     else if((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (lstrcmp(pid, "*No Process Selected*") != 0))
     {
-        scanner = (scanner) ? scanner : CreateMemoryScanner((unsigned int)StringToInt64(pid, 10), (unsigned short)StringToInt64(data_size, 10)); 
+        scanner = (scanner) ? scanner : CreateMemoryScanner((unsigned int)StringToUnsignedInteger(pid, FMT_INT_DECIMAL), (unsigned short)StringToUnsignedInteger(data_size, FMT_INT_DECIMAL)); 
 
         if(scanner)
         {
@@ -794,7 +622,7 @@ void WINAPI ProcessScan(void)
                         switch(selected_search_condition)
                         {
                             case SEARCH_EQUALS:
-                                UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_DECIMAL, StringToInt64(val, 10));
+                                UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_DECIMAL, StringToUnsignedInteger(val, FMT_INT_DECIMAL));
                                 DisplayScanResults(scanner);
                             break;
 
@@ -900,7 +728,7 @@ BOOL UpdateValue(void)
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
     SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
 
-    unsigned long long addr = StringToInt64(address, 16);
+    unsigned long long addr = StringToUnsignedInteger(address, FMT_INT_HEXADECIMAL);
     double v = (double)atof(val);
 
     LVITEM Item;
