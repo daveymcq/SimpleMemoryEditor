@@ -44,7 +44,6 @@ static HWND ListView, Scan, Value, ChangeValue, Pid, ChoosePid, DataSize, DataSi
             ChangeValueDlgButton;
 
 static LVCOLUMN Column;
-static LVITEM Item;
 
 static LRESULT SelectedItem;
 
@@ -66,9 +65,9 @@ static unsigned int number_of_processes;
 static unsigned int process_count;
 static unsigned int addresses_frozen;
 
-static BOOL SelectedProcessOpen;
-static BOOL ScanRunning;
-static BOOL FirstScanNotRun;
+static bool SelectedProcessOpen;
+static bool ScanRunning;
+static bool FirstScanNotRun;
 
 static HMENU MenuBar;
 static HMENU FileMenu;
@@ -101,7 +100,7 @@ typedef enum
 
 typedef enum
 {
-    TYPE_DECIMAL,
+    TYPE_INTEGER,
     TYPE_FLOAT,
     TYPE_DOUBLE
 

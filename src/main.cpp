@@ -13,13 +13,13 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "gdi32.lib")
 
-#include <stdio.h>
-#include <string.h>
 #include <windows.h>
 #include <tlhelp32.h>
 #include <commctrl.h>
 
 #include "resource.h"
+
+#include "lib/mcqlibc.h"
 #include "global_variables.h"
 #include "core_functions.h"
 #include "gui.h"

@@ -33,7 +33,7 @@ void CreateMainDialogUI(HWND hWnd)
     font = CreateFontIndirect(&metrics.lfMessageFont);
 
 
-    memset(&Column, 0, sizeof(Column));
+    MemoryZero(&Column, sizeof(Column));
 
     ListView = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTVIEW, 0, WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_SINGLESEL,
                               10, 10, 598, 225, hWnd, (HMENU)ID_LISTVIEW, GetModuleHandle(0), 0);
@@ -76,23 +76,23 @@ void CreateMainDialogUI(HWND hWnd)
 
     Scan = CreateWindow("button", "Scan Memory", WS_VISIBLE | WS_CHILD, 10, 315, 600, 50, hWnd, (HMENU)ID_SCAN, GetModuleHandle(0), 0);
 
-    EnableWindow(Scan, FALSE);
+    EnableWindow(Scan, false);
 
-    SendMessage(ChangeValue, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-    SendMessage(ChoosePid, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-    SendMessage(NewScan, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-    SendMessage(Scan, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-    SendMessage(DataSizeLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-    SendMessage(PidLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-    SendMessage(ValueLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-    SendMessage(DataSize, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-    SendMessage(Pid, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-    SendMessage(Value, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-    SendMessage(SearchCondition, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-    SendMessage(SearchConditionLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+    SendMessage(ChangeValue, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+    SendMessage(ChoosePid, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+    SendMessage(NewScan, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+    SendMessage(Scan, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+    SendMessage(DataSizeLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+    SendMessage(PidLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+    SendMessage(ValueLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+    SendMessage(DataSize, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+    SendMessage(Pid, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+    SendMessage(Value, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+    SendMessage(SearchCondition, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+    SendMessage(SearchConditionLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
 }
 
-void CenterWindow(HWND hWnd, HWND Parent = 0)
+void CenterWindow(HWND hWnd, HWND Parent)
 {
     RECT window;
 
@@ -101,23 +101,23 @@ void CenterWindow(HWND hWnd, HWND Parent = 0)
     DWORD X =  (((GetSystemMetrics(SM_CXSCREEN)) - (window.right)) / 2);
     DWORD Y =  (((GetSystemMetrics(SM_CYSCREEN)) - (window.bottom)) / 2);
 
-    MoveWindow(hWnd, X, Y, window.right - window.left, window.bottom - window.top, TRUE);
+    MoveWindow(hWnd, X, Y, window.right - window.left, window.bottom - window.top, true);
 }
 
 void ProcessListViewLeftClickEvent(void)
 {
     char buffer[256];
-    memset(buffer, 0, sizeof(buffer));
+    MemoryZero(buffer, sizeof(buffer));
 
     SelectedItem = (int)SendMessage(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
 
-    if(SelectedItem != -1 && lstrlen(buffer))
+    if(SelectedItem != -1 && StringLength(buffer))
     {
         ListView_GetItemText(ListView, SelectedItem, 1, buffer, sizeof(buffer));
         SendMessage(Value, WM_SETTEXT, 0, (LPARAM)buffer);
     }
 
-    (SelectedAddressFrozen()) ? EnableWindow(ChangeValue, FALSE) : EnableWindow(ChangeValue, TRUE);
+    (SelectedAddressFrozen()) ? EnableWindow(ChangeValue, false) : EnableWindow(ChangeValue, true);
 }
 
 void ProcessListViewRightClickEvent(HWND hWnd)
@@ -131,7 +131,7 @@ void ProcessListViewRightClickEvent(HWND hWnd)
         if(GetCursorPos(&pos))
         {
             char buffer[256];
-            memset(buffer, 0, sizeof(buffer));
+            MemoryZero(buffer, sizeof(buffer));
 
             ListView_GetItemText(ListView, SelectedItem, 0, buffer, sizeof(buffer));
 
@@ -139,13 +139,13 @@ void ProcessListViewRightClickEvent(HWND hWnd)
             int y = pos.y;
 
             unsigned int i;
-            BOOL address_frozen = FALSE;
+            bool address_frozen = false;
 
             for(i = 0; i < addresses_frozen; i++)
             {
-                if(lstrcmp(frozen_addresses[i], buffer) == 0)
+                if(StringCompare(frozen_addresses[i], buffer, false))
                 {
-                    address_frozen = TRUE;
+                    address_frozen = true;
                     break;
                 }
             }
@@ -154,12 +154,12 @@ void ProcessListViewRightClickEvent(HWND hWnd)
 
             if(address_frozen)
             {
-                EnableWindow(ChangeValue, FALSE);
+                EnableWindow(ChangeValue, false);
                 InsertMenu(PopupMenu, 0, MF_STRING, ID_UNFREEZE_VALUE, "Unfreeze Value");
             }
             else
             {
-                EnableWindow(ChangeValue, TRUE);
+                EnableWindow(ChangeValue, true);
                 InsertMenu(PopupMenu, 0, MF_STRING, ID_FREEZE_VALUE, "Freeze Value");
             }
 
@@ -184,23 +184,23 @@ void ProcessFreezeValueButtonEvent(void)
 {
     char address[256], value[256];
 
-    memset(address, 0, sizeof(address));
-    memset(value, 0, sizeof(value));
+    MemoryZero(address, sizeof(address));
+    MemoryZero(value, sizeof(value));
 
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
     ListView_GetItemText(ListView, SelectedItem, 1, value, sizeof(value));
 
 
     unsigned int i;
-    BOOL frozen = FALSE;
+    bool frozen = false;
 
     for(i = 0; i < addresses_frozen; i++)
     {
-        if(lstrcmp(frozen_addresses[i], address) == 0)
+        if(StringCompare(frozen_addresses[i], address, false))
         {
-            if(lstrcmp(frozen_values[i], value) == 0)
+            if(StringCompare(frozen_values[i], value, false))
             {
-                frozen = TRUE;
+                frozen = true;
                 break;
             }
         }
@@ -211,17 +211,17 @@ void ProcessFreezeValueButtonEvent(void)
     {
         if(addresses_frozen < FREEZE_LIMIT)
         {
-            memset(&frozen_addresses[addresses_frozen], 0, sizeof(frozen_addresses[addresses_frozen]));
-            memcpy(&frozen_addresses[addresses_frozen], address, sizeof(frozen_addresses[addresses_frozen]));
+            MemoryZero(&frozen_addresses[addresses_frozen], sizeof(frozen_addresses[addresses_frozen]));
+            CopyMemory(&frozen_addresses[addresses_frozen], address, sizeof(frozen_addresses[addresses_frozen]));
 
-            memset(&frozen_values[addresses_frozen], 0, sizeof(frozen_values[addresses_frozen]));
-            memcpy(&frozen_values[addresses_frozen], value, sizeof(frozen_values[addresses_frozen]));
+            MemoryZero(&frozen_values[addresses_frozen], sizeof(frozen_values[addresses_frozen]));
+            CopyMemory(&frozen_values[addresses_frozen], value, sizeof(frozen_values[addresses_frozen]));
 
             addresses_frozen++;
         }
     }
 
-    EnableWindow(ChangeValue, FALSE);
+    EnableWindow(ChangeValue, false);
 }
 
 void ProcessUnfreezeValueButtonEvent(void)
@@ -235,24 +235,24 @@ void ProcessUnfreezeValueButtonEvent(void)
 
     for(i = 0; i < addresses_frozen; i++)
     {
-        if(lstrcmp(frozen_addresses[i], address) == 0)
+        if(StringCompare(frozen_addresses[i], address, false))
         {
-            if(lstrcmp(frozen_values[i], value) == 0)
+            if(StringCompare(frozen_values[i], value, false))
             {
-                memset(&frozen_addresses[i], 0, sizeof(frozen_addresses[i]));
-                memset(&frozen_values[i], 0, sizeof(frozen_values[i]));
+                MemoryZero(&frozen_addresses[i], sizeof(frozen_addresses[i]));
+                MemoryZero(&frozen_values[i], sizeof(frozen_values[i]));
             }
         }
     }
 
-    EnableWindow(ChangeValue, TRUE);
+    EnableWindow(ChangeValue, true);
 }
 
 void CreateAboutDialog(HWND hWnd)
 {
-    EnableWindow(hWnd, FALSE); 
+    EnableWindow(hWnd, false); 
     MessageBox(hWnd, "A basic memory editing utility.", title, MB_OK);
-    EnableWindow(hWnd, TRUE); 
+    EnableWindow(hWnd, true); 
 }
 
 void CreateChooseProcessDialogUI(void)
@@ -288,7 +288,7 @@ void CreateChooseProcessDialogUI(void)
             ShowWindow(PidDlg, SW_SHOW);
             UpdateWindow(PidDlg);
  
-            EnableWindow(MainWindow, FALSE);
+            EnableWindow(MainWindow, false);
 
             ProcessSelection = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTBOX, 0,
                                               WS_VSCROLL | LBS_NOTIFY | LBS_DISABLENOSCROLL | WS_VISIBLE | WS_CHILD,
@@ -297,10 +297,10 @@ void CreateChooseProcessDialogUI(void)
             ChooseProcess = CreateWindow("button", "Select Process", WS_CHILD | WS_VISIBLE,
                                          10, 310, 270, 50, PidDlg, (HMENU)ID_CHOOSE_PROCESS, GetModuleHandle(0), 0);
 
-            SendMessage(ProcessSelection, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-            SendMessage(ChooseProcess, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+            SendMessage(ProcessSelection, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+            SendMessage(ChooseProcess, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
 
-            EnableWindow(ChooseProcess, FALSE);
+            EnableWindow(ChooseProcess, false);
 
             unsigned int i;
 
@@ -345,8 +345,8 @@ void CreateChangeValueDialogUI(void)
                  ShowWindow(ChangeValueDlg, SW_SHOW);
                  UpdateWindow(ChangeValueDlg);
 
-                 SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-                 SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+                 SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+                 SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
              }
          }
     }
@@ -366,14 +366,13 @@ void ProcessListboxChangeEvent(void)
     if(selected_process_index > -1)
     {
         char selected_process[256];
-        memset(selected_process, 0, sizeof(selected_process));
 
-        _snprintf(selected_process, sizeof(selected_process), "%s", pids[selected_process_index]);
+        CopyString(selected_process, pids[selected_process_index], sizeof(selected_process));
 
-        if(lstrlen(selected_process))
-            EnableWindow(ChooseProcess, TRUE);
+        if(StringLength(selected_process))
+            EnableWindow(ChooseProcess, true);
         else
-            EnableWindow(ChooseProcess, FALSE);
+            EnableWindow(ChooseProcess, false);
     }
 }
 
@@ -381,26 +380,26 @@ void ProcessChooseProcessButtonEvent(void)
 {
     if(selected_process_index > -1)
     {
-        BOOL error;
-        char selected_process[255], pid[255];
+        bool error;
+        char selected_process[256], pid[256];
 
-        _snprintf(selected_process, sizeof(selected_process), "%s", pids[selected_process_index]);
+        CopyString(selected_process, pids[selected_process_index], sizeof(selected_process));
 
-        if(lstrlen(selected_process))
+        if(StringLength(selected_process))
         {
-            error = FALSE;
+            error = false;
             SendMessage(Pid, WM_SETTEXT, 0, (LPARAM)pids[selected_process_index]);
         }
         else
         {
-            error = TRUE;
-            ResetScan(scanner, TRUE, TRUE);
+            error = true;
+            ResetScan(scanner, true, true);
         }
 
         SendMessage(Pid, WM_GETTEXT, sizeof(pid), (LPARAM)pid);
-        unsigned int process_id = (unsigned int)atoi(pid);
+        unsigned int process_id = (unsigned int)StringToInteger(pid, FMT_INT_DECIMAL);
 
-        HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, process_id);
+        HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, false, process_id);
 
         if(process)
         {
@@ -409,14 +408,14 @@ void ProcessChooseProcessButtonEvent(void)
                 char data_size[255];
                 LRESULT selection_id = SendMessage(DataSize, CB_GETCURSEL, 0, 0);
 
-                if(selection_id > -1) _snprintf(data_size, sizeof(data_size), "%s", data_sizes[selection_id]);
+                if(selection_id > -1) CopyString(data_size, (char *)data_sizes[selection_id], sizeof(data_size));
 
                 if(current_pid != process_id)
                 {
                     current_pid = process_id;
-                    ResetScan(scanner, FALSE, TRUE);
+                    ResetScan(scanner, false, true);
                     FreeMemoryScanner(scanner);
-                    scanner = CreateMemoryScanner(current_pid, (unsigned short)atoi(data_size));
+                    scanner = CreateMemoryScanner(current_pid, (unsigned short)StringToInteger(data_size, FMT_INT_DECIMAL));
                 }
             }
 
@@ -425,14 +424,14 @@ void ProcessChooseProcessButtonEvent(void)
 
         else
         {
-            error = TRUE;
-            EnableWindow(ChoosePid, TRUE);
-            if(scanner) ResetScan(scanner, TRUE, TRUE);
+            error = true;
+            EnableWindow(ChoosePid, true);
+            if(scanner) ResetScan(scanner, true, true);
         }
 
         DestroyWindow(PidDlg);
-        EnableWindow(MainWindow, TRUE);
-        (error) ? EnableWindow(Scan, FALSE) : EnableWindow(Scan, TRUE);
+        EnableWindow(MainWindow, true);
+        (error) ? EnableWindow(Scan, false) : EnableWindow(Scan, true);
         SetForegroundWindow(MainWindow);
     }
 }
@@ -445,9 +444,9 @@ void ProcessChooseProcessButtonEvent(void)
 void CreateChangeValueDialogUIChildren(HWND hWnd)
 {
     char val[256];
-    memset(val, 0, sizeof(val));
+    MemoryZero(val, sizeof(val));
     ListView_GetItemText(ListView, SelectedItem, 1, val, sizeof(val));
-    EnableWindow(MainWindow, FALSE);
+    EnableWindow(MainWindow, false);
     ChangeValueDlgValue = CreateWindowEx(WS_EX_CLIENTEDGE, "edit", val, WS_VISIBLE | WS_CHILD, 10, 10, 180, 25, hWnd, (HMENU)ID_CHANGE_DLG_VALUE, 0, 0);
     ChangeValueDlgButton = CreateWindow("button", "Set Value", WS_VISIBLE | WS_CHILD, 200, 10, 85, 25, hWnd, (HMENU)ID_CHANGE_DLG_BUTTON, 0, 0);
 }

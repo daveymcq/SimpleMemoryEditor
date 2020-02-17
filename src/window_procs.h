@@ -19,7 +19,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
         case WM_CREATE:
 
            CreateMainDialogUI(hWnd);
-           CenterWindow(hWnd);
+           CenterWindow(hWnd, 0);
 
         break;
 
@@ -88,7 +88,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
             else if(LOWORD(wParam) == ID_NEW_SCAN)
             {
-                if(scanner) ResetScan(scanner, FALSE, TRUE);
+                if(scanner) ResetScan(scanner, false, true);
             }
 
         break;
@@ -120,7 +120,7 @@ LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM 
         case WM_CLOSE:
 
             DestroyWindow(hWnd);
-            EnableWindow(MainWindow, TRUE);
+            EnableWindow(MainWindow, true);
             SetForegroundWindow(MainWindow);
 
         break;
@@ -165,7 +165,7 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
     {
         case WM_DESTROY:
 
-            EnableWindow(MainWindow, TRUE);
+            EnableWindow(MainWindow, true);
             SetForegroundWindow(MainWindow);
 
         break;
@@ -173,7 +173,7 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
         case WM_CREATE:
 
             CreateChangeValueDialogUIChildren(hWnd);
-            CenterWindow(hWnd);
+            CenterWindow(hWnd, 0);
 
         break;
 
