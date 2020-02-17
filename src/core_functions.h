@@ -125,29 +125,6 @@ void WINAPI MonitorSelectedProcess(void)
     }
 }
 
-// Checks if a string is a decimal.
-
-bool IsNumeric(char *str)
-{
-    bool numeric = (str) ? true : false;
-    char *tmpstr = str;
-    unsigned int index = 0;
-
-    while((*tmpstr) && (numeric))
-    {
-        numeric = (((*tmpstr >= 48) && (*tmpstr <= 57)) ||
-                   ((index == 0) && (*tmpstr == 45)) ||
-                   ((*tmpstr == 46)));
-
-        if(!numeric) break;
-
-        index++;
-        tmpstr++;
-    }
-
-    return numeric;
-}
-
 // Finds the number of matches from the last scan.
 
 unsigned int GetMatchCount(MEMORY_BLOCK *mblock)
@@ -622,7 +599,7 @@ void WINAPI ProcessScan(void)
     int selection_id = (int)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
     if(selection_id > -1) CopyString(data_size, (char *)data_sizes[selection_id], sizeof(data_size));
 
-    if(!IsNumeric(val))
+    if(!IsDecimal(val))
     {
         char msg[] = "Search value must be in decimal format";
         MessageBox(MainWindow, msg, title, MB_OK);
