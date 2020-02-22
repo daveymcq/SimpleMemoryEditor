@@ -157,6 +157,7 @@ void ProcessListViewRightClickEvent(HWND hWnd)
                 EnableWindow(ChangeValue, false);
                 InsertMenu(PopupMenu, 0, MF_STRING, ID_UNFREEZE_VALUE, "Unfreeze Value");
             }
+
             else
             {
                 EnableWindow(ChangeValue, true);
@@ -390,6 +391,7 @@ void ProcessChooseProcessButtonEvent(void)
             error = false;
             SendMessage(Pid, WM_SETTEXT, 0, (LPARAM)pids[selected_process_index]);
         }
+
         else
         {
             error = true;
@@ -405,7 +407,7 @@ void ProcessChooseProcessButtonEvent(void)
         {
             if(scanner)
             {
-                char data_size[255];
+                char data_size[256];
                 LRESULT selection_id = SendMessage(DataSize, CB_GETCURSEL, 0, 0);
 
                 if(selection_id > -1) CopyString(data_size, (char *)data_sizes[selection_id], sizeof(data_size));

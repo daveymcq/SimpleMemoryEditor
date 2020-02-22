@@ -397,7 +397,7 @@ void WINAPI FreezeAddresses(void)
             for(i = 0; i < addresses_frozen; i++)
             {
                 double value = StringToDouble(frozen_values[i]);
-                unsigned char *address = (unsigned char *)StringToInteger(frozen_addresses[i], FMT_INT_HEXADECIMAL);
+                unsigned char *address = (unsigned char *)(uintptr_t)StringToInteger(frozen_addresses[i], FMT_INT_HEXADECIMAL);
 
                 switch(type)
                 {
@@ -558,7 +558,7 @@ void DisplayScanResults(MEMORY_BLOCK *mblock)
             {
                 char address[256], val[256];
 
-                IntegerToString((unsigned long long)mb->address + offset, address, sizeof(address), FMT_INT_HEXADECIMAL);
+                IntegerToString((unsigned long long)(uintptr_t)mb->address + offset, address, sizeof(address), FMT_INT_HEXADECIMAL);
 
                 if(type == TYPE_INTEGER)
                 {
@@ -744,7 +744,7 @@ bool UpdateValue(void)
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
     SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
 
-    unsigned char *addr = (unsigned char *)StringToInteger(address, FMT_INT_HEXADECIMAL);
+    unsigned char *addr = (unsigned char *)(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
     double v = StringToDouble(val);
 
     LVITEM Item;
