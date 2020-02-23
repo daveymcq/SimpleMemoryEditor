@@ -6,4 +6,3 @@ gcc ".\src\main.c" ".\data\res64.o" -o ".\bin\x64\Simple Memory Editor (64-bit).
 gcc ".\src\test.c" -o ".\bin\x86\test_x86.exe" -g -static -m32 -Os
 gcc ".\src\test.c" -o ".\bin\x64\test_x64.exe" -g -static -m64 -Os
 echo Done!
-pause

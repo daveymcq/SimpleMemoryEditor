@@ -15,4 +15,3 @@ del ".\bin\x64\*.manifest"
 del ".\bin\x86\*.manifest"
 
 echo Done!
-pause
