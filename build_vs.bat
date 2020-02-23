@@ -1,5 +1,8 @@
 @echo off
 
+mkdir bin\x86>NUL
+mkdir bin\x64>NUL
+
 @%VC64%
 rc ".\data\resource.rc"
 cl ".\src\main.c" ".\data\resource.res" /MT /link /subsystem:windows,5.02 /out:".\bin\x64\Simple Memory Editor (64-bit).exe"
