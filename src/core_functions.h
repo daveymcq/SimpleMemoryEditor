@@ -167,7 +167,7 @@ bool GetProcessNameAndID(void)
 
         CopyString(processes[number_of_processes], pe.szExeFile, sizeof(processes[number_of_processes]));
 
-        process = OpenProcess(PROCESS_ALL_ACCESS, false, pe.th32ProcessID); 
+        process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, pe.th32ProcessID); 
 
         if(process)
         {
@@ -325,7 +325,7 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
     MEMORY_BASIC_INFORMATION mbi;
     current_pid = pid;
 
-    Process = OpenProcess(PROCESS_ALL_ACCESS, false, pid);
+    Process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, pid);
 
     if(Process)
     {
