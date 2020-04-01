@@ -3,12 +3,12 @@
 
 // Debugging code
 
- // void __DEBUG_INT(long long X)
- // {
- //     char msg[1024];
- //     _snprintf(msg, sizeof(msg), "%lld", X);
- //     MessageBox(0, msg, 0, MB_OK);
- // }
+  // void __DEBUG_INT(long long X)
+  // {
+  //     char msg[1024];
+  //     IntegerToString(X, msg, sizeof(msg), FMT_INT_DECIMAL);
+  //     MessageBox(0, msg, 0, MB_OK);
+  // }
 
 // Initialize local variables.
 
@@ -153,7 +153,7 @@ bool GetProcessNameAndID(void)
 
     if(snapshot == INVALID_HANDLE_VALUE) return false;
 
-    pe.dwSize = sizeof(PROCESSENTRY32);
+    pe.dwSize = sizeof(pe);
 
     if(!Process32First(snapshot, &pe))
     {
@@ -167,7 +167,7 @@ bool GetProcessNameAndID(void)
 
         CopyString(processes[number_of_processes], pe.szExeFile, sizeof(processes[number_of_processes]));
 
-        process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, pe.th32ProcessID); 
+        process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, true, pe.th32ProcessID); 
 
         if(process)
         {
@@ -325,7 +325,7 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
     MEMORY_BASIC_INFORMATION mbi;
     current_pid = pid;
 
-    Process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, pid);
+    Process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, true, pid);
 
     if(Process)
     {
@@ -335,7 +335,7 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
         {
             if((mbi.State & MEM_COMMIT) && (mbi.Protect & MEM_WRITABLE))
             {
-                MEMORY_BLOCK *mb = CreateMemoryBlock(Process, &mbi, data_size);
+                MEMORY_BLOCK *mb = CreateMemoryBlock(Process, &mbi, data_size); 
 
                 if(mb)
                 {
@@ -641,7 +641,7 @@ void WINAPI ProcessScan(void)
                         switch(selected_search_condition)
                         {
                             case SEARCH_EQUALS:
-                                UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_INTEGER, StringToDouble(val));
+                                UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_INTEGER, StringToInteger(val, FMT_INT_DECIMAL)); 
                                 DisplayScanResults(scanner);
                             break;
 
