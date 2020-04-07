@@ -29,13 +29,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    Init(); 
-
-    INITCOMMONCONTROLSEX icc;
-    icc.dwICC = ICC_WIN95_CLASSES;
-    icc.dwSize = sizeof(icc);
-
-    if(InitCommonControlsEx(&icc))
+    if(Initialize())
     {
         WNDCLASSEX wc;
 

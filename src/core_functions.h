@@ -12,12 +12,18 @@
 
 // Initialize local variables.
 
-void Init(void)
+BOOL Initialize(void)
 {
     Width = 625;
     Height = 425;
     FirstScanNotRun = true;
     SelectedItem = -1;
+
+    INITCOMMONCONTROLSEX icc;
+    icc.dwICC = ICC_WIN95_CLASSES;
+    icc.dwSize = sizeof(icc);
+
+    return InitCommonControlsEx(&icc);
 }
 
 // Checks if the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address was cleared in the previous scan. 
@@ -141,7 +147,6 @@ unsigned int GetMatchCount(MEMORY_BLOCK *mblock)
     return matches;
 }
 
-
 // Finds all running processes on machine and finds their process id.
 
 bool GetProcessNameAndID(void)
@@ -248,7 +253,6 @@ long long PeekDecimal(HANDLE process, unsigned char *address, SIZE_T data_size)
 
     return ret;
 }
-
 
 bool PokeFloat(HANDLE process, unsigned char *address, float val, SIZE_T data_size)
 {
@@ -432,9 +436,10 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
     {
         if(mb->matches)
         {
-            char data_size[256];
             static unsigned char buffer[128 * 1024];
             static unsigned int total_read, bytes_left, bytes_to_read, bytes_read;
+            
+            char data_size[256];
 
             bytes_left = mb->size;
             total_read = 0;
@@ -523,9 +528,14 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
                         }
 
                         if(match) 
+                        {
                             mb->matches++;
+                        }
+
                         else 
+                        {
                             DiscardAddress(mb, total_read + offset);
+                        }
                     }
                 }
 
@@ -581,6 +591,7 @@ void DisplayScanResults(MEMORY_BLOCK *mblock)
                 AddItemToListView(address, val);
             }
         }
+
         mb = mb->next;
     }
 }
@@ -597,6 +608,7 @@ void WINAPI ProcessScan(void)
     SendMessage(SearchCondition, WM_GETTEXT, sizeof(condition), (LPARAM)condition);
 
     int selection_id = (int)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
+
     if(selection_id > -1) CopyString(data_size, (char *)data_sizes[selection_id], sizeof(data_size));
 
     if(!IsDecimal(val))
@@ -707,7 +719,6 @@ void WINAPI ProcessScan(void)
                         CloseHandle(FreezeThread);
                         FreezeThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)FreezeAddresses, 0, 0, 0);
                     }
-
 
                     if(FirstScanNotRun)
                     {
