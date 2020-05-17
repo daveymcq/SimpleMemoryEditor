@@ -55,8 +55,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         if(RegisterClassEx(&wc))
         {
             MainWindow = CreateWindowEx(WS_EX_STATICEDGE, wc.lpszClassName, title,
-                                        WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX, CW_USEDEFAULT, 
-                                        CW_USEDEFAULT, Width, Height, 0, 0, hInstance, 0);
+                                        WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX, 100, 
+                                        100, Width, Height, 0, 0, hInstance, 0);
             if(MainWindow)
             {
                 ShowWindow(MainWindow, nCmdShow);
