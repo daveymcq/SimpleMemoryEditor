@@ -22,7 +22,6 @@
 
 #define MEM_WRITABLE (PAGE_READWRITE | PAGE_WRITECOPY | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)
 #define FREEZE_LIMIT (1024 * 128)
-#define MATCH_LIMIT (1024 * 128)
 #define PROCESS_LIMIT (1024)
 
 const char *title = "Simple Memory Editor";
@@ -36,8 +35,8 @@ static char pids[PROCESS_LIMIT][256];
 static char frozen_addresses[FREEZE_LIMIT][256];
 static char frozen_values[FREEZE_LIMIT][256];
 
-static char matching_addresses[MATCH_LIMIT * 256];
-static char matching_values[MATCH_LIMIT * 256];
+static DWORD Width;
+static DWORD Height;
 
 static HWND ListView, Scan, Value, ChangeValue, Pid, ChoosePid, DataSize, DataSizeLabel,
             PidLabel, ValueLabel, SearchConditionLabel, SearchCondition, NewScan, PidDlg,
@@ -65,9 +64,6 @@ static unsigned int current_pid;
 static unsigned int number_of_processes;
 static unsigned int process_count;
 static unsigned int addresses_frozen;
-
-static DWORD Width;
-static DWORD Height;
 
 static bool SelectedProcessOpen;
 static bool ScanRunning;

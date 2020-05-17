@@ -15,3 +15,4 @@ del ".\*.obj"
 del ".\bin\x64\*.manifest"
 del ".\bin\x86\*.manifest"
 
+pause
