@@ -593,8 +593,6 @@ void UpdateScanResults(MEMORY_BLOCK *mblock)
                     DoubleToString(value, val, sizeof(val));
                 }
 
-                ++match_count;
-
                 if(StringLength(address) && (StringLength(address) < sizeof(address)))
                     CopyString(pmatching_addresses, address, StringLength(address));
                 

@@ -65,7 +65,6 @@ static unsigned int current_pid;
 static unsigned int number_of_processes;
 static unsigned int process_count;
 static unsigned int addresses_frozen;
-static unsigned int match_count;
 
 static DWORD Width;
 static DWORD Height;
