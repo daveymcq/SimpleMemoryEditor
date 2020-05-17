@@ -279,8 +279,8 @@ void CreateChooseProcessDialogUI(void)
     {
 
         PidDlg = CreateWindowEx(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, title,
-                                WS_SYSMENU | WS_OVERLAPPED, CW_USEDEFAULT,
-                                CW_USEDEFAULT, 295, 400, 0, 0, 0, 0);
+                                WS_SYSMENU | WS_OVERLAPPED, 100,
+                                100, 295, 400, 0, 0, 0, 0);
 
 
         if(PidDlg)
@@ -338,8 +338,8 @@ void CreateChangeValueDialogUI(void)
          if(RegisterClassEx(&wc))
          {
              ChangeValueDlg = CreateWindowEx(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, 
-                                             title, WS_SYSMENU | WS_OVERLAPPED, CW_USEDEFAULT,
-                                             CW_USEDEFAULT, 300, 75, 0, 0, 0, 0);
+                                             title, WS_SYSMENU | WS_OVERLAPPED, 100,
+                                             100, 300, 75, 0, 0, 0, 0);
 
              if(ChangeValueDlg)
              {
