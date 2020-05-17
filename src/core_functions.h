@@ -70,6 +70,8 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
     MemoryZero(frozen_addresses, sizeof(frozen_addresses));
     MemoryZero(frozen_values, sizeof(frozen_values));
+    MemoryZero(matching_addresses, sizeof(matching_values));
+    MemoryZero(matching_values, sizeof(matching_values));
 
     FirstScanNotRun = true;
     SelectedItem = -1;
@@ -316,8 +318,6 @@ void FreeMemoryScanner(MEMORY_BLOCK *mblock)
         if(tmp->match_flag) free(tmp->match_flag);
         free(tmp);
     }
-
-    mb = 0;
 }
 
 // Finds the initial valid memory information and sets up for UpdateMemoryBlock().
@@ -370,15 +370,15 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
 bool SelectedAddressFrozen(void)
 {
     bool frozen = false;
-    unsigned int i;
+    unsigned int offset;
 
     char address[256];
 
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
 
-    for(i = 0; i < addresses_frozen; i++)
+    for(offset = 0; offset < addresses_frozen; offset++)
     {
-        if(StringCompare(frozen_addresses[i], address, false))
+        if(StringCompare(frozen_addresses[offset], address, false))
         {
             frozen = true;
             break;
@@ -544,9 +544,8 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
                 bytes_left -= bytes_copied;
                 total_read += bytes_copied;
             }
-
-            mb->size = total_read;
         }
+
 
         mb = mb->next; 
     }
@@ -554,9 +553,15 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
 
 // Add scan results to user interface.
 
-void DisplayScanResults(MEMORY_BLOCK *mblock)
+void UpdateScanResults(MEMORY_BLOCK *mblock)
 {
     MEMORY_BLOCK *mb = mblock;
+
+    MemoryZero(matching_addresses, sizeof(matching_values));
+    MemoryZero(matching_values, sizeof(matching_values));
+
+    char *pmatching_addresses = (char *)matching_addresses; 
+    char *pmatching_values = (char *)matching_values;
 
     while(mb)
     {
@@ -588,11 +593,41 @@ void DisplayScanResults(MEMORY_BLOCK *mblock)
                     DoubleToString(value, val, sizeof(val));
                 }
 
-                AddItemToListView(address, val);
+                ++match_count;
+
+                if(StringLength(address) && (StringLength(address) < sizeof(address)))
+                    CopyString(pmatching_addresses, address, StringLength(address));
+                
+                if(StringLength(address) && (StringLength(val) < sizeof(val)))
+                    CopyString(pmatching_values, val, StringLength(val));                
+
+                pmatching_addresses += (StringLength(address) + sizeof(char));
+                pmatching_values += (StringLength(val) + sizeof(char));
             }
         }
 
         mb = mb->next;
+    }
+}
+
+void DisplayScanResults(unsigned int limit)
+{
+    char *pmatching_addresses = (char *)matching_addresses; 
+    char *pmatching_values = (char *)matching_values;
+    char val[256];
+
+    SendMessage(Value, WM_GETTEXT, sizeof(val), (LPARAM)val);
+
+    while(limit && (pmatching_addresses && pmatching_values))
+    {
+        if(StringCompare(val, pmatching_values, false))
+        {
+            AddItemToListView(pmatching_addresses, pmatching_values);
+        }
+
+        limit--;
+        pmatching_values += (StringLength(pmatching_values) + sizeof(char));
+        pmatching_addresses += (StringLength(pmatching_addresses) + sizeof(char));
     }
 }
 
@@ -654,17 +689,17 @@ void WINAPI ProcessScan(void)
                         {
                             case SEARCH_EQUALS:
                                 UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_INTEGER, StringToInteger(val, FMT_INT_DECIMAL)); 
-                                DisplayScanResults(scanner);
+                                UpdateScanResults(scanner);
                             break;
 
                             case SEARCH_INCREASED:
                                 UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_INTEGER, 0);
-                                DisplayScanResults(scanner);
+                                UpdateScanResults(scanner);
                             break;
 
                             case SEARCH_DECREASED:
                                 UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_INTEGER, 0);
-                                DisplayScanResults(scanner);
+                                UpdateScanResults(scanner);
                             break;
                         }
                     }
@@ -675,17 +710,17 @@ void WINAPI ProcessScan(void)
                         {
                             case SEARCH_EQUALS:
                                 UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_FLOAT, (float)StringToDouble(val));
-                                DisplayScanResults(scanner);
+                                UpdateScanResults(scanner);
                             break;
 
                             case SEARCH_INCREASED:
                                 UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_FLOAT, 0);
-                                DisplayScanResults(scanner);
+                                UpdateScanResults(scanner);
                             break;
 
                             case SEARCH_DECREASED:
                                 UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_FLOAT, 0);
-                                DisplayScanResults(scanner);
+                                UpdateScanResults(scanner);
                             break;
                         }
                     }
@@ -696,17 +731,17 @@ void WINAPI ProcessScan(void)
                         {
                             case SEARCH_EQUALS:
                                 UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_DOUBLE, StringToDouble(val));
-                                DisplayScanResults(scanner);
+                                UpdateScanResults(scanner);
                             break;
 
                             case SEARCH_INCREASED:
                                 UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_DOUBLE, 0);
-                                DisplayScanResults(scanner);
+                                UpdateScanResults(scanner);
                             break;
 
                             case SEARCH_DECREASED:
                                 UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_DOUBLE, 0);
-                                DisplayScanResults(scanner);
+                                UpdateScanResults(scanner);
                             break;
                         }
                     }
@@ -727,6 +762,8 @@ void WINAPI ProcessScan(void)
 
                         FirstScanNotRun = false;
                     }
+
+                    DisplayScanResults(20);
 
                     CopyString(message, (char *)"Scan Complete!", sizeof(message));
 
