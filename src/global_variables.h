@@ -26,8 +26,8 @@
 
 const char *title = "Simple Memory Editor";
 const char *data_sizes[] = { "1", "2", "4", "8", "4", "8" };
-const char *data_types[] = { "Character", "Short Integer", "Integer", "Long Integer", "Float", "Double" };
-const char *search_conditions[] = { "Search Equality", "Search Increased", "Search Decreased" };
+const char *data_types[] = { "8-bit Integer", "16-bit Integer", "32-bit Integer", "64-bit Integer", "Float", "Double" };
+const char *search_conditions[] = { "Value Equal", "Value Increased", "Value Decreased" };
 
 static char processes[PROCESS_LIMIT][256];
 static char pids[PROCESS_LIMIT][256];
