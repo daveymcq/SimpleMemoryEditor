@@ -406,12 +406,12 @@ void WINAPI FreezeAddresses(void)
     {
         if(NumberOfAddressesFrozen)
         {
-            unsigned int i;
+            unsigned int offset;
 
-            for(i = 0; i < NumberOfAddressesFrozen; i++)
+            for(offset = 0; offset < NumberOfAddressesFrozen; offset++)
             {
-                double value = StringToDouble(frozen_values[i]);
-                unsigned char *address = (unsigned char *)(uintptr_t)StringToInteger(frozen_addresses[i], FMT_INT_HEXADECIMAL);
+                double value = StringToDouble(frozen_values[offset]);
+                unsigned char *address = (unsigned char *)(uintptr_t)StringToInteger(frozen_addresses[offset], FMT_INT_HEXADECIMAL);
 
                 switch(type)
                 {
@@ -446,8 +446,8 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
     {
         if(mb->matches)
         {
-            char data_size[256];
-            static unsigned char buffer[128 * 1024];
+            static char data_size[256];
+            static unsigned char buffer[32 * 1024];
             static unsigned int total_read, bytes_left, bytes_to_read, bytes_read;
 
             bytes_left = mb->size;
@@ -647,6 +647,9 @@ void WINAPI ProcessScan(void)
                     EnableWindow(Scan, false);
                     EnableWindow(NewScan, false);
                     EnableWindow(ChoosePid, false);
+                    EnableWindow(DataSize, false);
+                    EnableWindow(Value, false);
+                    EnableWindow(SearchCondition, false);
 
                     type = (selection_id <= 3) ? TYPE_INTEGER : (selection_id == 5) ? TYPE_DOUBLE : TYPE_FLOAT;
 
@@ -739,6 +742,10 @@ void WINAPI ProcessScan(void)
                     EnableWindow(NewScan, true);
                     EnableWindow(ChangeValue, true);
                     EnableWindow(ChoosePid, true);
+                    EnableWindow(DataSize, true);
+                    EnableWindow(Value, true);
+                    EnableWindow(SearchCondition, true);
+
                     EnableWindow(MainWindow, false);
                     MessageBox(MainWindow, message, title, MB_OK);
                     EnableWindow(MainWindow, true);
