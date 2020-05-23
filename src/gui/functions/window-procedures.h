@@ -7,7 +7,7 @@
 /* ************************************************************************************ */
 
 LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK ChooseProcessDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 // The window procedure for the main window.
@@ -19,7 +19,19 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
         case WM_CREATE:
 
            CreateMainDialogUI(hWnd);
-           CenterWindow(hWnd, 0);
+           CenterWindow(hWnd);
+
+        break;
+
+        case WM_CLOSE:
+
+           CleanupAndTerminateApplication(hWnd);
+
+        break;
+
+        case WM_DESTROY:
+
+            PostQuitMessage(0);
 
         break;
 
@@ -37,12 +49,6 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
                     ProcessListViewRightClickEvent(hWnd);
                 }
             }
-
-        break;
-
-        case WM_CLOSE:
-
-           CleanupAndTerminateApplication(hWnd);
 
         break;
 
@@ -93,12 +99,6 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
         break;
 
-        case WM_DESTROY:
-
-            PostQuitMessage(0);
-
-        break;
-
         default:
             return DefWindowProc(hWnd, Msg, wParam, lParam);
     }
@@ -113,21 +113,28 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 // The window procedure for the process selection dialog.
 
-LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK ChooseProcessDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
     switch(Msg)
     {
         case WM_CLOSE:
 
             DestroyWindow(hWnd);
-            EnableWindow(MainWindow, true);
             SetForegroundWindow(MainWindow);
 
         break;
 
         case WM_CREATE:
 
-            CenterWindow(hWnd, MainWindow); 
+            ShowWindow(MainWindow, SW_HIDE);
+            CenterWindow(hWnd); 
+
+        break;
+
+        case WM_DESTROY:
+
+            EnableWindow(MainWindow, true);
+            ShowWindow(MainWindow, SW_SHOW);
 
         break;
 
@@ -173,7 +180,7 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
         case WM_CREATE:
 
             CreateChangeValueDialogUIChildren(hWnd);
-            CenterWindow(hWnd, 0);
+            CenterWindow(hWnd);
 
         break;
 
@@ -182,6 +189,18 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
             if(LOWORD(wParam) == ID_CHANGE_DLG_BUTTON)
             {
                 UpdateValue();
+            }
+
+        case WM_SYSCOMMAND:
+
+            if(wParam == SC_MOVE)
+            {
+                return 0;
+            }
+
+            if(wParam == SC_CLOSE)
+            {
+                DestroyWindow(hWnd);
             }
 
         break;

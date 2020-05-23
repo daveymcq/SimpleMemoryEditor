@@ -4,7 +4,7 @@
 #include "resource.h"
 
 LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-LRESULT CALLBACK SelectPidDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK ChooseProcessDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,6 @@ void CreateMainDialogUI(HWND hWnd)
         SendMessage(DataSize, CB_ADDSTRING, 0, (LPARAM)data_types[i]);
     }
 
-
     Scan = CreateWindow("button", "Scan Memory", WS_VISIBLE | WS_CHILD, 10, 315, 600, 50, hWnd, (HMENU)ID_SCAN, GetModuleHandle(0), 0);
 
     EnableWindow(Scan, false);
@@ -96,7 +95,7 @@ void CreateMainDialogUI(HWND hWnd)
     SendMessage(SearchConditionLabel, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
 }
 
-void CenterWindow(HWND hWnd, HWND Parent)
+void CenterWindow(HWND hWnd)
 {
     RECT window;
 
@@ -269,7 +268,7 @@ void CreateChooseProcessDialogUI(void)
     wc.cbWndExtra       = 0;
     wc.lpszClassName    = "SelectPidDlg";
     wc.hCursor          = LoadCursor(0, IDC_ARROW);
-    wc.lpfnWndProc      = SelectPidDialogProc;
+    wc.lpfnWndProc      = ChooseProcessDialogProc;
     wc.lpszMenuName     = 0;
     wc.hInstance        = GetModuleHandle(0);
     wc.hbrBackground    = GetSysColorBrush(COLOR_3DFACE);
@@ -282,9 +281,9 @@ void CreateChooseProcessDialogUI(void)
     if(RegisterClassEx(&wc))
     {
 
-        PidDlg = CreateWindowEx(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, title,
-                                WS_SYSMENU | WS_OVERLAPPED, 100,
-                                100, 295, 400, 0, 0, 0, 0);
+        PidDlg = CreateWindowEx(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, 
+                                wc.lpszClassName, title, WS_SYSMENU | WS_OVERLAPPED, 
+                                100, 100, 295, 400, 0, 0, 0, 0);
 
 
         if(PidDlg)

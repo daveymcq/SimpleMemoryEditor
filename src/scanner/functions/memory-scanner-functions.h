@@ -162,8 +162,26 @@ bool GetProcessNameAndID(void)
 
         if(process)
         {
-            IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]), FMT_INT_DECIMAL);
-            NumberOfProcesses++; 
+            typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+
+            BOOL IsApplication64Bit;
+
+            LPFN_ISWOW64PROCESS pIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
+
+            if(pIsWow64Process && pIsWow64Process(GetCurrentProcess(), &IsApplication64Bit))
+            {
+                BOOL IsProcess64Bit;
+
+                if(pIsWow64Process && pIsWow64Process(process, &IsProcess64Bit))
+                {
+                    if(IsApplication64Bit == IsProcess64Bit)
+                    {
+                        IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]), FMT_INT_DECIMAL);
+                        NumberOfProcesses++; 
+                    }
+                }
+            }
+
             CloseHandle(process);
         }
 
@@ -179,19 +197,18 @@ bool GetProcessNameAndID(void)
 
 // Populates the ListView with the results of the scan.
 
-void AddItemToListView(char *address, char *val)
+void AddItemToListView(const char *address, const char *val)
 {
-    LVITEM Item;
-    MemoryZero(&Item, sizeof(Item));
+    static LVITEM Item;
 
     Item.mask        = LVIF_TEXT;
     Item.iSubItem    = 0;
-    Item.pszText     = address;
+    Item.pszText     = (char *)address;
 
     SendMessage(ListView, LVM_INSERTITEM, 0, (LPARAM)&Item);
 
     Item.iSubItem    = 1;
-    Item.pszText     = val;
+    Item.pszText     = (char *)val;
 
     SendMessage(ListView, LVM_SETITEM, 0, (LPARAM)&Item);
 }
@@ -311,7 +328,7 @@ void FreeMemoryScanner(MEMORY_BLOCK *mblock)
 
 MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
 {
-    MEMORY_BLOCK *ret = 0;
+    MEMORY_BLOCK *mblock = 0;
     unsigned char *address = 0;
     MEMORY_BASIC_INFORMATION mbi;
     CurrentProcess = pid;
@@ -330,8 +347,8 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
 
                 if(mb)
                 {
-                    mb->next = ret;
-                    ret = mb;
+                    mb->next = mblock;
+                    mblock = mb;
                 }
             }
 
@@ -351,7 +368,7 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
         EnableWindow(ChoosePid, true);
     }
 
-    return ret;
+    return mblock;
 }
 
 bool SelectedAddressFrozen(void)
