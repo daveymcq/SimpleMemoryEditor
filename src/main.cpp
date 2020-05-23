@@ -1,6 +1,6 @@
 /* Memory Editing Application
  Author: David McHugh Jr.
- Last Modified: 12/02/2019 */
+ Last Modified: 05/23/2020 */
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
@@ -18,7 +18,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <commctrl.h>
 
 #include "variables.h"
-#include "lib/functions/lowlevelfunctions/lowlevelfunctions.h"
+#include "foundation/functions/lowlevelfunctions/lowlevelfunctions.h"
 #include "scanner/functions/memory-scanner-functions.h"
 
 #include "gui/functions/resource.h"
