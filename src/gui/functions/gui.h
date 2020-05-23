@@ -12,7 +12,10 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 
 void CreateMainDialogUI(HWND hWnd)
 {
-    unsigned int i;
+    NONCLIENTMETRICS metrics;
+    LVCOLUMN Column;
+
+    unsigned short i;
     char val_header[] = "Value";
     char addr_header[] = "Address";
 
@@ -30,8 +33,7 @@ void CreateMainDialogUI(HWND hWnd)
 
     metrics.cbSize = sizeof(NONCLIENTMETRICS);
     SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &metrics, 0);
-    font = CreateFontIndirect(&metrics.lfMessageFont);
-
+    Font = CreateFontIndirect(&metrics.lfMessageFont);
 
     MemoryZero(&Column, sizeof(Column));
 
@@ -78,18 +80,18 @@ void CreateMainDialogUI(HWND hWnd)
 
     EnableWindow(Scan, false);
 
-    SendMessage(ChangeValue, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
-    SendMessage(ChoosePid, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
-    SendMessage(NewScan, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
-    SendMessage(Scan, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
-    SendMessage(DataSizeLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
-    SendMessage(PidLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
-    SendMessage(ValueLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
-    SendMessage(DataSize, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
-    SendMessage(Pid, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
-    SendMessage(Value, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
-    SendMessage(SearchCondition, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
-    SendMessage(SearchConditionLabel, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+    SendMessage(ChangeValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+    SendMessage(ChoosePid, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+    SendMessage(NewScan, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+    SendMessage(Scan, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+    SendMessage(DataSizeLabel, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+    SendMessage(PidLabel, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+    SendMessage(ValueLabel, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+    SendMessage(DataSize, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+    SendMessage(Pid, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+    SendMessage(Value, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+    SendMessage(SearchCondition, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+    SendMessage(SearchConditionLabel, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
 }
 
 void CenterWindow(HWND hWnd, HWND Parent)
@@ -141,7 +143,7 @@ void ProcessListViewRightClickEvent(HWND hWnd)
             unsigned int i;
             bool address_frozen = false;
 
-            for(i = 0; i < addresses_frozen; i++)
+            for(i = 0; i < NumberOfAddressesFrozen; i++)
             {
                 if(StringCompare(frozen_addresses[i], buffer, false))
                 {
@@ -195,7 +197,7 @@ void ProcessFreezeValueButtonEvent(void)
     unsigned int i;
     bool frozen = false;
 
-    for(i = 0; i < addresses_frozen; i++)
+    for(i = 0; i < NumberOfAddressesFrozen; i++)
     {
         if(StringCompare(frozen_addresses[i], address, false))
         {
@@ -210,15 +212,15 @@ void ProcessFreezeValueButtonEvent(void)
 
     if(!frozen)
     {
-        if(addresses_frozen < FREEZE_LIMIT)
+        if(NumberOfAddressesFrozen < FREEZE_LIMIT)
         {
-            MemoryZero(&frozen_addresses[addresses_frozen], sizeof(frozen_addresses[addresses_frozen]));
-            CopyMemory(&frozen_addresses[addresses_frozen], address, sizeof(frozen_addresses[addresses_frozen]));
+            MemoryZero(&frozen_addresses[NumberOfAddressesFrozen], sizeof(frozen_addresses[NumberOfAddressesFrozen]));
+            CopyMemory(&frozen_addresses[NumberOfAddressesFrozen], address, sizeof(frozen_addresses[NumberOfAddressesFrozen]));
 
-            MemoryZero(&frozen_values[addresses_frozen], sizeof(frozen_values[addresses_frozen]));
-            CopyMemory(&frozen_values[addresses_frozen], value, sizeof(frozen_values[addresses_frozen]));
+            MemoryZero(&frozen_values[NumberOfAddressesFrozen], sizeof(frozen_values[NumberOfAddressesFrozen]));
+            CopyMemory(&frozen_values[NumberOfAddressesFrozen], value, sizeof(frozen_values[NumberOfAddressesFrozen]));
 
-            addresses_frozen++;
+            NumberOfAddressesFrozen++;
         }
     }
 
@@ -234,7 +236,7 @@ void ProcessUnfreezeValueButtonEvent(void)
 
     unsigned int i;
 
-    for(i = 0; i < addresses_frozen; i++)
+    for(i = 0; i < NumberOfAddressesFrozen; i++)
     {
         if(StringCompare(frozen_addresses[i], address, false))
         {
@@ -298,14 +300,14 @@ void CreateChooseProcessDialogUI(void)
             ChooseProcess = CreateWindow("button", "Select Process", WS_CHILD | WS_VISIBLE,
                                          10, 310, 270, 50, PidDlg, (HMENU)ID_CHOOSE_PROCESS, GetModuleHandle(0), 0);
 
-            SendMessage(ProcessSelection, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
-            SendMessage(ChooseProcess, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+            SendMessage(ProcessSelection, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+            SendMessage(ChooseProcess, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
 
             EnableWindow(ChooseProcess, false);
 
             unsigned int i;
 
-            for(i = 0; i < process_count; i++)
+            for(i = 0; i < ProcessCounter; i++)
             {
                 SendMessage(ProcessSelection, LB_ADDSTRING, 0, (LPARAM)processes[i]);
             }
@@ -346,8 +348,8 @@ void CreateChangeValueDialogUI(void)
                  ShowWindow(ChangeValueDlg, SW_SHOW);
                  UpdateWindow(ChangeValueDlg);
 
-                 SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
-                 SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)font, MAKELPARAM(true, 0));
+                 SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+                 SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
              }
          }
     }
@@ -362,13 +364,13 @@ void CreateChangeValueDialogUI(void)
 
 void ProcessListboxChangeEvent(void)
 {
-    selected_process_index = (int)SendMessage(ProcessSelection, LB_GETCURSEL, 0, 0);
+    IndexOfSelectedProcess = (int)SendMessage(ProcessSelection, LB_GETCURSEL, 0, 0);
 
-    if(selected_process_index > -1)
+    if(IndexOfSelectedProcess > -1)
     {
         char selected_process[256];
 
-        CopyString(selected_process, pids[selected_process_index], sizeof(selected_process));
+        CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process));
 
         if(StringLength(selected_process))
             EnableWindow(ChooseProcess, true);
@@ -379,17 +381,17 @@ void ProcessListboxChangeEvent(void)
 
 void ProcessChooseProcessButtonEvent(void)
 {
-    if(selected_process_index > -1)
+    if(IndexOfSelectedProcess > -1)
     {
         bool error;
         char selected_process[256], pid[256];
 
-        CopyString(selected_process, pids[selected_process_index], sizeof(selected_process));
+        CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process));
 
         if(StringLength(selected_process))
         {
             error = false;
-            SendMessage(Pid, WM_SETTEXT, 0, (LPARAM)pids[selected_process_index]);
+            SendMessage(Pid, WM_SETTEXT, 0, (LPARAM)pids[IndexOfSelectedProcess]);
         }
 
         else
@@ -412,12 +414,12 @@ void ProcessChooseProcessButtonEvent(void)
 
                 if(selection_id > -1) CopyString(data_size, (char *)data_sizes[selection_id], sizeof(data_size));
 
-                if(current_pid != process_id)
+                if(CurrentProcess != process_id)
                 {
-                    current_pid = process_id;
+                    CurrentProcess = process_id;
                     ResetScan(scanner, false, true);
                     FreeMemoryScanner(scanner);
-                    scanner = CreateMemoryScanner(current_pid, (unsigned short)StringToInteger(data_size, FMT_INT_DECIMAL));
+                    scanner = CreateMemoryScanner(CurrentProcess, (unsigned short)StringToInteger(data_size, FMT_INT_DECIMAL));
                 }
             }
 

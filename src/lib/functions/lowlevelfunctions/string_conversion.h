@@ -1,9 +1,9 @@
 #ifndef _CONVERSION_STRING_H
 #define _CONVERSION_STRING_H
 
-#include "core/types.h"
-#include "core/strings.h"
-#include "core/math.h"
+#include "types.h"
+#include "strings.h"
+#include "math.h"
 
 #include "memory_manipulation.h"
 

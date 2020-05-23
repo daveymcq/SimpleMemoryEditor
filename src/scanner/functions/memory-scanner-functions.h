@@ -12,12 +12,18 @@
 
 // Initialize local variables.
 
-void Init(void)
+BOOL Initialize(void)
 {
     Width = 625;
     Height = 425;
     FirstScanNotRun = true;
     SelectedItem = -1;
+
+    INITCOMMONCONTROLSEX icc;
+    icc.dwICC = ICC_WIN95_CLASSES;
+    icc.dwSize = sizeof(icc);
+
+    return InitCommonControlsEx(&icc);
 }
 
 // Checks if the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address was cleared in the previous scan. 
@@ -59,7 +65,7 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
     EnableWindow(Scan, !reset_pid);
 
     SelectedProcessOpen = false;
-    addresses_frozen = 0;
+    NumberOfAddressesFrozen = 0;
     SelectedItem = -1;
 
     MemoryZero(frozen_addresses, sizeof(frozen_addresses));
@@ -165,21 +171,21 @@ bool GetProcessNameAndID(void)
     {
         if(pe.th32ProcessID == GetCurrentProcessId()) continue;
 
-        CopyString(processes[number_of_processes], pe.szExeFile, sizeof(processes[number_of_processes]));
+        CopyString(processes[NumberOfProcesses], pe.szExeFile, sizeof(processes[NumberOfProcesses]));
 
         process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, true, pe.th32ProcessID); 
 
         if(process)
         {
-            IntegerToString(pe.th32ProcessID, pids[number_of_processes], sizeof(pids[number_of_processes]), FMT_INT_DECIMAL);
-            number_of_processes++; 
+            IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]), FMT_INT_DECIMAL);
+            NumberOfProcesses++; 
             CloseHandle(process);
         }
 
     } while(Process32Next(snapshot, &pe));
 
-    process_count = number_of_processes;
-    number_of_processes = 0;
+    ProcessCounter = NumberOfProcesses;
+    NumberOfProcesses = 0;
 
     CloseHandle(snapshot);
 
@@ -323,19 +329,19 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
     MEMORY_BLOCK *ret = 0;
     unsigned char *address = 0;
     MEMORY_BASIC_INFORMATION mbi;
-    current_pid = pid;
+    CurrentProcess = pid;
 
-    Process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, true, pid);
+    HANDLE process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, true, pid);
 
-    if(Process)
+    if(process)
     {
         SelectedProcessOpen = true;
 
-        while(VirtualQueryEx(Process, address, &mbi, sizeof(mbi)))
+        while(VirtualQueryEx(process, address, &mbi, sizeof(mbi)))
         {
             if((mbi.State & MEM_COMMIT) && (mbi.Protect & MEM_WRITABLE))
             {
-                MEMORY_BLOCK *mb = CreateMemoryBlock(Process, &mbi, data_size); 
+                MEMORY_BLOCK *mb = CreateMemoryBlock(process, &mbi, data_size); 
 
                 if(mb)
                 {
@@ -372,7 +378,7 @@ bool SelectedAddressFrozen(void)
 
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
 
-    for(i = 0; i < addresses_frozen; i++)
+    for(i = 0; i < NumberOfAddressesFrozen; i++)
     {
         if(StringCompare(frozen_addresses[i], address, false))
         {
@@ -390,11 +396,11 @@ void WINAPI FreezeAddresses(void)
 {
     for(;;)
     {
-        if(addresses_frozen)
+        if(NumberOfAddressesFrozen)
         {
             unsigned int i;
 
-            for(i = 0; i < addresses_frozen; i++)
+            for(i = 0; i < NumberOfAddressesFrozen; i++)
             {
                 double value = StringToDouble(frozen_values[i]);
                 unsigned char *address = (unsigned char *)(uintptr_t)StringToInteger(frozen_addresses[i], FMT_INT_HEXADECIMAL);
@@ -402,18 +408,18 @@ void WINAPI FreezeAddresses(void)
                 switch(type)
                 {
                     case TYPE_FLOAT:
-                        current_value = PeekFloat(scanner->process, address, scanner->data_size);
-                        if(value != current_value) PokeFloat(scanner->process, address, (float)value, scanner->data_size);
+                        CurrentValue = PeekFloat(scanner->process, address, scanner->data_size);
+                        if(value != CurrentValue) PokeFloat(scanner->process, address, (float)value, scanner->data_size);
                     break;
 
                     case TYPE_DOUBLE:
-                        current_value = PeekDouble(scanner->process, address, scanner->data_size);
-                        if(value != current_value) PokeDouble(scanner->process, address, value, scanner->data_size);
+                        CurrentValue = PeekDouble(scanner->process, address, scanner->data_size);
+                        if(value != CurrentValue) PokeDouble(scanner->process, address, value, scanner->data_size);
                     break;
 
                     case TYPE_INTEGER:
-                        current_value = PeekDecimal(scanner->process, address, scanner->data_size);
-                        if(value != current_value) PokeDecimal(scanner->process, address, (long long)value, scanner->data_size);
+                        CurrentValue = PeekDecimal(scanner->process, address, scanner->data_size);
+                        if(value != CurrentValue) PokeDecimal(scanner->process, address, (long long)value, scanner->data_size);
                     break;
                 }
             }
@@ -622,7 +628,7 @@ void WINAPI ProcessScan(void)
                 TerminateThread(FreezeThread, 0);
                 CloseHandle(FreezeThread);
 
-                addresses_frozen = 0;
+                NumberOfAddressesFrozen = 0;
                 ScanRunning = true;
 
                 int selected_search_condition = (int)SendMessage(SearchCondition, CB_GETCURSEL, 0, 0);

@@ -17,25 +17,19 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <tlhelp32.h>
 #include <commctrl.h>
 
-#include "resource.h"
+#include "variables.h"
+#include "lib/functions/lowlevelfunctions/lowlevelfunctions.h"
+#include "scanner/functions/memory-scanner-functions.h"
 
-#include "lib/mcqlibc.h"
-#include "global_variables.h"
-#include "core_functions.h"
-#include "gui.h"
-#include "window_procs.h"
+#include "gui/functions/resource.h"
+#include "gui/functions/gui.h"
+#include "gui/functions/window_procs.h"
 
 // Entry point.
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    Init(); 
-
-    INITCOMMONCONTROLSEX icc;
-    icc.dwICC = ICC_WIN95_CLASSES;
-    icc.dwSize = sizeof(icc);
-
-    if(InitCommonControlsEx(&icc))
+    if(Initialize())
     {
         WNDCLASSEX wc;
 

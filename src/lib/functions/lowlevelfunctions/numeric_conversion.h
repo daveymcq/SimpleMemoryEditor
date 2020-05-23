@@ -1,8 +1,8 @@
 #ifndef _CONVERSION_NUMERIC_H
 #define _CONVERSION_NUMERIC_H
 
-#include "core/types.h"
-#include "core/strings.h"
+#include "types.h"
+#include "strings.h"
 
 #include "memory_manipulation.h"
 
