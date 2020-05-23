@@ -10,21 +10,6 @@
   //     MessageBox(0, msg, 0, MB_OK);
   // }
 
-// Initialize local variables.
-
-BOOL Initialize(void)
-{
-    Width = 625;
-    Height = 425;
-    FirstScanNotRun = true;
-    SelectedItem = -1;
-
-    INITCOMMONCONTROLSEX icc;
-    icc.dwICC = ICC_WIN95_CLASSES;
-    icc.dwSize = sizeof(icc);
-
-    return InitCommonControlsEx(&icc);
-}
 
 // Checks if the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address was cleared in the previous scan. 
 

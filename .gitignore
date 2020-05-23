@@ -1,2 +1,3 @@
 bin
 src/test.c
+resources/resource.res
