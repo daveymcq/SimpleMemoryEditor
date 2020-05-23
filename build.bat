@@ -1,6 +1,6 @@
 @echo off
 
-set VCVARS=
+set VCVARS=%VCVARS%
 
 set COMPILE_32BIT=yes
 set COMPILE_64BIT=yes

@@ -173,12 +173,14 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
         case WM_DESTROY:
 
             EnableWindow(MainWindow, true);
+            ShowWindow(MainWindow, SW_SHOW);
             SetForegroundWindow(MainWindow);
 
         break;
 
         case WM_CREATE:
 
+            ShowWindow(MainWindow, SW_HIDE);
             CreateChangeValueDialogUIChildren(hWnd);
             CenterWindow(hWnd);
 
