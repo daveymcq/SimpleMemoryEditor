@@ -205,7 +205,7 @@ bool GetProcessNameAndID(void)
 
 void AddItemToListView(const char *address, const char *val)
 {
-    static LVITEM Item;
+    static LVITEM Item = { 0 };
 
     Item.mask        = LVIF_TEXT;
     Item.iSubItem    = 0;
@@ -448,7 +448,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
         {
             static char data_size[256];
             static unsigned char buffer[32 * 1024];
-            static unsigned int total_read, bytes_left, bytes_to_read, bytes_read;
+            static unsigned long long total_read, bytes_left, bytes_to_read, bytes_read;
 
             bytes_left = mb->size;
             total_read = 0;
@@ -628,11 +628,13 @@ void WINAPI ProcessScan(void)
             TerminateThread(MonitorSelectedProcessThread, 0);
             CloseHandle(MonitorSelectedProcessThread);
 
-            MonitorSelectedProcessThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)MonitorSelectedProcess, 0, 0, 0);
+            DWORD ThreadID;
+            MonitorSelectedProcessThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)MonitorSelectedProcess, 0, 0, &ThreadID);
 
             if(MonitorSelectedProcessThread)
             {
                 SendMessage(ListView, LVM_DELETEALLITEMS, 0, 0);
+
                 TerminateThread(FreezeThread, 0);
                 CloseHandle(FreezeThread);
 
@@ -722,7 +724,9 @@ void WINAPI ProcessScan(void)
                     {
                         TerminateThread(FreezeThread, 0);
                         CloseHandle(FreezeThread);
-                        FreezeThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)FreezeAddresses, 0, 0, 0);
+
+                        DWORD ThreadID;
+                        FreezeThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)FreezeAddresses, 0, 0, &ThreadID);
                     }
 
 

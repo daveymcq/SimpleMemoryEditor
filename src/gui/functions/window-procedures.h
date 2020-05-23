@@ -78,7 +78,9 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             {
                 TerminateThread(ScanThread, 0);
                 CloseHandle(ScanThread);
-                ScanThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)ProcessScan, 0, 0, 0);
+
+                DWORD ThreadID;
+                ScanThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)ProcessScan, 0, 0, &ThreadID);
             }
 
             else if(LOWORD(wParam) == ID_SELECT_PROCESS)
