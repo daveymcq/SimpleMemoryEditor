@@ -1,6 +1,6 @@
 @echo off
 
-set VCVARS=%VCVARS%
+set VCVARS=
 
 set COMPILE_32BIT=yes
 set COMPILE_64BIT=yes
@@ -42,5 +42,3 @@ if defined VCVARS (
         echo Skipping 32-bit compilation.
     )
 )
-
-pause
