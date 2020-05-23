@@ -18,12 +18,10 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <commctrl.h>
 
 #include "variables.h"
-#include "foundation/functions/lowlevelfunctions/lowlevelfunctions.h"
-#include "scanner/functions/memory-scanner-functions.h"
 
-#include "gui/functions/resource.h"
-#include "gui/functions/gui.h"
-#include "gui/functions/window_procs.h"
+#include "foundation/functions/lowlevelfunctions/low-level-functions.h"
+#include "scanner/functions/memory-scanner-functions.h"
+#include "gui/functions/gui-functions.h"
 
 // Entry point.
 
