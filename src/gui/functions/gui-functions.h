@@ -16,8 +16,10 @@ void CreateMainDialogUI(HWND hWnd)
 {
     static LVCOLUMN Column = { 0 };
     static NONCLIENTMETRICS metrics;
+
     static char val_header[] = "Value";
     static char addr_header[] = "Address";
+
     unsigned short i;
 
     MenuBar = CreateMenu();
@@ -35,8 +37,6 @@ void CreateMainDialogUI(HWND hWnd)
     metrics.cbSize = sizeof(NONCLIENTMETRICS);
     SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &metrics, 0);
     Font = CreateFontIndirect(&metrics.lfMessageFont);
-
-    MemoryZero(&Column, sizeof(Column));
 
     ListView = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTVIEW, 0, WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_SINGLESEL,
                               10, 10, 598, 225, hWnd, (HMENU)ID_LISTVIEW, GetModuleHandle(0), 0);
@@ -60,7 +60,7 @@ void CreateMainDialogUI(HWND hWnd)
     SendMessage(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&Column);
 
     SearchConditionLabel = CreateWindow("static", "Search Condition: ", WS_VISIBLE | WS_CHILD, 10, 245, 100, 25, hWnd, 0, GetModuleHandle(0), 0);
-    SearchCondition = CreateWindowEx(WS_EX_CLIENTEDGE, "combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | CBS_AUTOHSCROLL, 150, 245, 125, 25, hWnd, (HMENU)ID_SEARCH_CONDITION, GetModuleHandle(0), 0);
+    SearchCondition = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 150, 245, 125, 25, hWnd, (HMENU)ID_SEARCH_CONDITION, GetModuleHandle(0), 0);
 
     SendMessage(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_EQUALS]);
 
@@ -73,7 +73,7 @@ void CreateMainDialogUI(HWND hWnd)
     ChoosePid = CreateWindow("button", "Select Process", WS_VISIBLE | WS_CHILD, 175, 275, 100, 25, hWnd, (HMENU)ID_SELECT_PROCESS, GetModuleHandle(0), 0);
 
     DataSizeLabel = CreateWindow("static", "Type: ", WS_VISIBLE | WS_CHILD, 310, 280, 100, 25, hWnd, 0, GetModuleHandle(0), 0);
-    DataSize = CreateWindowEx(WS_EX_CLIENTEDGE, "combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | CBS_AUTOHSCROLL, 400, 275, 100, 25, hWnd, (HMENU)ID_VALUE, GetModuleHandle(0), 0);
+    DataSize = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 400, 275, 100, 25, hWnd, (HMENU)ID_VALUE, GetModuleHandle(0), 0);
 
     for(i = 0; i < ARRAYSIZE(data_types); i++)
     {
