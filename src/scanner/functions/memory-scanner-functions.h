@@ -182,6 +182,12 @@ bool GetProcessNameAndID(void)
                 }
             }
 
+            else
+            {
+                IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]), FMT_INT_DECIMAL);
+                NumberOfProcesses++; 
+            }
+
             CloseHandle(process);
         }
 
