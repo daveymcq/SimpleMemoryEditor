@@ -15,12 +15,12 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 void CreateMainDialogUI(HWND hWnd)
 {
     static LVCOLUMN Column = { 0 };
-    static NONCLIENTMETRICS metrics;
+    static NONCLIENTMETRICS metrics = { 0 };
 
     static char val_header[] = "Value";
     static char addr_header[] = "Address";
 
-    unsigned short i;
+    unsigned short index;
 
     MenuBar = CreateMenu();
     FileMenu = CreateMenu();
@@ -34,15 +34,15 @@ void CreateMainDialogUI(HWND hWnd)
 
     SetMenu(hWnd, MenuBar);
 
-    metrics.cbSize = sizeof(NONCLIENTMETRICS);
-    SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &metrics, 0);
+    metrics.cbSize = sizeof(metrics);
+    SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0);
     Font = CreateFontIndirect(&metrics.lfMessageFont);
 
     ListView = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTVIEW, 0, WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_SINGLESEL,
                               10, 10, 598, 225, hWnd, (HMENU)ID_LISTVIEW, GetModuleHandle(0), 0);
 
     #ifndef LVS_EX_DOUBLEBUFFER
-    #define LVS_EX_DOUBLEBUFFER 0x00010000
+        #define LVS_EX_DOUBLEBUFFER 0x00010000
     #endif
 
     SendMessage(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
@@ -75,9 +75,9 @@ void CreateMainDialogUI(HWND hWnd)
     DataSizeLabel = CreateWindow("static", "Type: ", WS_VISIBLE | WS_CHILD, 310, 280, 100, 25, hWnd, 0, GetModuleHandle(0), 0);
     DataSize = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 400, 275, 100, 25, hWnd, (HMENU)ID_VALUE, GetModuleHandle(0), 0);
 
-    for(i = 0; i < ARRAYSIZE(data_types); i++)
+    for(index = 0; index < ARRAYSIZE(data_types); index++)
     {
-        SendMessage(DataSize, CB_ADDSTRING, 0, (LPARAM)data_types[i]);
+        SendMessage(DataSize, CB_ADDSTRING, 0, (LPARAM)data_types[index]);
     }
 
     Scan = CreateWindow("button", "Scan Memory", WS_VISIBLE | WS_CHILD, 10, 315, 600, 50, hWnd, (HMENU)ID_SCAN, GetModuleHandle(0), 0);
@@ -100,7 +100,7 @@ void CreateMainDialogUI(HWND hWnd)
 
 void CenterWindow(HWND hWnd)
 {
-    RECT window;
+    RECT window = { 0 };
 
     GetWindowRect(hWnd, &window);
 
@@ -112,8 +112,7 @@ void CenterWindow(HWND hWnd)
 
 void ProcessListViewLeftClickEvent(void)
 {
-    char buffer[256];
-    MemoryZero(buffer, sizeof(buffer));
+    char buffer[256] = { 0 };
 
     SelectedItem = (int)SendMessage(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
 
@@ -136,20 +135,19 @@ void ProcessListViewRightClickEvent(HWND hWnd)
 
         if(GetCursorPos(&pos))
         {
-            char buffer[256];
-            MemoryZero(buffer, sizeof(buffer));
+            char buffer[256] = { 0 };
 
             ListView_GetItemText(ListView, SelectedItem, 0, buffer, sizeof(buffer));
 
             int x = pos.x;
             int y = pos.y;
 
-            unsigned int i;
+            unsigned int offset;
             bool address_frozen = false;
 
-            for(i = 0; i < NumberOfAddressesFrozen; i++)
+            for(offset = 0; offset < NumberOfAddressesFrozen; offset++)
             {
-                if(StringCompare(frozen_addresses[i], buffer, false))
+                if(StringCompare(frozen_addresses[offset], buffer, false))
                 {
                     address_frozen = true;
                     break;
@@ -189,23 +187,21 @@ void CleanupAndTerminateApplication(HWND hWnd)
 
 void ProcessFreezeValueButtonEvent(void)
 {
-    char address[256], value[256];
-
-    MemoryZero(address, sizeof(address));
-    MemoryZero(value, sizeof(value));
+    char address[256] = { 0 };
+    char value[256] = { 0 };
 
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
     ListView_GetItemText(ListView, SelectedItem, 1, value, sizeof(value));
 
 
-    unsigned int i;
+    unsigned int offset;
     bool frozen = false;
 
-    for(i = 0; i < NumberOfAddressesFrozen; i++)
+    for(offset = 0; offset < NumberOfAddressesFrozen; offset++)
     {
-        if(StringCompare(frozen_addresses[i], address, false))
+        if(StringCompare(frozen_addresses[offset], address, false))
         {
-            if(StringCompare(frozen_values[i], value, false))
+            if(StringCompare(frozen_values[offset], value, false))
             {
                 frozen = true;
                 break;
@@ -233,21 +229,22 @@ void ProcessFreezeValueButtonEvent(void)
 
 void ProcessUnfreezeValueButtonEvent(void)
 {
-    char address[256], value[256];
+    char address[256] = { 0 };
+    char value[256] = { 0 };
 
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
     ListView_GetItemText(ListView, SelectedItem, 1, value, sizeof(value));
 
-    unsigned int i;
+    unsigned int offset;
 
-    for(i = 0; i < NumberOfAddressesFrozen; i++)
+    for(offset = 0; offset < NumberOfAddressesFrozen; offset++)
     {
-        if(StringCompare(frozen_addresses[i], address, false))
+        if(StringCompare(frozen_addresses[offset], address, false))
         {
-            if(StringCompare(frozen_values[i], value, false))
+            if(StringCompare(frozen_values[offset], value, false))
             {
-                MemoryZero(&frozen_addresses[i], sizeof(frozen_addresses[i]));
-                MemoryZero(&frozen_values[i], sizeof(frozen_values[i]));
+                MemoryZero(&frozen_addresses[offset], sizeof(frozen_addresses[offset]));
+                MemoryZero(&frozen_values[offset], sizeof(frozen_values[offset]));
             }
         }
     }
@@ -309,11 +306,11 @@ void CreateChooseProcessDialogUI(void)
 
             EnableWindow(ChooseProcess, false);
 
-            unsigned int i;
+            unsigned int index;
 
-            for(i = 0; i < ProcessCounter; i++)
+            for(index = 0; index < ProcessCounter; index++)
             {
-                SendMessage(ProcessSelection, LB_ADDSTRING, 0, (LPARAM)processes[i]);
+                SendMessage(ProcessSelection, LB_ADDSTRING, 0, (LPARAM)processes[index]);
             }
         }
     }
@@ -372,7 +369,7 @@ void ProcessListboxChangeEvent(void)
 
     if(IndexOfSelectedProcess > -1)
     {
-        char selected_process[256];
+        char selected_process[256] = { 0 };
 
         CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process));
 
@@ -388,7 +385,8 @@ void ProcessChooseProcessButtonEvent(void)
     if(IndexOfSelectedProcess > -1)
     {
         bool error;
-        char selected_process[256], pid[256];
+        char selected_process[256] = { 0 };
+        char pid[256] = { 0 };
 
         CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process));
 
@@ -413,7 +411,8 @@ void ProcessChooseProcessButtonEvent(void)
         {
             if(scanner)
             {
-                char data_size[256];
+                char data_size[256] = { 0 };
+
                 LRESULT selection_id = SendMessage(DataSize, CB_GETCURSEL, 0, 0);
 
                 if(selection_id > -1) CopyString(data_size, (char *)data_sizes[selection_id], sizeof(data_size));
@@ -451,8 +450,7 @@ void ProcessChooseProcessButtonEvent(void)
 
 void CreateChangeValueDialogUIChildren(HWND hWnd)
 {
-    char val[256];
-    MemoryZero(val, sizeof(val));
+    char val[256] = { 0 };
     ListView_GetItemText(ListView, SelectedItem, 1, val, sizeof(val));
     EnableWindow(MainWindow, false);
     ChangeValueDlgValue = CreateWindowEx(WS_EX_CLIENTEDGE, "edit", val, WS_VISIBLE | WS_CHILD, 10, 10, 180, 25, hWnd, (HMENU)ID_CHANGE_DLG_VALUE, 0, 0);
