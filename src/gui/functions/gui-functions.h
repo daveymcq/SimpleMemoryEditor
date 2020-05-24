@@ -261,7 +261,7 @@ void CreateAboutDialog(HWND hWnd)
 
 void CreateChooseProcessDialogUI(void)
 {
-    WNDCLASSEX wc;
+    WNDCLASSEX wc = { 0 };
 
     wc.cbSize           = sizeof(wc);
     wc.cbClsExtra       = 0;
@@ -280,7 +280,6 @@ void CreateChooseProcessDialogUI(void)
 
     if(RegisterClassEx(&wc))
     {
-
         PidDlg = CreateWindowEx(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, 
                                 wc.lpszClassName, title, WS_SYSMENU | WS_OVERLAPPED, 
                                 100, 100, 295, 400, 0, 0, 0, 0);
@@ -320,7 +319,7 @@ void CreateChangeValueDialogUI(void)
 {
     if(SelectedItem > -1)
     {
-         WNDCLASSEX wc;
+         WNDCLASSEX wc = { 0 };
 
          wc.cbSize           = sizeof(wc);
          wc.cbClsExtra       = 0;
@@ -405,7 +404,7 @@ void ProcessChooseProcessButtonEvent(void)
         SendMessage(Pid, WM_GETTEXT, sizeof(pid), (LPARAM)pid);
         unsigned int process_id = (unsigned int)StringToInteger(pid, FMT_INT_DECIMAL);
 
-        HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, false, process_id);
+        HANDLE process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, true, process_id);
 
         if(process)
         {
