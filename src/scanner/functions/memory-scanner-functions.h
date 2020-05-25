@@ -162,11 +162,11 @@ bool GetProcessNameAndID(void)
 
         if(process)
         {
-            typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+            typedef BOOL (WINAPI *FP_ISWOW64PROCESS) (HANDLE, PBOOL);
 
             BOOL IsApplication64Bit;
 
-            LPFN_ISWOW64PROCESS pIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
+            FP_ISWOW64PROCESS pIsWow64Process = (FP_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
 
             if(pIsWow64Process && pIsWow64Process(GetCurrentProcess(), &IsApplication64Bit))
             {
@@ -246,15 +246,21 @@ long long PeekDecimal(HANDLE process, unsigned char *address, SIZE_T data_size)
         switch(data_size)
         {
             case sizeof(char):
+
                 ret = (char)ret;
+
             break;
 
             case sizeof(short):
+
                 ret = (short)ret;
+
             break;
 
             case sizeof(int):
+
                 ret = (int)ret;
+
             break;
 
         }
@@ -263,10 +269,10 @@ long long PeekDecimal(HANDLE process, unsigned char *address, SIZE_T data_size)
     return ret;
 }
 
-
 bool PokeFloat(HANDLE process, unsigned char *address, float val, SIZE_T data_size)
 {
     SIZE_T bytes_read = 0;
+
     if(WriteProcessMemory(process, address, &val, data_size, &bytes_read) != 0)
         return (bytes_read == data_size);
     return false;
@@ -275,6 +281,7 @@ bool PokeFloat(HANDLE process, unsigned char *address, float val, SIZE_T data_si
 bool PokeDouble(HANDLE process, unsigned char *address, double val, SIZE_T data_size)
 {
     SIZE_T bytes_read = 0;
+
     if(WriteProcessMemory(process, address, &val, data_size, &bytes_read) != 0)
         return (bytes_read == data_size);
     return false;
@@ -283,6 +290,7 @@ bool PokeDouble(HANDLE process, unsigned char *address, double val, SIZE_T data_
 bool PokeDecimal(HANDLE process, unsigned char *address, long long val, SIZE_T data_size)
 {
     SIZE_T bytes_read = 0;
+
     if (WriteProcessMemory(process, address, &val, data_size, &bytes_read) != 0)
         return (bytes_read == data_size);
     return false;
@@ -326,8 +334,6 @@ void FreeMemoryScanner(MEMORY_BLOCK *mblock)
         if(tmp->match_flag) free(tmp->match_flag);
         free(tmp);
     }
-
-    mb = 0;
 }
 
 // Finds the initial valid memory information and sets up for UpdateMemoryBlock().
@@ -416,18 +422,24 @@ void WINAPI FreezeAddresses(void)
                 switch(type)
                 {
                     case TYPE_FLOAT:
+
                         CurrentValue = PeekFloat(scanner->process, address, scanner->data_size);
                         if(value != CurrentValue) PokeFloat(scanner->process, address, (float)value, scanner->data_size);
+
                     break;
 
                     case TYPE_DOUBLE:
+
                         CurrentValue = PeekDouble(scanner->process, address, scanner->data_size);
                         if(value != CurrentValue) PokeDouble(scanner->process, address, value, scanner->data_size);
+
                     break;
 
                     case TYPE_INTEGER:
+
                         CurrentValue = PeekDecimal(scanner->process, address, scanner->data_size);
                         if(value != CurrentValue) PokeDecimal(scanner->process, address, (long long)value, scanner->data_size);
+
                     break;
                 }
             }
@@ -481,23 +493,31 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
                             switch(mb->data_size)
                             {
                                 case sizeof(char):
+
                                     tmpval = *((char *)&buffer[offset]);
                                     prevval = *((char *)&mb->buffer[total_read + offset]);
+
                                 break;
 
                                 case sizeof(short):
+
                                     tmpval = *((short *)&buffer[offset]);
                                     prevval = *((short *)&mb->buffer[total_read + offset]);
+
                                 break;
 
                                 case sizeof(int):
+
                                     tmpval = *((int *)&buffer[offset]);
                                     prevval = *((int *)&mb->buffer[total_read + offset]);
+
                                 break;
 
                                 case sizeof(long long):
+
                                     tmpval = *((long long *)&buffer[offset]);
                                     prevval = *((long long *)&mb->buffer[total_read + offset]);
+
                                 break;
 
                             }
@@ -524,22 +544,32 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
                         switch(condition)
                         {
                             case SEARCH_EQUALS:
+
                                 match = (tmpval == val);
+
                             break;
 
                             case SEARCH_INCREASED:
+
                                 match = (tmpval > prevval);
+
                             break;
 
                             case SEARCH_DECREASED:
+
                                 match = (tmpval < prevval);
+                                
                             break;
                         }
 
-                        if(match) 
+                        if(match)
+                        {
                             mb->matches++;
+                        }
                         else 
+                        {
                             DiscardAddress(mb, total_read + offset);
+                        }
                     }
                 }
 
@@ -595,6 +625,7 @@ void DisplayScanResults(MEMORY_BLOCK *mblock)
                 AddItemToListView(address, val);
             }
         }
+
         mb = mb->next;
     }
 }
@@ -660,18 +691,24 @@ void WINAPI ProcessScan(void)
                         switch(selected_search_condition)
                         {
                             case SEARCH_EQUALS:
+
                                 UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_INTEGER, StringToInteger(val, FMT_INT_DECIMAL)); 
                                 DisplayScanResults(scanner);
+
                             break;
 
                             case SEARCH_INCREASED:
+
                                 UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_INTEGER, 0);
                                 DisplayScanResults(scanner);
+
                             break;
 
                             case SEARCH_DECREASED:
+
                                 UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_INTEGER, 0);
                                 DisplayScanResults(scanner);
+
                             break;
                         }
                     }
@@ -681,18 +718,24 @@ void WINAPI ProcessScan(void)
                         switch(selected_search_condition)
                         {
                             case SEARCH_EQUALS:
+
                                 UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_FLOAT, (float)StringToDouble(val));
                                 DisplayScanResults(scanner);
+
                             break;
 
                             case SEARCH_INCREASED:
+
                                 UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_FLOAT, 0);
                                 DisplayScanResults(scanner);
+
                             break;
 
                             case SEARCH_DECREASED:
+
                                 UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_FLOAT, 0);
                                 DisplayScanResults(scanner);
+
                             break;
                         }
                     }
@@ -702,18 +745,24 @@ void WINAPI ProcessScan(void)
                         switch(selected_search_condition)
                         {
                             case SEARCH_EQUALS:
+
                                 UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_DOUBLE, StringToDouble(val));
                                 DisplayScanResults(scanner);
+
                             break;
 
                             case SEARCH_INCREASED:
+
                                 UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_DOUBLE, 0);
                                 DisplayScanResults(scanner);
+
                             break;
 
                             case SEARCH_DECREASED:
+
                                 UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_DOUBLE, 0);
                                 DisplayScanResults(scanner);
+
                             break;
                         }
                     }
@@ -779,8 +828,6 @@ bool UpdateValue(void)
     Item.mask = LVIF_TEXT;
     Item.iItem = SelectedItem;
     Item.iSubItem = 1;
-
-    MemoryZero(buffer, sizeof(buffer));
 
     SendMessage(Value, WM_GETTEXT, sizeof(buffer), (LPARAM)buffer);
     Item.pszText = buffer;
