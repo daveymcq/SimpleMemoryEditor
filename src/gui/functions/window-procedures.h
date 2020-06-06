@@ -183,7 +183,6 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
         case WM_CREATE:
 
             ShowWindow(MainWindow, SW_HIDE);
-            CreateChangeValueDialogUIChildren(hWnd);
             CenterWindow(hWnd);
 
         break;
@@ -193,18 +192,6 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
             if(LOWORD(wParam) == ID_CHANGE_DLG_BUTTON)
             {
                 UpdateValue();
-            }
-
-        case WM_SYSCOMMAND:
-
-            if(wParam == SC_MOVE)
-            {
-                return 0;
-            }
-
-            if(wParam == SC_CLOSE)
-            {
-                DestroyWindow(hWnd);
             }
 
         break;

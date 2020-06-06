@@ -2,14 +2,9 @@
 #define _SCANNER_VARIABLES_H
 
 #define MEM_WRITABLE (PAGE_READWRITE | PAGE_WRITECOPY | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)
-#define FREEZE_LIMIT (1024 * 128)
-#define PROCESS_LIMIT (1024)
 
 static char processes[PROCESS_LIMIT][256];
 static char pids[PROCESS_LIMIT][256];
-
-static char frozen_addresses[FREEZE_LIMIT][256];
-static char frozen_values[FREEZE_LIMIT][256];
 
 static LRESULT SelectedItem;
 
@@ -34,10 +29,10 @@ static bool FirstScanNotRun;
 typedef struct _MEMORY_BLOCK
 {
     HANDLE process;
+    SIZE_T size;
     unsigned char *address;
     unsigned char *buffer;
     unsigned char *match_flag;
-    unsigned long long size;
     unsigned short data_size;
     unsigned int matches;
     struct _MEMORY_BLOCK *next;

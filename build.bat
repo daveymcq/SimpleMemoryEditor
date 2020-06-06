@@ -1,12 +1,12 @@
 @echo off
 
-set VCVARS=
+set VCVARS=%VCVARS2005%
 
 set COMPILE_32BIT=yes
 set COMPILE_64BIT=yes
 
 if not [%1] == [] (
-    set VCVARS=%1%
+    set VCVARS=%1
     goto :compile
 )
 

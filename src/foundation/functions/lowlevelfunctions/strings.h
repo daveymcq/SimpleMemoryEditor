@@ -34,6 +34,16 @@ unsigned int StringLength(const char *str)
     return length;
 }
 
+
+// Join two strings.
+
+char *StringConcat(char *str1, char *str2)
+{
+    CopyString(str1 + StringLength(str1), str2, StringLength(str2));
+    return str1;
+}
+
+
 // Checks equality of two c-strings.
 
 bool StringCompare(const char *string_a, const char *string_b, bool case_sensitive)

@@ -20,10 +20,17 @@
 #define ID_FREEZE_VALUE (WM_USER + 1016)
 #define ID_UNFREEZE_VALUE (WM_USER + 1017)
 
+#define FREEZE_LIMIT (1024 * 128)
+#define PROCESS_LIMIT (1024)
+
 const char *title = "Simple Memory Editor";
 const char *data_sizes[] = { "1", "2", "4", "8", "4", "8" };
 const char *data_types[] = { "Byte", "Short Integer", "Integer", "Long Integer", "Float", "Double" };
 const char *search_conditions[] = { "Equals", "Increased", "Decreased" };
+
+static char frozen_addresses[FREEZE_LIMIT][256];
+static char frozen_values[FREEZE_LIMIT][256]; 
+static char PID[256];
 
 static DWORD Width;
 static DWORD Height;

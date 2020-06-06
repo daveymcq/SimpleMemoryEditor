@@ -2,14 +2,15 @@
 #define _CORE_FUNCTIONS_H
 
 // Debugging code
+//
+// void __DEBUG_INT(long long X)
+// {
+//     char msg[1024];
+//     IntegerToString(X, msg, sizeof(msg), FMT_INT_DECIMAL);
+//     MessageBox(0, msg, 0, MB_OK);
+// }
 
-  // void __DEBUG_INT(long long X)
-  // {
-  //     char msg[1024];
-  //     IntegerToString(X, msg, sizeof(msg), FMT_INT_DECIMAL);
-  //     MessageBox(0, msg, 0, MB_OK);
-  // }
-
+void AddItemToListView(void *address, const char *value);
 
 // Checks if the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address was cleared in the previous scan. 
 
@@ -87,21 +88,24 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
     }
 
     TerminateThread(FreezeThread, 0);
+    WaitForSingleObject(FreezeThread, INFINITE); 
     CloseHandle(FreezeThread);
 
     if(disable_process_monitor)
     {
         TerminateThread(MonitorSelectedProcessThread, 0);
+        WaitForSingleObject(MonitorSelectedProcessThread, INFINITE); 
         CloseHandle(MonitorSelectedProcessThread);
     }
 
     TerminateThread(ScanThread, 0);
+    WaitForSingleObject(ScanThread, INFINITE); 
     CloseHandle(ScanThread);
 }
 
 // Calls ResetScan() if the selected thread terminates.
 
-void WINAPI MonitorSelectedProcess(void)
+DWORD WINAPI MonitorSelectedProcess(LPVOID params)
 {
     while(SelectedProcessOpen)
     {
@@ -114,6 +118,8 @@ void WINAPI MonitorSelectedProcess(void)
             break;
         }
     }
+
+    return 0;
 }
 
 // Finds the number of matches from the last scan.
@@ -132,7 +138,6 @@ unsigned int GetMatchCount(MEMORY_BLOCK *mblock)
     return matches;
 }
 
-
 // Finds all running processes on machine and finds their process id.
 
 bool GetProcessNameAndID(void)
@@ -142,157 +147,169 @@ bool GetProcessNameAndID(void)
 
     snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
-    if(snapshot == INVALID_HANDLE_VALUE) return false;
-
-    pe.dwSize = sizeof(pe);
-
-    if(!Process32First(snapshot, &pe))
+    if(snapshot != INVALID_HANDLE_VALUE)
     {
-        CloseHandle(snapshot);
-        return false;
-    }
 
-    do
-    {
-        if(pe.th32ProcessID == GetCurrentProcessId()) continue;
+        pe.dwSize = sizeof(pe);
 
-        CopyString(processes[NumberOfProcesses], pe.szExeFile, sizeof(processes[NumberOfProcesses]));
-
-        process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, true, pe.th32ProcessID); 
-
-        if(process)
+        if(!Process32First(snapshot, &pe))
         {
-            typedef BOOL (WINAPI *FP_ISWOW64PROCESS) (HANDLE, PBOOL);
-
-            BOOL IsApplication64Bit;
-
-            FP_ISWOW64PROCESS pIsWow64Process = (FP_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
-
-            if(pIsWow64Process && pIsWow64Process(GetCurrentProcess(), &IsApplication64Bit))
-            {
-                BOOL IsProcess64Bit;
-
-                if(pIsWow64Process && pIsWow64Process(process, &IsProcess64Bit))
-                {
-                    if(IsApplication64Bit == IsProcess64Bit)
-                    {
-                        IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]), FMT_INT_DECIMAL);
-                        NumberOfProcesses++; 
-                    }
-                }
-            }
-
-            else
-            {
-                IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]), FMT_INT_DECIMAL);
-                NumberOfProcesses++; 
-            }
-
-            CloseHandle(process);
+            CloseHandle(snapshot);
+            return false;
         }
 
-    } while(Process32Next(snapshot, &pe));
+        do
+        {
+            if(pe.th32ProcessID == GetCurrentProcessId()) continue;
 
-    ProcessCounter = NumberOfProcesses;
-    NumberOfProcesses = 0;
+            CopyString(processes[NumberOfProcesses], pe.szExeFile, sizeof(processes[NumberOfProcesses]));
 
-    CloseHandle(snapshot);
+            process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, pe.th32ProcessID); 
 
-    return true;
-}
+            if(process)
+            {
+                typedef BOOL (WINAPI *FP_ISWOW64PROCESS) (HANDLE, PBOOL);
 
-// Populates the ListView with the results of the scan.
+                BOOL IsApplication64Bit;
 
-void AddItemToListView(const char *address, const char *val)
-{
-    static LVITEM Item = { 0 };
+                FP_ISWOW64PROCESS pIsWow64Process = (FP_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
 
-    Item.mask        = LVIF_TEXT;
-    Item.iSubItem    = 0;
-    Item.pszText     = (char *)address;
+                if(pIsWow64Process && pIsWow64Process(GetCurrentProcess(), &IsApplication64Bit))
+                {
+                    BOOL IsProcess64Bit;
 
-    SendMessage(ListView, LVM_INSERTITEM, 0, (LPARAM)&Item);
+                    if(pIsWow64Process && pIsWow64Process(process, &IsProcess64Bit))
+                    {
+                        if(IsApplication64Bit == IsProcess64Bit)
+                        {
+                            IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]), FMT_INT_DECIMAL);
+                            NumberOfProcesses++; 
+                        }
+                    }
+                }
 
-    Item.iSubItem    = 1;
-    Item.pszText     = (char *)val;
+                else
+                {
+                    IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]), FMT_INT_DECIMAL);
+                    NumberOfProcesses++; 
+                }
 
-    SendMessage(ListView, LVM_SETITEM, 0, (LPARAM)&Item);
+                CloseHandle(process);
+            }
+
+        } while(Process32Next(snapshot, &pe));
+
+        ProcessCounter = NumberOfProcesses;
+        NumberOfProcesses = 0;
+
+        CloseHandle(snapshot);
+
+        return true;
+    }
+
+    return false;
 }
 
 // A set of helper functions that reads/writes the memory at the address specified.
 
-float PeekFloat(HANDLE process, unsigned char *address, SIZE_T data_size)
+float PeekFloat(HANDLE process, void *address, unsigned short data_size)
 {
-    float ret = 0.0f;
-    if(ReadProcessMemory(process, address, &ret, data_size, 0))
-        return ret;
-    return 0;
+    float value;
+
+    if(ReadProcessMemory(process, address, (float *)&value, data_size, 0))
+    {
+        return value;
+    }
+
+    return 0.0f;
 }
 
-double PeekDouble(HANDLE process, unsigned char *address, SIZE_T data_size)
+double PeekDouble(HANDLE process, void *address, unsigned short data_size)
 {
-    double ret = 0.0;
-    if(ReadProcessMemory(process, address, &ret, data_size, 0))
-        return ret;
-    return 0;
+    double value;
+
+    if(ReadProcessMemory(process, address, (double *)&value, data_size, 0))
+    {
+        return value;
+    }
+
+    return 0.0;
 }
 
-long long PeekDecimal(HANDLE process, unsigned char *address, SIZE_T data_size)
+long long PeekDecimal(HANDLE process, void *address, unsigned short data_size)
 {
-    long long ret = 0LL;
+    long long value;
 
-    if(ReadProcessMemory(process, address, &ret, data_size, 0))
+    if(ReadProcessMemory(process, address, (long long *)&value, data_size, 0))
     {
         switch(data_size)
         {
             case sizeof(char):
 
-                ret = (char)ret;
+                value = (char)value;
+                return value;
 
             break;
 
             case sizeof(short):
 
-                ret = (short)ret;
+                value = (short)value;
+                return value; 
 
             break;
-
+            
             case sizeof(int):
 
-                ret = (int)ret;
+                value = (int)value; 
+                return value; 
 
             break;
 
+            case sizeof(long long):
+
+                value = (long long)value;
+                return value;
+
+            break;
         }
     }
 
-    return ret;
+    return 0LL;
 }
 
-bool PokeFloat(HANDLE process, unsigned char *address, float val, SIZE_T data_size)
+bool PokeFloat(HANDLE process, void *address, float value, unsigned short data_size)
 {
-    SIZE_T bytes_read = 0;
+    SIZE_T bytes_written;
 
-    if(WriteProcessMemory(process, address, &val, data_size, &bytes_read) != 0)
-        return (bytes_read == data_size);
+    if(WriteProcessMemory(process, address, &value, data_size, &bytes_written))
+    {
+        return ((unsigned short)bytes_written == data_size); 
+    }
+
     return false;
 }
 
-bool PokeDouble(HANDLE process, unsigned char *address, double val, SIZE_T data_size)
+bool PokeDouble(HANDLE process, void *address, double value, unsigned short data_size)
 {
-    SIZE_T bytes_read = 0;
+    SIZE_T bytes_written;
 
-    if(WriteProcessMemory(process, address, &val, data_size, &bytes_read) != 0)
-        return (bytes_read == data_size);
+    if(WriteProcessMemory(process, address, &value, data_size, &bytes_written))
+    {
+        return ((unsigned short)bytes_written == data_size); 
+    }
+
     return false;
 }
 
-bool PokeDecimal(HANDLE process, unsigned char *address, long long val, SIZE_T data_size)
+bool PokeDecimal(HANDLE process, void *address, long long value, unsigned short data_size)
 {
-    SIZE_T bytes_read = 0;
+    SIZE_T bytes_written;
 
-    if (WriteProcessMemory(process, address, &val, data_size, &bytes_read) != 0)
-        return (bytes_read == data_size);
+    if(WriteProcessMemory(process, address, &value, data_size, &bytes_written))
+    {
+        return ((unsigned short)bytes_written == data_size);
+    }
+
     return false;
 }
 
@@ -306,11 +323,11 @@ MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, u
     {
         mb->process             = process;
         mb->size                = mbi->RegionSize;
-        mb->data_size           = data_size;
         mb->address             = (unsigned char *)mbi->BaseAddress;
         mb->buffer              = (unsigned char *)malloc(mbi->RegionSize);
         mb->match_flag          = (unsigned char *)malloc(mbi->RegionSize / 8);
         mb->matches             = (unsigned int)mbi->RegionSize;
+        mb->data_size           = data_size; 
         mb->next                = 0;
 
         if(mb->match_flag) MemorySet(mb->match_flag, 0xff, mbi->RegionSize / 8);
@@ -345,7 +362,7 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
     MEMORY_BASIC_INFORMATION mbi;
     CurrentProcess = pid;
 
-    HANDLE process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, true, pid);
+    HANDLE process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, pid);
 
     if(process)
     {
@@ -406,9 +423,9 @@ bool SelectedAddressFrozen(void)
 
 // A thread to monitor addresses for change.
 
-void WINAPI FreezeAddresses(void)
+DWORD WINAPI FreezeAddresses(LPVOID params)
 {
-    for(;;)
+    while(scanner)
     {
         if(NumberOfAddressesFrozen)
         {
@@ -424,27 +441,41 @@ void WINAPI FreezeAddresses(void)
                     case TYPE_FLOAT:
 
                         CurrentValue = PeekFloat(scanner->process, address, scanner->data_size);
-                        if(value != CurrentValue) PokeFloat(scanner->process, address, (float)value, scanner->data_size);
+
+                        if(value != CurrentValue)
+                        {
+                            PokeFloat(scanner->process, address, value, scanner->data_size);
+                        }
 
                     break;
 
                     case TYPE_DOUBLE:
 
                         CurrentValue = PeekDouble(scanner->process, address, scanner->data_size);
-                        if(value != CurrentValue) PokeDouble(scanner->process, address, value, scanner->data_size);
+
+                        if(value != CurrentValue)
+                        {
+                            PokeDouble(scanner->process, address, value, scanner->data_size);
+                        }
 
                     break;
 
                     case TYPE_INTEGER:
-
+                        
                         CurrentValue = PeekDecimal(scanner->process, address, scanner->data_size);
-                        if(value != CurrentValue) PokeDecimal(scanner->process, address, (long long)value, scanner->data_size);
+
+                        if(value != CurrentValue)
+                        {
+                            PokeDecimal(scanner->process, address, value, scanner->data_size);
+                        }
 
                     break;
                 }
             }
         }
     }
+    
+    return 0;
 }
 
 // Filters memory information aquired by CreateMemoryScanner() and subsequent calls to this function.
@@ -566,6 +597,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
                         {
                             mb->matches++;
                         }
+
                         else 
                         {
                             DiscardAddress(mb, total_read + offset);
@@ -591,6 +623,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
 void DisplayScanResults(MEMORY_BLOCK *mblock)
 {
     MEMORY_BLOCK *mb = mblock;
+    unsigned int limit = 100;
 
     while(mb)
     {
@@ -622,22 +655,33 @@ void DisplayScanResults(MEMORY_BLOCK *mblock)
                     DoubleToString(value, val, sizeof(val));
                 }
 
-                AddItemToListView(address, val);
+                if(limit)
+                {
+                    AddItemToListView(address, val);
+                    limit--;
+                }
+
+                else
+                {
+                    EnableWindow(ListView, false);
+                }
             }
         }
 
         mb = mb->next;
     }
+
+    EnableWindow(ListView, true); 
 }
 
 // The thread function responsible for performing the scan.
 
-void WINAPI ProcessScan(void)
+DWORD WINAPI ProcessScan(LPVOID params)
 {
     unsigned int matches;
     char pid[256], data_size[256], val[256], condition[256], message[256];
 
-    SendMessage(Pid, WM_GETTEXT, sizeof(pid), (LPARAM)pid);
+    CopyString(pid, PID, sizeof(pid)); 
     SendMessage(Value, WM_GETTEXT, sizeof(val), (LPARAM)val);
     SendMessage(SearchCondition, WM_GETTEXT, sizeof(condition), (LPARAM)condition);
 
@@ -657,6 +701,7 @@ void WINAPI ProcessScan(void)
         if(scanner)
         {
             TerminateThread(MonitorSelectedProcessThread, 0);
+            WaitForSingleObject(MonitorSelectedProcessThread, INFINITE); 
             CloseHandle(MonitorSelectedProcessThread);
 
             DWORD ThreadID;
@@ -667,12 +712,13 @@ void WINAPI ProcessScan(void)
                 SendMessage(ListView, LVM_DELETEALLITEMS, 0, 0);
 
                 TerminateThread(FreezeThread, 0);
+                WaitForSingleObject(FreezeThread, INFINITE);
                 CloseHandle(FreezeThread);
 
                 NumberOfAddressesFrozen = 0;
                 ScanRunning = true;
 
-                int selected_search_condition = (int)SendMessage(SearchCondition, CB_GETCURSEL, 0, 0);
+                short selected_search_condition = (short)SendMessage(SearchCondition, CB_GETCURSEL, 0, 0);
 
                 if(selected_search_condition > -1)
                 {
@@ -771,11 +817,8 @@ void WINAPI ProcessScan(void)
 
                     if(matches)
                     {
-                        TerminateThread(FreezeThread, 0);
-                        CloseHandle(FreezeThread);
-
                         DWORD ThreadID;
-                        FreezeThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)FreezeAddresses, 0, 0, &ThreadID);
+                        FreezeThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)FreezeAddresses, 0, 0, &ThreadID); 
                     }
 
 
@@ -798,15 +841,18 @@ void WINAPI ProcessScan(void)
                     EnableWindow(DataSize, true);
                     EnableWindow(Value, true);
                     EnableWindow(SearchCondition, true);
-
                     EnableWindow(MainWindow, false);
+
                     MessageBox(MainWindow, message, title, MB_OK);
+
                     EnableWindow(MainWindow, true);
                     SetForegroundWindow(MainWindow);
                 }
             }
         }
     }
+
+    return 0;
 }
 
 // Once an address is found, this function updates the value at that address.
@@ -842,6 +888,7 @@ bool UpdateValue(void)
             MessageBox(MainWindow, "Memory was updated successfully.", "Success!", MB_OK);
             EnableWindow(MainWindow, true);
             SetForegroundWindow(MainWindow);
+
             SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
             float tmp = PeekFloat(scanner->process, addr, scanner->data_size);
             DoubleToString(tmp, val, sizeof(val));
@@ -871,6 +918,7 @@ bool UpdateValue(void)
             MessageBox(MainWindow, "Memory was updated successfully.", "Success!", MB_OK);
             EnableWindow(MainWindow, true);
             SetForegroundWindow(MainWindow);
+
             SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
             double tmp = PeekDouble(scanner->process, addr, scanner->data_size);
             DoubleToString(tmp, val, sizeof(val));
@@ -900,6 +948,7 @@ bool UpdateValue(void)
             MessageBox(MainWindow, "Memory was updated successfully.", "Success!", MB_OK);
             EnableWindow(MainWindow, true);
             SetForegroundWindow(MainWindow);
+
             SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
             long long tmp = PeekDecimal(scanner->process, addr, scanner->data_size);
             IntegerToString(tmp, val, sizeof(val), FMT_INT_DECIMAL);
