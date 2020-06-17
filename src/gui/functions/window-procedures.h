@@ -14,6 +14,10 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 
 LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
+    HDC hdc;
+    PAINTSTRUCT ps;
+    LPDRAWITEMSTRUCT pdis;
+
     switch(Msg)
     {
         case WM_CREATE:
@@ -28,6 +32,32 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
            CleanupAndTerminateApplication(hWnd);
 
         break;
+
+
+        case WM_NCHITTEST:
+
+            return UpdateWindowLocation(hWnd, Msg, wParam, lParam);
+
+        break; 
+
+        case WM_PAINT:
+        
+            hdc = BeginPaint(hWnd, &ps);
+
+            {
+                PaintCustomWindowFrame(hWnd, hdc, MainWindowWidth, MainWindowHeight);
+            }
+
+            EndPaint(hWnd, &ps);
+
+        break;
+
+        case WM_SIZE:
+
+            MainWindowWidth = LOWORD(lParam);
+            MainWindowHeight = HIWORD(lParam);
+
+        break; 
 
         case WM_DESTROY:
 
@@ -52,9 +82,29 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
         break;
 
+        case WM_DRAWITEM:
+
+            pdis = (LPDRAWITEMSTRUCT)lParam;
+
+            switch(pdis->CtlID)
+            {
+                case ID_CLOSE:
+                   
+                    DrawCloseButton(hWnd, pdis->hDC);
+
+                break;
+            }
+
+        break; 
+
         case WM_COMMAND:
 
-            if((LOWORD(wParam) == ID_FREEZE_VALUE) && (SelectedItem != -1))
+            if(LOWORD(wParam) == ID_CLOSE)
+            {
+                PostQuitMessage(0);
+            }
+
+            else if((LOWORD(wParam) == ID_FREEZE_VALUE) && (SelectedItem != -1))
             {
                 ProcessFreezeValueButtonEvent();
             }
@@ -62,16 +112,6 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             else if((LOWORD(wParam) == ID_UNFREEZE_VALUE) && (SelectedItem != -1))
             {
                 ProcessUnfreezeValueButtonEvent();
-            }
-
-            else if(LOWORD(wParam) == ID_FILE_EXIT)
-            {
-                PostQuitMessage(0);
-            }
-
-            else if(LOWORD(wParam) == ID_HELP_ABOUT)
-            {
-                CreateAboutDialog(hWnd);
             }
 
             else if(LOWORD(wParam) == ID_SCAN)
@@ -102,7 +142,10 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
         break;
 
         default:
+
             return DefWindowProc(hWnd, Msg, wParam, lParam);
+
+        break;
     }
 
     return 0;
@@ -117,6 +160,10 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 LRESULT CALLBACK ChooseProcessDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
+    HDC hdc;
+    PAINTSTRUCT ps;
+    LPDRAWITEMSTRUCT pdis; 
+
     switch(Msg)
     {
         case WM_CLOSE:
@@ -129,9 +176,49 @@ LRESULT CALLBACK ChooseProcessDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPA
         case WM_CREATE:
 
             ShowWindow(MainWindow, SW_HIDE);
-            CenterWindow(hWnd); 
+            CenterWindow(hWnd);
 
-        break;
+        break; 
+
+        case WM_PAINT:
+
+            hdc = BeginPaint(hWnd, &ps);
+
+            {
+                PaintCustomWindowFrame(hWnd, hdc, ChooseProcessWindowWidth, ChooseProcessWindowHeight);
+            }
+
+            EndPaint(hWnd, &ps);
+
+        break; 
+
+        case WM_SIZE:
+
+            ChooseProcessWindowWidth = LOWORD(lParam);
+            ChooseProcessWindowHeight = HIWORD(lParam);
+
+        break; 
+
+        case WM_DRAWITEM:
+
+            pdis = (LPDRAWITEMSTRUCT)lParam;
+
+            switch(pdis->CtlID)
+            {
+                case ID_CLOSE_CHOOSE_PROCESS:
+
+                    DrawCloseButton(hWnd, pdis->hDC);
+
+                break;
+            }
+
+        break; 
+
+        case WM_NCHITTEST:
+
+            return UpdateWindowLocation(hWnd, Msg, wParam, lParam);
+
+        break; 
 
         case WM_DESTROY:
 
@@ -142,7 +229,12 @@ LRESULT CALLBACK ChooseProcessDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPA
 
         case WM_COMMAND:
 
-            if(LOWORD(wParam) == ID_CHOOSE_PROCESS)
+            if(LOWORD(wParam) == ID_CLOSE_CHOOSE_PROCESS)
+            {
+                DestroyWindow(hWnd);
+            }
+
+            else if(LOWORD(wParam) == ID_CHOOSE_PROCESS)
             {
                 ProcessChooseProcessButtonEvent();
             }
@@ -155,7 +247,10 @@ LRESULT CALLBACK ChooseProcessDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPA
         break;
 
         default:
+
             return DefWindowProc(hWnd, Msg, wParam, lParam);
+
+        break;
     }
 
     return 0;
@@ -170,6 +265,11 @@ LRESULT CALLBACK ChooseProcessDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPA
 
 LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
+
+    HDC hdc;
+    PAINTSTRUCT ps;
+    LPDRAWITEMSTRUCT pdis;
+
     switch(Msg)
     {
         case WM_DESTROY:
@@ -187,9 +287,55 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 
         break;
 
+        case WM_SIZE:
+
+            ChangeValueWindowWidth = LOWORD(lParam);
+            ChangeValueWindowHeight = HIWORD(lParam);
+
+        break; 
+
+        case WM_PAINT:
+
+            hdc = BeginPaint(hWnd, &ps);
+
+            {
+                PaintCustomWindowFrame(hWnd, hdc, ChangeValueWindowWidth, ChangeValueWindowHeight);
+            }
+
+            EndPaint(hWnd, &ps);
+
+            break;
+
+        case WM_DRAWITEM:
+
+            pdis = (LPDRAWITEMSTRUCT)lParam;
+
+            switch(pdis->CtlID)
+            {
+                case ID_CLOSE_CHANGE_VALUE:
+
+                    DrawCloseButton(hWnd, pdis->hDC);
+
+                break;
+
+            }
+
+            break;
+
+        case WM_NCHITTEST:
+
+            return UpdateWindowLocation(hWnd, Msg, wParam, lParam);
+
+        break; 
+
         case WM_COMMAND:
 
-            if(LOWORD(wParam) == ID_CHANGE_DLG_BUTTON)
+            if(LOWORD(wParam) == ID_CLOSE_CHANGE_VALUE)
+            {
+                DestroyWindow(hWnd); 
+            }
+
+            else if(LOWORD(wParam) == ID_CHANGE_DLG_BUTTON)
             {
                 UpdateValue();
             }
@@ -197,7 +343,10 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
         break;
 
         default:
+
             return DefWindowProc(hWnd, Msg, wParam, lParam);
+
+        break;
     }
 
     return 0;

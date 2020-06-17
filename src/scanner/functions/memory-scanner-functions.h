@@ -391,7 +391,7 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
         ResetScan(0, true, true);
         EnableWindow(MainWindow, false);
 
-        MessageBox(MainWindow, "Error: Failed to open process.", title, MB_OK);
+        MessageBox(MainWindow, "Error: Failed to open process.", "Error!", MB_OK | MB_ICONERROR);
 
         EnableWindow(MainWindow, true);
         EnableWindow(ChoosePid, true);
@@ -679,7 +679,7 @@ void DisplayScanResults(MEMORY_BLOCK *mblock)
 DWORD WINAPI ProcessScan(LPVOID params)
 {
     unsigned int matches;
-    char pid[256], data_size[256], val[256], condition[256], message[256];
+    char pid[256], data_size[256], val[256], condition[256];
 
     CopyString(pid, PID, sizeof(pid)); 
     SendMessage(Value, WM_GETTEXT, sizeof(val), (LPARAM)val);
@@ -688,13 +688,7 @@ DWORD WINAPI ProcessScan(LPVOID params)
     int selection_id = (int)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
     if(selection_id > -1) CopyString(data_size, (char *)data_sizes[selection_id], sizeof(data_size));
 
-    if(!IsDecimal(val))
-    {
-        char msg[] = "Search value must be in decimal format";
-        MessageBox(MainWindow, msg, title, MB_OK);
-    }
-
-    else if((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (!StringCompare(pid, "*No Process Selected*", false)))
+    if((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (!StringCompare(pid, "*No Process Selected*", false)) && (IsDecimal(val)))
     {
         scanner = (scanner) ? scanner : CreateMemoryScanner((unsigned int)StringToInteger(pid, FMT_INT_DECIMAL), (unsigned short)StringToInteger(data_size, FMT_INT_DECIMAL)); 
 
@@ -830,8 +824,6 @@ DWORD WINAPI ProcessScan(LPVOID params)
                         FirstScanNotRun = false;
                     }
 
-                    CopyString(message, (char *)"Scan Complete!", sizeof(message));
-
                     ScanRunning = false;
 
                     EnableWindow(Scan, true);
@@ -841,11 +833,9 @@ DWORD WINAPI ProcessScan(LPVOID params)
                     EnableWindow(DataSize, true);
                     EnableWindow(Value, true);
                     EnableWindow(SearchCondition, true);
-                    EnableWindow(MainWindow, false);
 
-                    MessageBox(MainWindow, message, title, MB_OK);
-
-                    EnableWindow(MainWindow, true);
+                    MessageBeep(MB_OK); 
+        
                     SetForegroundWindow(MainWindow);
                 }
             }
@@ -884,15 +874,14 @@ bool UpdateValue(void)
         if(PokeFloat(scanner->process, addr, v, scanner->data_size))
         {
             DestroyWindow(ChangeValueDlg);
-            EnableWindow(MainWindow, false);
-            MessageBox(MainWindow, "Memory was updated successfully.", "Success!", MB_OK);
-            EnableWindow(MainWindow, true);
             SetForegroundWindow(MainWindow);
 
             SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
             float tmp = PeekFloat(scanner->process, addr, scanner->data_size);
             DoubleToString(tmp, val, sizeof(val));
             ListView_SetItemText(ListView, SelectedItem, 1, val);
+
+            MessageBeep(MB_OK); 
 
             return true;
         }
@@ -901,7 +890,7 @@ bool UpdateValue(void)
         {
             char error[] = "Memory operation failed!";
             EnableWindow(MainWindow, false);
-            MessageBox(MainWindow, error, "Error!", MB_OK);
+            MessageBox(MainWindow, error, "Error!", MB_OK | MB_ICONERROR);
             EnableWindow(MainWindow, true);
             SetForegroundWindow(MainWindow);
 
@@ -914,15 +903,14 @@ bool UpdateValue(void)
         if(PokeDouble(scanner->process, addr, v, scanner->data_size))
         {
             DestroyWindow(ChangeValueDlg);
-            EnableWindow(MainWindow, false);
-            MessageBox(MainWindow, "Memory was updated successfully.", "Success!", MB_OK);
-            EnableWindow(MainWindow, true);
             SetForegroundWindow(MainWindow);
 
             SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
             double tmp = PeekDouble(scanner->process, addr, scanner->data_size);
             DoubleToString(tmp, val, sizeof(val));
             ListView_SetItemText(ListView, SelectedItem, 1, val);
+
+            MessageBeep(MB_OK); 
 
             return true;
         }
@@ -931,7 +919,7 @@ bool UpdateValue(void)
         {
             char error[] = "Memory operation failed!";
             EnableWindow(MainWindow, false);
-            MessageBox(MainWindow, error, "Error!", MB_OK);
+            MessageBox(MainWindow, error, "Error!", MB_OK | MB_ICONERROR);
             EnableWindow(MainWindow, true);
             SetForegroundWindow(MainWindow);
 
@@ -944,15 +932,14 @@ bool UpdateValue(void)
         if(PokeDecimal(scanner->process, addr, (long long)v, scanner->data_size))
         {
             DestroyWindow(ChangeValueDlg);
-            EnableWindow(MainWindow, false);
-            MessageBox(MainWindow, "Memory was updated successfully.", "Success!", MB_OK);
-            EnableWindow(MainWindow, true);
             SetForegroundWindow(MainWindow);
 
             SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
             long long tmp = PeekDecimal(scanner->process, addr, scanner->data_size);
             IntegerToString(tmp, val, sizeof(val), FMT_INT_DECIMAL);
             ListView_SetItemText(ListView, SelectedItem, 1, val);
+
+            MessageBeep(MB_OK); 
 
             return true;
         }
@@ -961,7 +948,7 @@ bool UpdateValue(void)
         {
             char error[] = "Memory operation failed!";
             EnableWindow(MainWindow, false);
-            MessageBox(MainWindow, error, "Error!", MB_OK);
+            MessageBox(MainWindow, error, "Error!", MB_OK | MB_ICONERROR);
             EnableWindow(MainWindow, true);
             SetForegroundWindow(MainWindow); 
 

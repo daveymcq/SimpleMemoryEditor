@@ -16,6 +16,8 @@ if not [%1] == [] (
 if defined VCVARS (
     if %COMPILE_64BIT% == yes (
     
+        echo building for x64
+    
         call %VCVARS% x64>NUL
         mkdir bin\x64
         rc ".\resources\resource.rc"
@@ -30,7 +32,9 @@ if defined VCVARS (
 
 if defined VCVARS (
     if %COMPILE_32BIT% == yes (
-    
+        
+        echo building for x86
+        
         call %VCVARS% x86>NUL
         mkdir bin\x86
         rc ".\resources\resource.rc"
