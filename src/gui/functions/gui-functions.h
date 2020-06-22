@@ -1,14 +1,9 @@
 #ifndef _GUI_H
 #define _GUI_H
 
-#include "resource.h"
-
 LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ChooseProcessDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void DrawCloseButton(HWND hWnd, HDC hdc)
 {
@@ -612,6 +607,8 @@ void AddItemToListView(void *address, const char *value)
     SendMessage(ListView, LVM_SETITEM, 0, (LPARAM)&Item);
 }
 
-#include "window-procedures.h"
+#include "window-procedures/main-window-procedures.h"
+#include "window-procedures/choose-process-window-procedures.h"
+#include "window-procedures/change-value-window-procedures.h"
 
 #endif

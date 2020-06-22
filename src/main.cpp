@@ -1,6 +1,6 @@
 /* Memory Editing Application
  Author: David McHugh Jr.
- Last Modified: 06/06/2020 */
+ Last Modified: 06/22/2020 */
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
@@ -17,8 +17,8 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <tlhelp32.h>
 #include <commctrl.h>
 
-#include "variables.h"
-
+#include "resource.h"
+#include "global-declarations.h"
 #include "foundation/functions/lowlevelfunctions/low-level-functions.h"
 #include "scanner/functions/memory-scanner-functions.h"
 #include "gui/functions/gui-functions.h"
@@ -33,5 +33,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     }
 
     MessageBox(0, "The application failed to start.", title, MB_OK | MB_ICONERROR);
+
     return -1;
 }
