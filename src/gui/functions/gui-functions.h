@@ -76,7 +76,7 @@ void PaintCustomWindowFrame(HWND hWnd, HDC hdc, DWORD X, DWORD Y)
     RECT window;
     HBRUSH brush;
 
-    COLORREF background = RGB(57, 60, 64);
+    COLORREF background = RGB(51, 51, 51);
 
     GetClientRect(hWnd, &window);
 
