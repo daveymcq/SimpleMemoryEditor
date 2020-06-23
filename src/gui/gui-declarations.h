@@ -38,6 +38,7 @@ static char PID[256];
 static DWORD MainWindowWidth, MainWindowHeight; 
 static DWORD ChooseProcessWindowWidth, ChooseProcessWindowHeight;
 static DWORD ChangeValueWindowWidth, ChangeValueWindowHeight;
+static DWORD CustomToolbarHeight;
 
 static HFONT Font;
 static HICON Icon;

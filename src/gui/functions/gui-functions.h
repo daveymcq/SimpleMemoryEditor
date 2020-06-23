@@ -7,17 +7,17 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 
 void DrawCloseButton(HWND hWnd, HDC hdc)
 {
-    RECT rc;
+    RECT window;
 
-    GetClientRect(hWnd,  &rc);
+    GetClientRect(hWnd,  &window);
 
     HBRUSH br = CreateSolidBrush(RGB(200, 30, 30)); 
 
-    FillRect(hdc, &rc, br);
+    FillRect(hdc, &window, br);
     SetBkColor(hdc, RGB(200, 30, 30)); 
     SetTextColor(hdc, RGB(255, 255, 255));
 
-    TextOut(hdc, 15, 8, "X", 1);
+    TextOut(hdc, 13, 4, "X", 1);
 }
 
 void DrawWindowFrame(RECT rect, HDC hdc, HBRUSH brush, DWORD width, DWORD height)
@@ -26,12 +26,12 @@ void DrawWindowFrame(RECT rect, HDC hdc, HBRUSH brush, DWORD width, DWORD height
 
     left.left = 0;
     left.top = rect.bottom;
-    left.right = 2;
+    left.right = 4;
     left.bottom = height;
     
     FillRect(hdc, &left, brush);
 
-    right.left = width - 2;
+    right.left = width - 4;
     right.top = rect.bottom;
     right.right = width;
     right.bottom = height;
@@ -39,7 +39,7 @@ void DrawWindowFrame(RECT rect, HDC hdc, HBRUSH brush, DWORD width, DWORD height
     FillRect(hdc, &right, brush);
 
     bottom.left = 0;
-    bottom.top = height - 2;
+    bottom.top = height - 4;
     bottom.right = width;
     bottom.bottom = height;
     
@@ -49,7 +49,6 @@ void DrawWindowFrame(RECT rect, HDC hdc, HBRUSH brush, DWORD width, DWORD height
 LRESULT UpdateWindowLocation(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
     LRESULT move = 0;
-    DWORD custom_toolbar_height = 34; 
 
     RECT rc;
     POINT pt;
@@ -57,7 +56,7 @@ LRESULT UpdateWindowLocation(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     GetCursorPos(&pt);
     GetWindowRect(hWnd, &rc);
 
-    rc.bottom = rc.bottom - ((rc.bottom - rc.top) - custom_toolbar_height);
+    rc.bottom = rc.bottom - ((rc.bottom - rc.top) - CustomToolbarHeight);
 
     if(pt.x <= rc.right && pt.x >= rc.left && pt.y <= rc.bottom && pt.y >= rc.top)
     {
@@ -74,19 +73,20 @@ LRESULT UpdateWindowLocation(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 void PaintCustomWindowFrame(HWND hWnd, HDC hdc, DWORD X, DWORD Y)
 {
-    RECT rect;
+    RECT window;
     HBRUSH brush;
-    DWORD custom_toolbar_height = 34; 
+
     COLORREF background = RGB(57, 60, 64);
 
-    GetClientRect(hWnd, &rect);
+    GetClientRect(hWnd, &window);
 
-    rect.bottom = rect.bottom - ((rect.bottom - rect.top) - custom_toolbar_height);
+    window.bottom = window.bottom - ((window.bottom - window.top - 2) - CustomToolbarHeight);
+
     brush = CreateSolidBrush(background);
 
-    FillRect(hdc, &rect, brush);
+    FillRect(hdc, &window, brush);
 
-    DrawWindowFrame(rect, hdc, brush, X, Y);
+    DrawWindowFrame(window, hdc, brush, X, Y);
 
     SetBkColor(hdc, background);
     SetTextColor(hdc, RGB(255, 255, 255));
@@ -155,17 +155,16 @@ void CreateMainDialogUI(HWND hWnd)
     static char addr_header[] = "Address";
 
     unsigned short index;
-    DWORD custom_toolbar_height = 34;
 
-    MainWindowCloseButton = CreateWindow("button", 0, WS_CHILD | WS_VISIBLE | BS_OWNERDRAW, MainWindowWidth - 40, 1,
-                               39, custom_toolbar_height - 2, hWnd, (HMENU)ID_CLOSE, GetModuleHandle(0), 0);
+    MainWindowCloseButton = CreateWindow("button", 0, WS_CHILD | WS_VISIBLE | BS_OWNERDRAW, MainWindowWidth - 40, 4,
+                               34, CustomToolbarHeight - 6, hWnd, (HMENU)ID_CLOSE, GetModuleHandle(0), 0);
 
     metrics.cbSize = sizeof(metrics);
     SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0);
     Font = CreateFontIndirect(&metrics.lfMessageFont);
 
     ListView = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTVIEW, 0, WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_SINGLESEL,
-                              10, 10 + custom_toolbar_height, 598, 225, hWnd, (HMENU)ID_LISTVIEW, GetModuleHandle(0), 0);
+                              10, 10 + CustomToolbarHeight, 598, 225, hWnd, (HMENU)ID_LISTVIEW, GetModuleHandle(0), 0);
 
     #ifndef LVS_EX_DOUBLEBUFFER
         #define LVS_EX_DOUBLEBUFFER 0x00010000
@@ -185,28 +184,28 @@ void CreateMainDialogUI(HWND hWnd)
 
     SendMessage(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&Column);
 
-    SearchConditionLabel = CreateWindow("static", "Search Condition: ", WS_VISIBLE | WS_CHILD, 10, 245 + custom_toolbar_height, 100, 25, hWnd, 0, GetModuleHandle(0), 0);
-    SearchCondition = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 150, 245 + custom_toolbar_height, 125, 25, hWnd, (HMENU)ID_SEARCH_CONDITION, GetModuleHandle(0), 0);
+    SearchConditionLabel = CreateWindow("static", "Search Condition: ", WS_VISIBLE | WS_CHILD, 10, 245 + CustomToolbarHeight, 100, 25, hWnd, 0, GetModuleHandle(0), 0);
+    SearchCondition = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 150, 245 + CustomToolbarHeight, 125, 25, hWnd, (HMENU)ID_SEARCH_CONDITION, GetModuleHandle(0), 0);
 
     SendMessage(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_EQUALS]);
 
-    ValueLabel = CreateWindow("static", "Value: ", WS_VISIBLE | WS_CHILD, 310, 250 + custom_toolbar_height, 100, 25, hWnd, 0, GetModuleHandle(0), 0);
-    Value = CreateWindowEx(WS_EX_CLIENTEDGE, "edit", 0, WS_VISIBLE | WS_CHILD, 400, 247 + custom_toolbar_height, 100, 20, hWnd, (HMENU)ID_VALUE, GetModuleHandle(0), 0);
-    ChangeValue = CreateWindow("button", "Change Value", WS_VISIBLE | WS_CHILD, 510, 245 + custom_toolbar_height, 100, 25, hWnd, (HMENU)ID_CHANGE_VALUE, GetModuleHandle(0), 0);
-    NewScan = CreateWindow("button", "Reset Scan", WS_VISIBLE | WS_CHILD, 510, 275 + custom_toolbar_height, 100, 25, hWnd, (HMENU)ID_NEW_SCAN, GetModuleHandle(0), 0);
+    ValueLabel = CreateWindow("static", "Value: ", WS_VISIBLE | WS_CHILD, 310, 250 + CustomToolbarHeight, 100, 25, hWnd, 0, GetModuleHandle(0), 0);
+    Value = CreateWindowEx(WS_EX_CLIENTEDGE, "edit", 0, WS_VISIBLE | WS_CHILD, 400, 247 + CustomToolbarHeight, 100, 20, hWnd, (HMENU)ID_VALUE, GetModuleHandle(0), 0);
+    ChangeValue = CreateWindow("button", "Change Value", WS_VISIBLE | WS_CHILD, 510, 245 + CustomToolbarHeight, 100, 25, hWnd, (HMENU)ID_CHANGE_VALUE, GetModuleHandle(0), 0);
+    NewScan = CreateWindow("button", "Reset Scan", WS_VISIBLE | WS_CHILD, 510, 275 + CustomToolbarHeight, 100, 25, hWnd, (HMENU)ID_NEW_SCAN, GetModuleHandle(0), 0);
 
-    Pid = CreateWindow("static", "*No Process Selected*", WS_VISIBLE | WS_CHILD, 10, 280 + custom_toolbar_height, 150, 25, hWnd, (HMENU)ID_PROCESS_ID, GetModuleHandle(0), 0);
-    ChoosePid = CreateWindow("button", "Select Process", WS_VISIBLE | WS_CHILD, 175, 275 + custom_toolbar_height, 100, 25, hWnd, (HMENU)ID_SELECT_PROCESS, GetModuleHandle(0), 0);
+    Pid = CreateWindow("static", "*No Process Selected*", WS_VISIBLE | WS_CHILD, 10, 280 + CustomToolbarHeight, 150, 25, hWnd, (HMENU)ID_PROCESS_ID, GetModuleHandle(0), 0);
+    ChoosePid = CreateWindow("button", "Select Process", WS_VISIBLE | WS_CHILD, 175, 275 + CustomToolbarHeight, 100, 25, hWnd, (HMENU)ID_SELECT_PROCESS, GetModuleHandle(0), 0);
 
-    DataSizeLabel = CreateWindow("static", "Type: ", WS_VISIBLE | WS_CHILD, 310, 280 + custom_toolbar_height, 100, 25, hWnd, 0, GetModuleHandle(0), 0);
-    DataSize = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 400, 275 + custom_toolbar_height, 100, 25, hWnd, (HMENU)ID_VALUE, GetModuleHandle(0), 0);
+    DataSizeLabel = CreateWindow("static", "Type: ", WS_VISIBLE | WS_CHILD, 310, 280 + CustomToolbarHeight, 100, 25, hWnd, 0, GetModuleHandle(0), 0);
+    DataSize = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 400, 275 + CustomToolbarHeight, 100, 25, hWnd, (HMENU)ID_VALUE, GetModuleHandle(0), 0);
 
     for(index = 0; index < ARRAYSIZE(data_types); index++)
     {
         SendMessage(DataSize, CB_ADDSTRING, 0, (LPARAM)data_types[index]);
     }
 
-    Scan = CreateWindow("button", "Scan Memory", WS_VISIBLE | WS_CHILD, 10, 315 + custom_toolbar_height, 600, 50, hWnd, (HMENU)ID_SCAN, GetModuleHandle(0), 0);
+    Scan = CreateWindow("button", "Scan Memory", WS_VISIBLE | WS_CHILD, 10, 315 + CustomToolbarHeight, 600, 50, hWnd, (HMENU)ID_SCAN, GetModuleHandle(0), 0);
 
     EnableWindow(Scan, false);
 
@@ -383,7 +382,6 @@ void ProcessUnfreezeValueButtonEvent(void)
 
 void CreateChooseProcessDialogUI(void)
 {
-    DWORD custom_toolbar_height = 34; 
     WNDCLASSEX wc;
 
     wc.cbSize           = sizeof(wc);
@@ -416,15 +414,15 @@ void CreateChooseProcessDialogUI(void)
  
             EnableWindow(MainWindow, false);
 
-            ChooseProcessWindowCloseButton = CreateWindow("button", 0, WS_CHILD | WS_VISIBLE | BS_OWNERDRAW, ChooseProcessWindowWidth - 40, 1,
-                                                          39, custom_toolbar_height - 2, PidDlg, (HMENU)ID_CLOSE_CHOOSE_PROCESS, GetModuleHandle(0), 0);
+            ChooseProcessWindowCloseButton = CreateWindow("button", 0, WS_CHILD | WS_VISIBLE | BS_OWNERDRAW, ChooseProcessWindowWidth - 38, 4,
+                                                          34, CustomToolbarHeight - 6, PidDlg, (HMENU)ID_CLOSE_CHOOSE_PROCESS, GetModuleHandle(0), 0);
 
             ProcessSelection = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTBOX, 0,
                                               WS_VSCROLL | LBS_NOTIFY | LBS_DISABLENOSCROLL | WS_VISIBLE | WS_CHILD,
-                                              10, 10 + custom_toolbar_height, 270, 300, PidDlg, (HMENU)ID_PROCESSES, GetModuleHandle(0), 0);
+                                              10, 10 + CustomToolbarHeight, 270, 300, PidDlg, (HMENU)ID_PROCESSES, GetModuleHandle(0), 0);
   
             ChooseProcess = CreateWindow("button", "Select Process", WS_CHILD | WS_VISIBLE,
-                                         10, 310 + custom_toolbar_height, 270, 50, PidDlg, (HMENU)ID_CHOOSE_PROCESS, GetModuleHandle(0), 0);
+                                         10, 310 + CustomToolbarHeight, 270, 50, PidDlg, (HMENU)ID_CHOOSE_PROCESS, GetModuleHandle(0), 0);
 
             SendMessage(ProcessSelection, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessage(ChooseProcess, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
@@ -450,7 +448,6 @@ void CreateChangeValueDialogUI(void)
 {
     if(SelectedItem > -1)
     {
-         DWORD custom_toolbar_height = 34; 
          WNDCLASSEX wc;
 
          wc.cbSize           = sizeof(wc);
@@ -483,16 +480,17 @@ void CreateChangeValueDialogUI(void)
                  ShowWindow(ChangeValueDlg, SW_SHOW);
                  UpdateWindow(ChangeValueDlg);
 
-                 ChangeValueWindowCloseButton = CreateWindow("button", 0, WS_CHILD | WS_VISIBLE | BS_OWNERDRAW, ChangeValueWindowWidth - 40, 1,
-                                                             39, custom_toolbar_height - 2, ChangeValueDlg, (HMENU)ID_CLOSE_CHANGE_VALUE, GetModuleHandle(0), 0);
+                 ChangeValueWindowCloseButton = CreateWindow("button", 0, WS_CHILD | WS_VISIBLE | BS_OWNERDRAW, ChangeValueWindowWidth - 38, 4,
+                                                             34, CustomToolbarHeight - 6, ChangeValueDlg, (HMENU)ID_CLOSE_CHANGE_VALUE, GetModuleHandle(0), 0);
+
 
                  SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
                  SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
 
                  ListView_GetItemText(ListView, SelectedItem, 1, val, sizeof(val)); 
 
-                 ChangeValueDlgValue = CreateWindowEx(WS_EX_CLIENTEDGE, "edit", val, WS_VISIBLE | WS_CHILD, 10, 10 + custom_toolbar_height, 180, 25, ChangeValueDlg, (HMENU)ID_CHANGE_DLG_VALUE, 0, 0);
-                 ChangeValueDlgButton = CreateWindow("button", "Set Value", WS_VISIBLE | WS_CHILD, 200, 10 + custom_toolbar_height, 85, 25, ChangeValueDlg, (HMENU)ID_CHANGE_DLG_BUTTON, 0, 0);
+                 ChangeValueDlgValue = CreateWindowEx(WS_EX_CLIENTEDGE, "edit", val, WS_VISIBLE | WS_CHILD, 10, 10 + CustomToolbarHeight, 180, 25, ChangeValueDlg, (HMENU)ID_CHANGE_DLG_VALUE, 0, 0);
+                 ChangeValueDlgButton = CreateWindow("button", "Set Value", WS_VISIBLE | WS_CHILD, 200, 10 + CustomToolbarHeight, 85, 25, ChangeValueDlg, (HMENU)ID_CHANGE_DLG_BUTTON, 0, 0);
 
                  SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
                  SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0)); 

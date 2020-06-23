@@ -17,6 +17,8 @@ BOOL Initialize(void)
     ChangeValueWindowWidth = 295;
     ChangeValueWindowHeight = 80;
 
+    CustomToolbarHeight = 30;
+
     FirstScanNotRun = true;
     SelectedItem = -1;
 

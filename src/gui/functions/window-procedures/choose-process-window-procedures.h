@@ -32,11 +32,7 @@ LRESULT CALLBACK ChooseProcessDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPA
         case WM_PAINT:
 
             hdc = BeginPaint(hWnd, &ps);
-
-            {
-                PaintCustomWindowFrame(hWnd, hdc, ChooseProcessWindowWidth, ChooseProcessWindowHeight);
-            }
-
+            PaintCustomWindowFrame(hWnd, hdc, ChooseProcessWindowWidth, ChooseProcessWindowHeight);
             EndPaint(hWnd, &ps);
 
         break;

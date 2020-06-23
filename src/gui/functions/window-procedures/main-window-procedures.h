@@ -37,11 +37,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
         case WM_PAINT:
 
             hdc = BeginPaint(hWnd, &ps);
-
-            {
-                PaintCustomWindowFrame(hWnd, hdc, MainWindowWidth, MainWindowHeight);
-            }
-
+            PaintCustomWindowFrame(hWnd, hdc, MainWindowWidth, MainWindowHeight);
             EndPaint(hWnd, &ps);
 
         break;

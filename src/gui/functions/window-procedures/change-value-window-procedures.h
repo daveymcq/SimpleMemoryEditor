@@ -22,55 +22,46 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
             ShowWindow(MainWindow, SW_SHOW);
             SetForegroundWindow(MainWindow);
 
-            break;
+        break;
 
         case WM_CREATE:
 
             ShowWindow(MainWindow, SW_HIDE);
             CenterWindow(hWnd);
 
-            break;
+        break;
 
         case WM_SIZE:
 
             ChangeValueWindowWidth = LOWORD(lParam);
             ChangeValueWindowHeight = HIWORD(lParam);
 
-            break;
+        break;
 
         case WM_PAINT:
 
             hdc = BeginPaint(hWnd, &ps);
-
-            {
-                PaintCustomWindowFrame(hWnd, hdc, ChangeValueWindowWidth, ChangeValueWindowHeight);
-            }
-
+            PaintCustomWindowFrame(hWnd, hdc, ChangeValueWindowWidth, ChangeValueWindowHeight);     
             EndPaint(hWnd, &ps);
 
-            break;
+        break;
 
         case WM_DRAWITEM:
 
             pdis = (LPDRAWITEMSTRUCT)lParam;
 
-            switch(pdis->CtlID)
+            if(pdis->CtlID == ID_CLOSE_CHANGE_VALUE)
             {
-                case ID_CLOSE_CHANGE_VALUE:
-
-                    DrawCloseButton(hWnd, pdis->hDC);
-
-                    break;
-
+                DrawCloseButton(hWnd, pdis->hDC);
             }
 
-            break;
+        break;
 
         case WM_NCHITTEST:
 
             return UpdateWindowLocation(hWnd, Msg, wParam, lParam);
 
-            break;
+        break;
 
         case WM_COMMAND:
 
@@ -84,13 +75,13 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
                 UpdateValue();
             }
 
-            break;
+        break;
 
         default:
 
             return DefWindowProc(hWnd, Msg, wParam, lParam);
 
-            break;
+        break;
     }
 
     return 0;
