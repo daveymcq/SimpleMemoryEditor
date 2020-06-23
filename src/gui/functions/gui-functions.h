@@ -119,7 +119,7 @@ int CreateMainDialog(HINSTANCE hInstance, int nCmdShow)
         Icon = wc.hIcon;
 
         MainWindow = CreateWindow(wc.lpszClassName,
-                                  title, WS_POPUPWINDOW, 100, 
+                                  title, WS_POPUP, 100, 
                                   100, MainWindowWidth,
                                   MainWindowHeight, 0, 0, 
                                   wc.hInstance, 0);
@@ -156,7 +156,7 @@ void CreateMainDialogUI(HWND hWnd)
 
     unsigned short index;
 
-    MainWindowCloseButton = CreateWindow("button", 0, WS_CHILD | WS_VISIBLE | BS_OWNERDRAW, MainWindowWidth - 40, 4,
+    MainWindowCloseButton = CreateWindow("button", 0, WS_CHILD | WS_VISIBLE | BS_OWNERDRAW, MainWindowWidth - 38, 4,
                                34, CustomToolbarHeight - 6, hWnd, (HMENU)ID_CLOSE, GetModuleHandle(0), 0);
 
     metrics.cbSize = sizeof(metrics);
@@ -401,9 +401,9 @@ void CreateChooseProcessDialogUI(void)
 
     if(RegisterClassEx(&wc))
     {
-        PidDlg = CreateWindowEx(WS_EX_TOPMOST, wc.lpszClassName, title, 
-                                WS_POPUP, 100, 100, ChooseProcessWindowWidth, 
-                                ChooseProcessWindowHeight, 0, 0, 0, 0);
+        PidDlg = CreateWindow(wc.lpszClassName, title, 
+                             WS_POPUP, 100, 100, ChooseProcessWindowWidth, 
+                             ChooseProcessWindowHeight, 0, 0, 0, 0);
 
 
         if(PidDlg)
@@ -468,9 +468,9 @@ void CreateChangeValueDialogUI(void)
 
          if(RegisterClassEx(&wc))
          {
-             ChangeValueDlg = CreateWindowEx(WS_EX_TOPMOST, wc.lpszClassName, title, WS_POPUP, 
-                                             100, 100, ChangeValueWindowWidth, 
-                                             ChangeValueWindowHeight, 0, 0, 0, 0);
+             ChangeValueDlg = CreateWindow(wc.lpszClassName, title, WS_POPUP, 
+                                           100, 100, ChangeValueWindowWidth, 
+                                           ChangeValueWindowHeight, 0, 0, 0, 0);
 
              if(ChangeValueDlg)
              {
