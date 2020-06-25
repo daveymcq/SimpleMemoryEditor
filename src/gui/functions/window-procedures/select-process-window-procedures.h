@@ -1,5 +1,5 @@
-#ifndef _CHOOSE_PROCESS_WINDOW_PROCEDURES_H
-#define _CHOOSE_PROCESS_WINDOW_PROCEDURES_H
+#ifndef _SELECT_PROCESS_WINDOW_PROCEDURES_H
+#define _SELECT_PROCESS_WINDOW_PROCEDURES_H
 
 /* ************************************************************************************ */
 
@@ -7,7 +7,7 @@
 
 // The window procedure for the process selection dialog.
 
-LRESULT CALLBACK ChooseProcessDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK ChooseProcessWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
     HDC hdc;
     PAINTSTRUCT ps;
@@ -81,7 +81,7 @@ LRESULT CALLBACK ChooseProcessDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPA
 
             else if(LOWORD(wParam) == ID_CHOOSE_PROCESS)
             {
-                ProcessChooseProcessButtonEvent();
+                ProcessSelectProcessButtonEvent();
             }
 
             else if((LOWORD(wParam) == ID_PROCESSES) && (HIWORD(wParam) == LBN_SELCHANGE))

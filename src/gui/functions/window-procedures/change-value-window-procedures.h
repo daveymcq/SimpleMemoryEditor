@@ -7,7 +7,7 @@
 
 // The window procedure for the dialog that modifies the value of a scan result.
 
-LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK ChangeValueWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 
     HDC hdc;
@@ -72,7 +72,7 @@ LRESULT CALLBACK ChangeValueDialogProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 
             else if(LOWORD(wParam) == ID_CHANGE_DLG_BUTTON)
             {
-                UpdateValue();
+                ProcessUpdateValueEvent();
             }
 
         break;

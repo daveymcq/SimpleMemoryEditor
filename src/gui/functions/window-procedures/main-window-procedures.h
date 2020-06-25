@@ -7,7 +7,7 @@
 
 // The window procedure for the main window.
 
-LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
     HDC hdc;
     PAINTSTRUCT ps;
@@ -17,14 +17,14 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         case WM_CREATE:
 
-            CreateMainDialogUI(hWnd);
+            CreateMainWindowUI(hWnd);
             CenterWindow(hWnd);
 
         break;
 
         case WM_CLOSE:
 
-            CleanupAndTerminateApplication(hWnd);
+            ProcessMainWindowCloseEvent(hWnd);
 
         break;
 
@@ -117,12 +117,12 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
             else if(LOWORD(wParam) == ID_SELECT_PROCESS)
             {
                 GetProcessNameAndID();
-                CreateChooseProcessDialogUI();
+                CreateChooseProcessWindow();
             }
 
             else if(LOWORD(wParam) == ID_CHANGE_VALUE)
             {
-                if((!SelectedAddressFrozen()) && (GetMatchCount(scanner))) CreateChangeValueDialogUI();
+                if((!SelectedAddressFrozen()) && (GetMatchCount(scanner))) CreateChangeValueDialog();
             }
 
             else if(LOWORD(wParam) == ID_NEW_SCAN)
