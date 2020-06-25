@@ -41,7 +41,7 @@ void CreateChooseProcessWindow(void)
                                               WS_VSCROLL | LBS_NOTIFY | LBS_DISABLENOSCROLL | WS_VISIBLE | WS_CHILD,
                                               10, 10 + CustomToolbarHeight, 270, 300, PidDlg, (HMENU)ID_PROCESSES, GetModuleHandle(0), 0);
 
-            ChooseProcess = CreateWindow("button", "Select Process", WS_CHILD | WS_VISIBLE,
+            ChooseProcess = CreateWindow("button", "Select Process", WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
                                          10, 310 + CustomToolbarHeight, 270, 50, PidDlg, (HMENU)ID_CHOOSE_PROCESS, GetModuleHandle(0), 0);
 
             SendMessage(ProcessSelection, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));

@@ -80,7 +80,31 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPara
             {
                 case ID_CLOSE:
 
-                    DrawCloseButton(hWnd, pdis->hDC);
+                    DrawCloseButton(hWnd, pdis->hDC, 13, 4, 34, CustomToolbarHeight - 6);
+
+                break;
+
+                case ID_SELECT_PROCESS:
+
+                    DrawCustomButton(hWnd, pdis->hDC, ID_SELECT_PROCESS, 12, 5, 100, 25);
+
+                break;
+
+                case ID_SCAN:
+
+                    DrawCustomButton(hWnd, pdis->hDC, ID_SCAN, 270, 15, 600, 50);
+                    
+                break;
+
+                case ID_NEW_SCAN:
+
+                    DrawCustomButton(hWnd, pdis->hDC, ID_NEW_SCAN, 20, 5, 100, 25);
+
+                break;
+
+                case ID_CHANGE_VALUE:
+
+                    DrawCustomButton(hWnd, pdis->hDC, ID_CHANGE_VALUE, 12, 5, 100, 25);
 
                 break;
             }

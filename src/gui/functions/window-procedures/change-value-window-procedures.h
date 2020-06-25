@@ -48,11 +48,21 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 
         case WM_DRAWITEM:
 
-            pdis = (LPDRAWITEMSTRUCT)lParam;
+            pdis = (LPDRAWITEMSTRUCT)lParam; 
 
-            if(pdis->CtlID == ID_CLOSE_CHANGE_VALUE)
+            switch(pdis->CtlID)
             {
-                DrawCloseButton(hWnd, pdis->hDC);
+                case ID_CLOSE_CHANGE_VALUE:
+
+                    DrawCloseButton(hWnd, pdis->hDC, 13, 4, 34, CustomToolbarHeight - 6); 
+
+                break;
+
+                case ID_CHANGE_DLG_BUTTON:
+
+                    DrawCustomButton(hWnd, pdis->hDC, ID_CHANGE_DLG_BUTTON, 20, 5, 85, 25);
+
+                break;
             }
 
         break;

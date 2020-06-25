@@ -1,19 +1,28 @@
 #ifndef _CUSTOM_WINDOW_FRAME
 #define _CUSTOM_WINDOW_FRAME
 
-void DrawCloseButton(HWND hWnd, HDC hdc)
+void DrawCloseButton(HWND hWnd, HDC hdc, DWORD x, DWORD y, DWORD width, DWORD height)
 {
     RECT window;
+    HPEN hpen;
+    unsigned int offset; 
 
     GetClientRect(hWnd,  &window);
+    SendMessage(hWnd, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0)); 
 
-    HBRUSH br = CreateSolidBrush(RGB(200, 30, 30));
+    for(offset = 0; offset < height; offset++)
+    {
+        hpen = CreatePen(PS_SOLID, 4, RGB(160 - offset, 0, 0));
+        SelectObject(hdc, hpen);
+        Rectangle(hdc, 0, 0 + offset, width + 2, 1 + offset);
+        DeleteObject(hpen);
+    }
 
-    FillRect(hdc, &window, br);
-    SetBkColor(hdc, RGB(200, 30, 30));
+    SetBkColor(hdc, RGB(130, 0, 0));
     SetTextColor(hdc, RGB(255, 255, 255));
+    SetBkMode(hdc, TRANSPARENT); 
 
-    TextOut(hdc, 13, 4, "X", 1);
+    TextOut(hdc, x, y, "X", 1);
 }
 
 void DrawWindowFrame(RECT rect, HDC hdc, HBRUSH brush, DWORD width, DWORD height)
@@ -75,6 +84,7 @@ void PaintCustomWindowFrame(HWND hWnd, HDC hdc, DWORD X, DWORD Y)
     COLORREF background = RGB(51, 51, 51);
 
     GetClientRect(hWnd, &window);
+    SendMessage(hWnd, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0)); 
 
     window.bottom = window.bottom - ((window.bottom - window.top - 2) - CustomToolbarHeight);
 

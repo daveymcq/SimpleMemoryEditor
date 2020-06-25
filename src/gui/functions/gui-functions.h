@@ -6,6 +6,7 @@ LRESULT CALLBACK ChooseProcessWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPA
 LRESULT CALLBACK ChangeValueWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 #include "window-creation/custom-components/window-frame.h"
+#include "window-creation/custom-components/buttons.h"
 
 #include "window-creation/main-window.h"
 #include "window-creation/select-process-window.h"

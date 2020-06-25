@@ -52,8 +52,14 @@ LRESULT CALLBACK ChooseProcessWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPA
             {
                 case ID_CLOSE_CHOOSE_PROCESS:
 
-                    DrawCloseButton(hWnd, pdis->hDC);
+                    DrawCloseButton(hWnd, pdis->hDC, 13, 4, 34, CustomToolbarHeight - 6); 
 
+                break;
+
+                case ID_CHOOSE_PROCESS:
+
+                    DrawCustomButton(hWnd, pdis->hDC, ID_CHOOSE_PROCESS, 100, 15, 270, 50);
+                    
                 break;
             }
 

@@ -96,11 +96,11 @@ void CreateMainWindowUI(HWND hWnd)
 
     ValueLabel = CreateWindow("static", "Value: ", WS_VISIBLE | WS_CHILD, 310, 250 + CustomToolbarHeight, 100, 25, hWnd, 0, GetModuleHandle(0), 0);
     Value = CreateWindowEx(WS_EX_CLIENTEDGE, "edit", 0, WS_VISIBLE | WS_CHILD, 400, 247 + CustomToolbarHeight, 100, 20, hWnd, (HMENU)ID_VALUE, GetModuleHandle(0), 0);
-    ChangeValue = CreateWindow("button", "Change Value", WS_VISIBLE | WS_CHILD, 510, 245 + CustomToolbarHeight, 100, 25, hWnd, (HMENU)ID_CHANGE_VALUE, GetModuleHandle(0), 0);
-    NewScan = CreateWindow("button", "Reset Scan", WS_VISIBLE | WS_CHILD, 510, 275 + CustomToolbarHeight, 100, 25, hWnd, (HMENU)ID_NEW_SCAN, GetModuleHandle(0), 0);
+    ChangeValue = CreateWindow("button", "Change Value", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW, 510, 245 + CustomToolbarHeight, 100, 25, hWnd, (HMENU)ID_CHANGE_VALUE, GetModuleHandle(0), 0);
+    NewScan = CreateWindow("button", "Reset Scan", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW, 510, 275 + CustomToolbarHeight, 100, 25, hWnd, (HMENU)ID_NEW_SCAN, GetModuleHandle(0), 0);
 
     Pid = CreateWindow("static", "*No Process Selected*", WS_VISIBLE | WS_CHILD, 10, 280 + CustomToolbarHeight, 150, 25, hWnd, (HMENU)ID_PROCESS_ID, GetModuleHandle(0), 0);
-    ChoosePid = CreateWindow("button", "Select Process", WS_VISIBLE | WS_CHILD, 175, 275 + CustomToolbarHeight, 100, 25, hWnd, (HMENU)ID_SELECT_PROCESS, GetModuleHandle(0), 0);
+    ChoosePid = CreateWindow("button", "Select Process", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW, 175, 275 + CustomToolbarHeight, 100, 25, hWnd, (HMENU)ID_SELECT_PROCESS, GetModuleHandle(0), 0);
 
     DataSizeLabel = CreateWindow("static", "Type: ", WS_VISIBLE | WS_CHILD, 310, 280 + CustomToolbarHeight, 100, 25, hWnd, 0, GetModuleHandle(0), 0);
     DataSize = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 400, 275 + CustomToolbarHeight, 100, 25, hWnd, (HMENU)ID_VALUE, GetModuleHandle(0), 0);
@@ -110,7 +110,7 @@ void CreateMainWindowUI(HWND hWnd)
         SendMessage(DataSize, CB_ADDSTRING, 0, (LPARAM)data_types[index]);
     }
 
-    Scan = CreateWindow("button", "Scan Memory", WS_VISIBLE | WS_CHILD, 10, 315 + CustomToolbarHeight, 600, 50, hWnd, (HMENU)ID_SCAN, GetModuleHandle(0), 0);
+    Scan = CreateWindow("button", "Scan Memory", WS_VISIBLE | WS_CHILD | BS_OWNERDRAW, 10, 315 + CustomToolbarHeight, 600, 50, hWnd, (HMENU)ID_SCAN, GetModuleHandle(0), 0);
 
     EnableWindow(Scan, false);
 
