@@ -19,34 +19,31 @@
 #define ID_HELP_ABOUT (WM_USER + 1015)
 #define ID_FREEZE_VALUE (WM_USER + 1016)
 #define ID_UNFREEZE_VALUE (WM_USER + 1017)
-#define ID_CLOSE (WM_USER + 1018)
-#define ID_CLOSE_CHOOSE_PROCESS (WM_USER + 1019)
-#define ID_CLOSE_CHANGE_VALUE (WM_USER + 1020)
 
 #define FREEZE_LIMIT (1024 * 128)
 #define PROCESS_LIMIT (1024)
 
-static const char *title = "Simple Memory Editor";
-static const char *data_sizes[] = { "1", "2", "4", "8", "4", "8" };
-static const char *data_types[] = { "Byte", "Short Integer", "Integer", "Long Integer", "Float", "Double" };
-static const char *search_conditions[] = { "Equals", "Increased", "Decreased" };
+const char *title = "Simple Memory Editor";
+const char *data_sizes[] = { "1", "2", "4", "8", "4", "8" };
+const char *data_types[] = { "Byte", "Short Integer", "Integer", "Long Integer", "Float", "Double" };
+const char *search_conditions[] = { "Equals", "Increased", "Decreased" };
 
 static char frozen_addresses[FREEZE_LIMIT][256];
 static char frozen_values[FREEZE_LIMIT][256]; 
 static char PID[256];
- 
-static DWORD MainWindowWidth, MainWindowHeight; 
-static DWORD ChooseProcessWindowWidth, ChooseProcessWindowHeight;
-static DWORD ChangeValueWindowWidth, ChangeValueWindowHeight;
-static DWORD CustomToolbarHeight;
+
+static DWORD Width;
+static DWORD Height;
 
 static HFONT Font;
-static HICON Icon;
 
 static HWND ListView, Scan, Value, ChangeValue, Pid, ChoosePid, DataSize, DataSizeLabel,
             PidLabel, ValueLabel, SearchConditionLabel, SearchCondition, NewScan, PidDlg,
             ProcessSelection, ChooseProcess, MainWindow, ChangeValueDlg, ChangeValueDlgValue,
-            ChangeValueDlgButton, MainWindowCloseButton, ChooseProcessWindowCloseButton, 
-            ChangeValueWindowCloseButton;
+            ChangeValueDlgButton;
+
+static HMENU MenuBar;
+static HMENU FileMenu;
+static HMENU HelpMenu;
 
 #endif
