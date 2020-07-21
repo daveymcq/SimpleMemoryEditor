@@ -1,5 +1,5 @@
-#ifndef _GUI_VARIABLES_H
-#define _GUI_VARIABLES_H
+#ifndef _GUI_DECLARATIONS_H
+#define _GUI_DECLARATIONS_H
 
 #define ID_LISTVIEW (WM_USER + 1000)
 #define ID_SCAN (WM_USER + 1001)

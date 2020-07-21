@@ -1,8 +1,8 @@
-#ifndef _VARIABLES_H
-#define _VARIABLES_H
+#ifndef _GLOBAL_DECLARATIONS_H
+#define _GLOBAL_DECLARATIONS_H
 
-#include "gui/functions/variables.h"
-#include "scanner/functions/variables.h"
+#include "gui/gui-declarations.h"
+#include "scanner/scanner-declarations.h"
 
 // Initialize local variables.
 
