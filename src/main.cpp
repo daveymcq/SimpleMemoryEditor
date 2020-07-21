@@ -20,7 +20,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include "resource.h"
 #include "declarations.h"
 #include "foundation/functions/lowlevelfunctions/low-level-functions.h"
-#include "scanner/functions/memory-scanner-functions.h"
+#include "scanner/functions/scanner-functions.h"
 #include "gui/functions/gui-functions.h"
 
 // Entry point.

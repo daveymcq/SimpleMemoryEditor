@@ -33,20 +33,19 @@ void CreateChangeValueWindow(void)
             {
                 char val[256];
 
-                EnableWindow(MainWindow, false);
-                ShowWindow(ChangeValueDlg, SW_SHOW);
-                UpdateWindow(ChangeValueDlg);
-
-                SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
-                SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
-
                 ListView_GetItemText(ListView, SelectedItem, 1, val, sizeof(val));
 
                 ChangeValueDlgValue = CreateWindowEx(WS_EX_CLIENTEDGE, "edit", val, WS_VISIBLE | WS_CHILD, 10, 10, 180, 25, ChangeValueDlg, (HMENU)ID_CHANGE_DLG_VALUE, 0, 0);
-                ChangeValueDlgButton = CreateWindow("button", "Set Value", WS_VISIBLE | WS_CHILD, 200, 10, 85, 25, ChangeValueDlg, (HMENU)ID_CHANGE_DLG_BUTTON, 0, 0);
+                ChangeValueDlgButton = CreateWindow("button", "Set Value", WS_VISIBLE | WS_CHILD, 200, 10, 85, 25, ChangeValueDlg, (HMENU)ID_CHANGE_DLG_BUTTON, 0, 0); 
 
                 SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
                 SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+                SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+                SendMessage(ChangeValueDlgButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+
+                EnableWindow(MainWindow, false);
+                ShowWindow(ChangeValueDlg, SW_SHOW);
+                UpdateWindow(ChangeValueDlg); 
             }
         }
     }
