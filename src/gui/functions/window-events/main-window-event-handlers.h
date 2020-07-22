@@ -100,7 +100,7 @@ void ProcessFreezeValueButtonEvent(void)
             MemoryZero(&frozen_values[NumberOfAddressesFrozen], sizeof(frozen_values[NumberOfAddressesFrozen]));
             CopyMemory(&frozen_values[NumberOfAddressesFrozen], value, sizeof(frozen_values[NumberOfAddressesFrozen]));
 
-            ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(value, " (FROZEN)"));
+            ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(value, (char *)" (FROZEN)"));
 
             NumberOfAddressesFrozen++;
         }

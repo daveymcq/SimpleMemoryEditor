@@ -3,16 +3,16 @@
 
 int CreateMainWindow(void)
 {
-    static LVCOLUMN Column;
-    static NONCLIENTMETRICS metrics;
-
     static char val_header[] = "Value";
     static char addr_header[] = "Address";
+    HINSTANCE hInstance = GetModuleHandle(0);
+
+    static LVCOLUMN Column;
+    static NONCLIENTMETRICS metrics; 
 
     unsigned short index;
 
     WNDCLASSEX wc;
-    HINSTANCE hInstance;
     MSG Msg;
 
     wc.cbSize = sizeof(wc);
@@ -32,8 +32,6 @@ int CreateMainWindow(void)
 
     if(RegisterClassEx(&wc))
     {
-        hInstance = wc.hInstance;
-
         MainWindow = CreateWindowEx(WS_EX_STATICEDGE, wc.lpszClassName, title,
                                     WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX, 100, 
                                     100, Width, Height, 0, 0, hInstance, 0);
