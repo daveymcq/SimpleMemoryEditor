@@ -667,7 +667,7 @@ void DisplayScanResults(MEMORY_BLOCK *mblock)
 
 // The thread function responsible for performing the scan.
 
-DWORD WINAPI ProcessScan(LPVOID params)
+DWORD WINAPI ProcessScan(void)
 {
     unsigned int matches;
     char pid[256], data_size[256], val[256], condition[256], message[256];
@@ -679,7 +679,7 @@ DWORD WINAPI ProcessScan(LPVOID params)
     int selection_id = (int)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
     if(selection_id > -1) CopyString(data_size, (char *)data_sizes[selection_id], sizeof(data_size));
 
-    if(!IsDecimal(val))
+    if(!IsNumeric(val) || ((val[0] == '0') && (val[1] == 'x')))
     {
         char msg[] = "Search value must be in decimal format";
         MessageBox(MainWindow, msg, title, MB_OK);
@@ -811,7 +811,6 @@ DWORD WINAPI ProcessScan(LPVOID params)
                         DWORD ThreadID;
                         FreezeThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)FreezeAddresses, 0, 0, &ThreadID); 
                     }
-
 
                     if(FirstScanNotRun)
                     {

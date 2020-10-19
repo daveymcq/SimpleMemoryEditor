@@ -13,12 +13,12 @@ static HANDLE FreezeThread;
 static HANDLE MonitorSelectedProcessThread;
 
 static double CurrentValue;
-static unsigned int CurrentProcess;
-static unsigned int NumberOfProcesses;
-static unsigned int ProcessCounter;
-static unsigned int NumberOfAddressesFrozen;
+static uint32 CurrentProcess;
+static uint32 NumberOfProcesses;
+static uint32 ProcessCounter;
+static uint32 NumberOfAddressesFrozen;
 
-static int IndexOfSelectedProcess;
+static int32 IndexOfSelectedProcess;
 
 static bool SelectedProcessOpen;
 static bool ScanRunning;
@@ -29,12 +29,12 @@ static bool FirstScanNotRun;
 typedef struct _MEMORY_BLOCK
 {
     HANDLE process;
-    SIZE_T size;
-    unsigned char *address;
-    unsigned char *buffer;
-    unsigned char *match_flag;
-    unsigned short data_size;
-    unsigned int matches;
+    uint64 size;
+    uint8 *address;
+    uint8 *buffer;
+    uint8 *match_flag;
+    uint16 data_size;
+    uint32 matches;
     struct _MEMORY_BLOCK *next;
 
 } MEMORY_BLOCK;
