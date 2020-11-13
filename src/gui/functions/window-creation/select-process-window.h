@@ -26,7 +26,6 @@ void CreateSelectProcessWindow(void)
                                 wc.lpszClassName, title, WS_SYSMENU | WS_OVERLAPPED,
                                 100, 100, 295, 400, 0, 0, 0, 0);
 
-
         if(PidDlg)
         {
             ProcessSelection = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTBOX, 0,
@@ -41,7 +40,7 @@ void CreateSelectProcessWindow(void)
 
             EnableWindow(ChooseProcess, false);
 
-            unsigned int index;
+            uint32 index;
 
             for(index = 0; index < ProcessCounter; index++)
             {

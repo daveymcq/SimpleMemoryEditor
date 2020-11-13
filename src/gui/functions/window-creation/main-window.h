@@ -1,16 +1,16 @@
 #ifndef _MAIN_WINDOW_H
 #define _MAIN_WINDOW_H
 
-int CreateMainWindow(void)
+int32 CreateMainWindow(void)
 {
-    static char val_header[] = "Value";
-    static char addr_header[] = "Address";
+    int8 val_header[] = "Value";
+    int8 addr_header[] = "Address";
     HINSTANCE hInstance = GetModuleHandle(0);
 
-    static LVCOLUMN Column;
-    static NONCLIENTMETRICS metrics; 
+    LVCOLUMN Column;
+    NONCLIENTMETRICS metrics; 
 
-    unsigned short index;
+    uint8 index;
 
     WNDCLASSEX wc;
     MSG Msg;
@@ -38,7 +38,6 @@ int CreateMainWindow(void)
 
         if(MainWindow)
         {
-
             MenuBar = CreateMenu();
             FileMenu = CreateMenu();
             HelpMenu = CreateMenu();
@@ -123,7 +122,7 @@ int CreateMainWindow(void)
                 DispatchMessage(&Msg);
             }
 
-            return (int)Msg.wParam;
+            return (int32)Msg.wParam;
         }
     }
 

@@ -5,7 +5,7 @@
 
 int64 Power(int64 base, int64 exponent)
 {
-    int64 result = 1LL;
+    int64 result = 1;
 
     while(exponent)
     {
@@ -18,7 +18,7 @@ int64 Power(int64 base, int64 exponent)
         base *= base;
     }
     
-   if(result == 0LL) --result;
+   if(result == 0) --result;
    return result;
 }
 

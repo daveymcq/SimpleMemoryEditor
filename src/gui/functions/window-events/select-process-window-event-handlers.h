@@ -5,11 +5,11 @@
 
 void ProcessListboxChangeEvent(void)
 {
-    IndexOfSelectedProcess = (int)SendMessage(ProcessSelection, LB_GETCURSEL, 0, 0);
+    IndexOfSelectedProcess = (int32)SendMessage(ProcessSelection, LB_GETCURSEL, 0, 0);
 
     if(IndexOfSelectedProcess > -1)
     {
-        char selected_process[256];
+        int8 selected_process[256];
 
         CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process));
 

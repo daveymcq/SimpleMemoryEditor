@@ -31,7 +31,7 @@ void CreateChangeValueWindow(void)
 
             if(ChangeValueDlg)
             {
-                char val[256];
+                int8 val[256];
 
                 ListView_GetItemText(ListView, SelectedItem, 1, val, sizeof(val));
 

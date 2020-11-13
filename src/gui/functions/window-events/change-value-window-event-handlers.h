@@ -3,12 +3,12 @@
 
 bool ProcessUpdateValueEvent(void)
 {
-    char address[256], val[256], buffer[256];
+    int8 address[256], val[256], buffer[256];
 
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
     SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
 
-    unsigned char *addr = (unsigned char *)(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
+    uint8 *addr = (uint8 *)(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
     double v = StringToDouble(val);
 
     LVITEM Item;
@@ -44,7 +44,7 @@ bool ProcessUpdateValueEvent(void)
 
         else
         {
-            char error[] = "Memory operation failed!";
+            int8 error[] = "Memory operation failed!";
 
             EnableWindow(MainWindow, false);
             MessageBox(MainWindow, error, "Error!", MB_OK | MB_ICONERROR);
@@ -76,7 +76,7 @@ bool ProcessUpdateValueEvent(void)
 
         else
         {
-            char error[] = "Memory operation failed!";
+            int8 error[] = "Memory operation failed!";
 
             EnableWindow(MainWindow, false);
             MessageBox(MainWindow, error, "Error!", MB_OK | MB_ICONERROR);
@@ -89,14 +89,14 @@ bool ProcessUpdateValueEvent(void)
 
     else if(type == TYPE_INTEGER)
     {
-        if(PokeDecimal(scanner->process, addr, (long long)v, scanner->data_size))
+        if(PokeDecimal(scanner->process, addr, (int64)v, scanner->data_size))
         {
             DestroyWindow(ChangeValueDlg);
             SetForegroundWindow(MainWindow);
 
             SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
 
-            long long tmp = PeekDecimal(scanner->process, addr, scanner->data_size);
+            int64 tmp = PeekDecimal(scanner->process, addr, scanner->data_size);
 
             IntegerToString(tmp, val, sizeof(val), FMT_INT_DECIMAL);
             ListView_SetItemText(ListView, SelectedItem, 1, val);
@@ -108,7 +108,7 @@ bool ProcessUpdateValueEvent(void)
 
         else
         {
-            char error[] = "Memory operation failed!";
+            int8 error[] = "Memory operation failed!";
 
             EnableWindow(MainWindow, false);
             MessageBox(MainWindow, error, "Error!", MB_OK | MB_ICONERROR);

@@ -5,11 +5,11 @@
 
 void ProcessListViewLeftClickEvent(void)
 {
-    char buffer[256];
+    int8 buffer[256];
 
-    SelectedItem = (int)SendMessage(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
+    SelectedItem = (int32)SendMessage(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
 
-    if(SelectedItem != -1 && StringLength(buffer))
+    if((SelectedItem != -1) && (StringLength(buffer)))
     {
         ListView_GetItemText(ListView, SelectedItem, 1, buffer, sizeof(buffer));
         SendMessage(Value, WM_SETTEXT, 0, (LPARAM)buffer);
@@ -22,7 +22,7 @@ void ProcessListViewLeftClickEvent(void)
 
 void ProcessListViewRightClickEvent(HWND hWnd)
 {
-    SelectedItem = (int)SendMessage(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
+    SelectedItem = (int32)SendMessage(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
 
     if(SelectedItem != -1)
     {
@@ -30,14 +30,14 @@ void ProcessListViewRightClickEvent(HWND hWnd)
 
         if(GetCursorPos(&pos))
         {
-            char buffer[256];
+            int8 buffer[256];
 
             ListView_GetItemText(ListView, SelectedItem, 0, buffer, sizeof(buffer));
 
-            int x = pos.x;
-            int y = pos.y;
+            int32 x = pos.x;
+            int32 y = pos.y;
 
-            unsigned int offset;
+            uint32 offset;
             bool address_frozen = false;
 
             for(offset = 0; offset < NumberOfAddressesFrozen; offset++)
@@ -72,13 +72,12 @@ void ProcessListViewRightClickEvent(HWND hWnd)
 
 void ProcessFreezeValueButtonEvent(void)
 {
-    char address[256] = { 0 };
-    char value[512] = { 0 };
+    int8 address[256], value[512];
 
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
     ListView_GetItemText(ListView, SelectedItem, 1, value, sizeof(value));
 
-    unsigned int offset;
+    uint32 offset;
     bool frozen = false;
 
     for(offset = 0; offset < NumberOfAddressesFrozen; offset++)
@@ -100,7 +99,7 @@ void ProcessFreezeValueButtonEvent(void)
             MemoryZero(&frozen_values[NumberOfAddressesFrozen], sizeof(frozen_values[NumberOfAddressesFrozen]));
             CopyMemory(&frozen_values[NumberOfAddressesFrozen], value, sizeof(frozen_values[NumberOfAddressesFrozen]));
 
-            ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(value, (char *)" (FROZEN)"));
+            ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(value, (cstring)" (FROZEN)"));
 
             NumberOfAddressesFrozen++;
         }
@@ -111,8 +110,8 @@ void ProcessFreezeValueButtonEvent(void)
 
 void ProcessUnfreezeValueButtonEvent(void)
 {
-    char address[256];
-    unsigned int offset;
+    int8 address[256];
+    uint32 offset;
 
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
 
@@ -139,8 +138,8 @@ void ProcessSelectProcessButtonEvent(void)
     if(IndexOfSelectedProcess > -1)
     {
         bool error;
-        char selected_process[256];
-        char pid[256];
+        int8 selected_process[256];
+        int8 pid[256];
 
         CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process));
 
@@ -159,7 +158,7 @@ void ProcessSelectProcessButtonEvent(void)
             error = true;
         }
 
-        unsigned int process_id = (unsigned int)StringToInteger(pid, FMT_INT_DECIMAL);
+        uint32 process_id = (uint32)StringToInteger(pid, FMT_INT_DECIMAL);
 
         HANDLE process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, process_id);
 
@@ -167,18 +166,17 @@ void ProcessSelectProcessButtonEvent(void)
         {
             if(scanner)
             {
-                char data_size[256];
-
+                int8 data_size[256];
                 LRESULT selection_id = SendMessage(DataSize, CB_GETCURSEL, 0, 0);
 
-                if(selection_id > -1) CopyString(data_size, (char *)data_sizes[selection_id], sizeof(data_size));
+                if(selection_id > -1) CopyString(data_size, (cstring)data_sizes[selection_id], sizeof(data_size));
 
                 if(CurrentProcess != process_id)
                 {
                     CurrentProcess = process_id;
                     ResetScan(scanner, false, true);
                     FreeMemoryScanner(scanner);
-                    scanner = CreateMemoryScanner(CurrentProcess, (unsigned short)StringToInteger(data_size, FMT_INT_DECIMAL));
+                    scanner = CreateMemoryScanner(CurrentProcess, (uint16)StringToInteger(data_size, FMT_INT_DECIMAL));
                 }
             }
 

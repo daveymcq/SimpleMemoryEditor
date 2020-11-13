@@ -1,11 +1,11 @@
 #ifndef _CORE_FUNCTIONS_H
 #define _CORE_FUNCTIONS_H
 
-void AddItemToListView(void *address, const char *value);
+void AddItemToListView(void *address, const cstring value);
 
 // Checks if the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address was cleared in the previous scan. 
 
-bool AddressNotDiscarded(MEMORY_BLOCK *mblock, unsigned long long offset)
+bool AddressNotDiscarded(MEMORY_BLOCK *mblock, uint64 offset)
 {
     MEMORY_BLOCK *mb = mblock;
 
@@ -20,7 +20,7 @@ bool AddressNotDiscarded(MEMORY_BLOCK *mblock, unsigned long long offset)
 
 // Clears the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address.
 
-bool DiscardAddress(MEMORY_BLOCK *mblock, unsigned long long offset)
+bool DiscardAddress(MEMORY_BLOCK *mblock, uint64 offset)
 {
     MEMORY_BLOCK *mb = mblock;
 
@@ -50,7 +50,7 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
     FirstScanNotRun = true;
     SelectedItem = -1;
-    unsigned short i;
+    uint16 i;
 
     while(mb)
     {
@@ -66,7 +66,7 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
     if(reset_pid)
     {
-        char msg[] =  "*No Process Selected*";
+        int8 msg[] =  "*No Process Selected*";
         SendMessage(Pid, WM_SETTEXT, 0, (LPARAM)msg);
         EnableWindow(ChoosePid, true);
     }
@@ -96,7 +96,7 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
 // Calls ResetScan() if the selected thread terminates.
 
-DWORD WINAPI MonitorSelectedProcess(LPVOID params)
+void WINAPI MonitorSelectedProcess(void)
 {
     while(SelectedProcessOpen)
     {
@@ -109,15 +109,13 @@ DWORD WINAPI MonitorSelectedProcess(LPVOID params)
             break;
         }
     }
-
-    return 0;
 }
 
 // Finds the number of matches from the last scan.
 
-unsigned int GetMatchCount(MEMORY_BLOCK *mblock)
+uint64 GetMatchCount(MEMORY_BLOCK *mblock)
 {
-    unsigned int matches = 0;
+    uint64 matches = 0;
     MEMORY_BLOCK *mb = mblock;
 
     while(mb)
@@ -140,7 +138,6 @@ bool GetProcessNameAndID(void)
 
     if(snapshot != INVALID_HANDLE_VALUE)
     {
-
         pe.dwSize = sizeof(pe);
 
         if(!Process32First(snapshot, &pe))
@@ -203,7 +200,7 @@ bool GetProcessNameAndID(void)
 
 // A set of helper functions that reads/writes the memory at the address specified.
 
-float PeekFloat(HANDLE process, void *address, unsigned short data_size)
+float PeekFloat(HANDLE process, void *address, uint16 data_size)
 {
     float value;
 
@@ -215,7 +212,7 @@ float PeekFloat(HANDLE process, void *address, unsigned short data_size)
     return 0.0f;
 }
 
-double PeekDouble(HANDLE process, void *address, unsigned short data_size)
+double PeekDouble(HANDLE process, void *address, uint16 data_size)
 {
     double value;
 
@@ -227,78 +224,78 @@ double PeekDouble(HANDLE process, void *address, unsigned short data_size)
     return 0.0;
 }
 
-long long PeekDecimal(HANDLE process, void *address, unsigned short data_size)
+int64 PeekDecimal(HANDLE process, void *address, uint16 data_size)
 {
-    long long value;
+    int64 value;
 
-    if(ReadProcessMemory(process, address, (long long *)&value, data_size, 0))
+    if(ReadProcessMemory(process, address, (int64 *)&value, data_size, 0))
     {
         switch(data_size)
         {
-            case sizeof(char):
+            case sizeof(int8):
 
-                value = (char)value;
+                value = (int8)value;
                 return value;
 
             break;
 
-            case sizeof(short):
+            case sizeof(int16):
 
-                value = (short)value;
+                value = (int16)value;
                 return value; 
 
             break;
             
-            case sizeof(int):
+            case sizeof(int32):
 
-                value = (int)value; 
+                value = (int32)value; 
                 return value; 
 
             break;
 
-            case sizeof(long long):
+            case sizeof(int64):
 
-                value = (long long)value;
+                value = (int64)value;
                 return value;
 
             break;
         }
     }
 
-    return 0LL;
+    return 0;
 }
 
-bool PokeFloat(HANDLE process, void *address, float value, unsigned short data_size)
+bool PokeFloat(HANDLE process, void *address, float value, uint16 data_size)
 {
     SIZE_T bytes_written;
 
     if(WriteProcessMemory(process, address, &value, data_size, &bytes_written))
     {
-        return ((unsigned short)bytes_written == data_size); 
+        return ((uint16)bytes_written == data_size); 
     }
 
     return false;
 }
 
-bool PokeDouble(HANDLE process, void *address, double value, unsigned short data_size)
+bool PokeDouble(HANDLE process, void *address, double value, uint16 data_size)
 {
     SIZE_T bytes_written;
 
     if(WriteProcessMemory(process, address, &value, data_size, &bytes_written))
     {
-        return ((unsigned short)bytes_written == data_size); 
+        return ((uint16)bytes_written == data_size); 
     }
 
     return false;
 }
 
-bool PokeDecimal(HANDLE process, void *address, long long value, unsigned short data_size)
+bool PokeDecimal(HANDLE process, void *address, int64 value, uint16 data_size)
 {
     SIZE_T bytes_written;
 
     if(WriteProcessMemory(process, address, &value, data_size, &bytes_written))
     {
-        return ((unsigned short)bytes_written == data_size);
+        return ((uint16)bytes_written == data_size);
     }
 
     return false;
@@ -306,22 +303,25 @@ bool PokeDecimal(HANDLE process, void *address, long long value, unsigned short 
 
 // Constructs and allocates the MEMORY_BLOCK linked list structure.
 
-MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, unsigned short data_size)
+MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, uint16 data_size)
 {
     MEMORY_BLOCK *mb = (MEMORY_BLOCK *)malloc(sizeof(*mb));
 
     if(mb)
     {
         mb->process             = process;
-        mb->size                = mbi->RegionSize;
-        mb->address             = (unsigned char *)mbi->BaseAddress;
-        mb->buffer              = (unsigned char *)malloc(mbi->RegionSize);
-        mb->match_flag          = (unsigned char *)malloc(mbi->RegionSize / 8);
-        mb->matches             = (unsigned int)mbi->RegionSize;
+        mb->size                = (uint64)mbi->RegionSize;
+        mb->address             = (uint8 *)mbi->BaseAddress;
+        mb->buffer              = (uint8 *)malloc(mbi->RegionSize);
+        mb->match_flag          = (uint8 *)malloc(mbi->RegionSize / 8);
+        mb->matches             = (uint64)mbi->RegionSize;
         mb->data_size           = data_size; 
         mb->next                = 0;
 
-        if(mb->match_flag) MemorySet(mb->match_flag, 0xff, mbi->RegionSize / 8);
+        if(mb->match_flag) 
+        {
+            MemorySet(mb->match_flag, 0xff, mbi->RegionSize / 8);
+        }
     }
 
     return mb;
@@ -346,10 +346,10 @@ void FreeMemoryScanner(MEMORY_BLOCK *mblock)
 
 // Finds the initial valid memory information and sets up for UpdateMemoryBlock().
 
-MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
+MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
 {
     MEMORY_BLOCK *mblock = 0;
-    unsigned char *address = 0;
+    uint8 *address = 0;
     MEMORY_BASIC_INFORMATION mbi;
     CurrentProcess = pid;
 
@@ -372,7 +372,7 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
                 }
             }
 
-            address = (unsigned char *)mbi.BaseAddress + mbi.RegionSize;
+            address = (uint8 *)mbi.BaseAddress + mbi.RegionSize;
         }
     }
 
@@ -394,15 +394,14 @@ MEMORY_BLOCK *CreateMemoryScanner(DWORD pid, unsigned short data_size)
 bool SelectedAddressFrozen(void)
 {
     bool frozen = false;
-    unsigned int i;
-
-    char address[256];
+    uint32 index;
+    int8 address[256];
 
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
 
-    for(i = 0; i < NumberOfAddressesFrozen; i++)
+    for(index = 0; index < NumberOfAddressesFrozen; index++)
     {
-        if(StringCompare(frozen_addresses[i], address, false))
+        if(StringCompare(frozen_addresses[index], address, false))
         {
             frozen = true;
             break;
@@ -414,18 +413,18 @@ bool SelectedAddressFrozen(void)
 
 // A thread to monitor addresses for change.
 
-DWORD WINAPI FreezeAddresses(LPVOID params)
+void WINAPI FreezeAddresses(void)
 {
     while(scanner)
     {
         if(NumberOfAddressesFrozen)
         {
-            unsigned int offset;
+            uint32 offset;
 
             for(offset = 0; offset < NumberOfAddressesFrozen; offset++)
             {
                 double value = StringToDouble(frozen_values[offset]);
-                unsigned char *address = (unsigned char *)(uintptr_t)StringToInteger(frozen_addresses[offset], FMT_INT_HEXADECIMAL);
+                cstring address = (cstring)(uintptr_t)StringToInteger(frozen_addresses[offset], FMT_INT_HEXADECIMAL);
 
                 switch(type)
                 {
@@ -465,13 +464,11 @@ DWORD WINAPI FreezeAddresses(LPVOID params)
             }
         }
     }
-    
-    return 0;
 }
 
 // Filters memory information aquired by CreateMemoryScanner() and subsequent calls to this function.
 
-void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE type, double val)
+void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE type, double value)
 {
     MEMORY_BLOCK *mb = mblock;
     SelectedItem = -1;
@@ -480,19 +477,20 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
     {
         if(mb->matches)
         {
-            static char data_size[256];
-            static unsigned char buffer[32 * 1024];
-            static unsigned long long total_read, bytes_left, bytes_to_read, bytes_read;
+            static int8 data_size[256];
+            static int8 buffer[256 * 1024];
+
+            static uint64 total_read, bytes_left, bytes_to_read, bytes_read;
 
             bytes_left = mb->size;
             total_read = 0;
             mb->matches = 0;
 
-            int selection_id = (int)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
+            int32 selection_id = (int32)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
 
-            CopyString(data_size, (char *)data_sizes[selection_id], sizeof(data_size));
+            CopyString(data_size, (cstring)data_sizes[selection_id], sizeof(data_size));
 
-            mb->data_size = (unsigned short)StringToInteger(data_size, FMT_INT_DECIMAL); 
+            mb->data_size = (uint16)StringToInteger(data_size, FMT_INT_DECIMAL); 
 
             while(bytes_left)
             {
@@ -502,8 +500,8 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
 
                 if(bytes_read != bytes_to_read) break;
 
+                uint64 offset;
                 double tmpval, prevval;
-                unsigned int offset;
                 bool match;
 
                 for(offset = 0; offset < bytes_read; offset += mb->data_size)
@@ -514,34 +512,33 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
                         {
                             switch(mb->data_size)
                             {
-                                case sizeof(char):
+                                case sizeof(int8):
 
-                                    tmpval = *((char *)&buffer[offset]);
-                                    prevval = *((char *)&mb->buffer[total_read + offset]);
-
-                                break;
-
-                                case sizeof(short):
-
-                                    tmpval = *((short *)&buffer[offset]);
-                                    prevval = *((short *)&mb->buffer[total_read + offset]);
+                                    tmpval = *((int8 *)&buffer[offset]);
+                                    prevval = *((int8 *)&mb->buffer[total_read + offset]);
 
                                 break;
 
-                                case sizeof(int):
+                                case sizeof(int16):
 
-                                    tmpval = *((int *)&buffer[offset]);
-                                    prevval = *((int *)&mb->buffer[total_read + offset]);
-
-                                break;
-
-                                case sizeof(long long):
-
-                                    tmpval = *((long long *)&buffer[offset]);
-                                    prevval = *((long long *)&mb->buffer[total_read + offset]);
+                                    tmpval = *((int16 *)&buffer[offset]);
+                                    prevval = *((int16 *)&mb->buffer[total_read + offset]);
 
                                 break;
 
+                                case sizeof(int32):
+
+                                    tmpval = *((int32 *)&buffer[offset]);
+                                    prevval = *((int32 *)&mb->buffer[total_read + offset]);
+
+                                break;
+
+                                case sizeof(int64):
+
+                                    tmpval = *((int64 *)&buffer[offset]);
+                                    prevval = *((int64 *)&mb->buffer[total_read + offset]);
+
+                                break;
                             }
                         }
 
@@ -567,7 +564,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
                         {
                             case SEARCH_EQUALS:
 
-                                match = (tmpval == val);
+                                match = (tmpval == value);
 
                             break;
 
@@ -596,7 +593,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
                     }
                 }
 
-                unsigned int bytes_copied = MemoryCopy(mb->buffer + total_read, buffer, bytes_read);
+                uint64 bytes_copied = MemoryCopy(mb->buffer + total_read, buffer, bytes_read);
 
                 bytes_left -= bytes_copied;
                 total_read += bytes_copied;
@@ -614,23 +611,23 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
 void DisplayScanResults(MEMORY_BLOCK *mblock)
 {
     MEMORY_BLOCK *mb = mblock;
-    unsigned int limit = 100;
+    uint32 limit = (GetMatchCount(mb) > 100) ? 100 : (uint32)GetMatchCount(mb);
 
     while(mb)
     {
-        unsigned int offset;
+        uint64 offset;
 
         for(offset = 0; offset < mb->size; offset += mb->data_size)
         {
             if(AddressNotDiscarded(mb, offset))
             {
-                char address[256], val[256];
+                int8 address[256], val[256];
 
-                IntegerToString((unsigned long long)(uintptr_t)mb->address + offset, address, sizeof(address), FMT_INT_HEXADECIMAL);
+                IntegerToString((uint64)(uintptr_t)mb->address + offset, address, sizeof(address), FMT_INT_HEXADECIMAL);
 
                 if(type == TYPE_INTEGER)
                 {
-                    long long value = PeekDecimal(mb->process, mb->address + offset, mb->data_size);
+                    int64 value = PeekDecimal(mb->process, mb->address + offset, mb->data_size);
                     IntegerToString(value, val, sizeof(val), FMT_INT_DECIMAL);
                 }
 
@@ -667,27 +664,27 @@ void DisplayScanResults(MEMORY_BLOCK *mblock)
 
 // The thread function responsible for performing the scan.
 
-DWORD WINAPI ProcessScan(void)
+void WINAPI ProcessScan(void)
 {
-    unsigned int matches;
-    char pid[256], data_size[256], val[256], condition[256], message[256];
+    uint64 matches;
+    int8 pid[256], data_size[256], val[256], condition[256], message[256];
 
     CopyString(pid, PID, sizeof(pid)); 
     SendMessage(Value, WM_GETTEXT, sizeof(val), (LPARAM)val);
     SendMessage(SearchCondition, WM_GETTEXT, sizeof(condition), (LPARAM)condition);
 
-    int selection_id = (int)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
-    if(selection_id > -1) CopyString(data_size, (char *)data_sizes[selection_id], sizeof(data_size));
+    int32 selection_id = (int32)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
+    if(selection_id > -1) CopyString(data_size, (cstring)data_sizes[selection_id], sizeof(data_size));
 
     if(!IsNumeric(val) || ((val[0] == '0') && (val[1] == 'x')))
     {
-        char msg[] = "Search value must be in decimal format";
+        int8 msg[] = "Search value must be a number.";
         MessageBox(MainWindow, msg, title, MB_OK);
     }
 
     else if((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (!StringCompare(pid, "*No Process Selected*", false)))
     {
-        scanner = (scanner) ? scanner : CreateMemoryScanner((unsigned int)StringToInteger(pid, FMT_INT_DECIMAL), (unsigned short)StringToInteger(data_size, FMT_INT_DECIMAL)); 
+        scanner = (scanner) ? scanner : CreateMemoryScanner((uint32)StringToInteger(pid, FMT_INT_DECIMAL), (uint16)StringToInteger(data_size, FMT_INT_DECIMAL)); 
 
         if(scanner)
         {
@@ -709,7 +706,7 @@ DWORD WINAPI ProcessScan(void)
                 NumberOfAddressesFrozen = 0;
                 ScanRunning = true;
 
-                short selected_search_condition = (short)SendMessage(SearchCondition, CB_GETCURSEL, 0, 0);
+                int16 selected_search_condition = (int16)SendMessage(SearchCondition, CB_GETCURSEL, 0, 0);
 
                 if(selected_search_condition > -1)
                 {
@@ -820,7 +817,7 @@ DWORD WINAPI ProcessScan(void)
                         FirstScanNotRun = false;
                     }
 
-                    CopyString(message, (char *)"Scan Complete!", sizeof(message));
+                    CopyString(message, (cstring)"Scan Complete!", sizeof(message));
 
                     ScanRunning = false;
 
@@ -841,20 +838,18 @@ DWORD WINAPI ProcessScan(void)
             }
         }
     }
-
-    return 0;
 }
 
 // Once an address is found, this function updates the value at that address.
 
 bool UpdateValue(void)
 {
-    char address[256], val[256], buffer[256];
+    int8 address[256], val[256], buffer[256];
 
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
     SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
 
-    unsigned char *addr = (unsigned char *)(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
+    cstring addr = (cstring)(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
     double v = StringToDouble(val);
 
     LVITEM Item;
@@ -889,7 +884,7 @@ bool UpdateValue(void)
 
         else
         {
-            char error[] = "Memory operation failed!";
+            int8 error[] = "Memory operation failed!";
             EnableWindow(MainWindow, false);
             MessageBox(MainWindow, error, "Error!", MB_OK);
             EnableWindow(MainWindow, true);
@@ -919,7 +914,7 @@ bool UpdateValue(void)
 
         else
         {
-            char error[] = "Memory operation failed!";
+            int8 error[] = "Memory operation failed!";
             EnableWindow(MainWindow, false);
             MessageBox(MainWindow, error, "Error!", MB_OK);
             EnableWindow(MainWindow, true);
@@ -940,7 +935,7 @@ bool UpdateValue(void)
             SetForegroundWindow(MainWindow);
 
             SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(val), (LPARAM)val);
-            long long tmp = PeekDecimal(scanner->process, addr, scanner->data_size);
+            int64 tmp = PeekDecimal(scanner->process, addr, scanner->data_size);
             IntegerToString(tmp, val, sizeof(val), FMT_INT_DECIMAL);
             ListView_SetItemText(ListView, SelectedItem, 1, val);
 
@@ -949,7 +944,7 @@ bool UpdateValue(void)
 
         else
         {
-            char error[] = "Memory operation failed!";
+            int8 error[] = "Memory operation failed!";
             EnableWindow(MainWindow, false);
             MessageBox(MainWindow, error, "Error!", MB_OK);
             EnableWindow(MainWindow, true);

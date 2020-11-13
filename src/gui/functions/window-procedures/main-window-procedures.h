@@ -27,7 +27,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPara
 
             PostQuitMessage(0);
 
-            break;
+        break;
 
         case WM_NOTIFY:
 
@@ -74,7 +74,6 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPara
                 CloseHandle(ScanThread);
 
                 DWORD ThreadID;
-
                 ScanThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)ProcessScan, 0, 0, &ThreadID);
             }
 

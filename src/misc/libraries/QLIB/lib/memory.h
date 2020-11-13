@@ -3,10 +3,10 @@
 
 /* Zero out a memory location. */
 
-uint32 MemoryZero(void *address, uint32 length)
+uint64 MemoryZero(void *address, uint64 length)
 {
-    uint32 bytes_zeroed = 0;
-    cstring paddress = (cstring)address;
+    uint64 bytes_zeroed = 0;
+    int8 *paddress = (int8 *)address;
 
     while(length) 
     {
@@ -19,10 +19,10 @@ uint32 MemoryZero(void *address, uint32 length)
 
 /* Rewrite of libc memset(). */
 
-uint32 MemorySet(void *address, int8 value, uint32 length)
+uint64 MemorySet(void *address, int8 value, uint64 length)
 {
-    uint32 bytes_set = 0;
-    cstring paddress = (cstring)address;
+    uint64 bytes_set = 0;
+    int8 *paddress = (int8 *)address;
 
     while(bytes_set < length)
     {
@@ -35,11 +35,11 @@ uint32 MemorySet(void *address, int8 value, uint32 length)
 
 /* Copies memory from one memory location to an other memory location. */
 
-uint32 MemoryCopy(void *to_address, void *from_address, uint32 length_in_bytes)
+uint64 MemoryCopy(void *to_address, void *from_address, uint64 length_in_bytes)
 {
-    uint32 bytes_copied = 0;
-    cstring pto = (cstring)to_address;
-    cstring pfrom = (cstring)from_address;
+    uint64 bytes_copied = 0;
+    int8 *pto = (int8 *)to_address;
+    int8 *pfrom = (int8 *)from_address;
 
     while(length_in_bytes - bytes_copied)
     {

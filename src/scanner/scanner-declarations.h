@@ -34,7 +34,7 @@ typedef struct _MEMORY_BLOCK
     uint8 *buffer;
     uint8 *match_flag;
     uint16 data_size;
-    uint32 matches;
+    uint64 matches;
     struct _MEMORY_BLOCK *next;
 
 } MEMORY_BLOCK;

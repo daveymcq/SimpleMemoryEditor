@@ -82,7 +82,7 @@ int32 FindFirstOccurrenceOfString(const cstring haystack, const cstring needle, 
 
     while(index < haystack_length)
     {
-        char haystack_buffer[2048];
+        int8 haystack_buffer[2048];
  
         CopyString((cstring)haystack_buffer, (cstring)haystack, haystack_length);
         haystack_buffer[needle_length] = 0;

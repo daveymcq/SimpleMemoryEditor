@@ -6,7 +6,7 @@
 
 cstring UnsignedIntegerToString(uint64 integer, cstring out_result, uint32 out_result_length, INTFMT base)
 {
-    static char result[65];
+    static int8 result[65];
 
     cstring presult = result;
     uint16 value;
@@ -52,7 +52,7 @@ cstring UnsignedIntegerToString(uint64 integer, cstring out_result, uint32 out_r
             {
                 value = (uint16)(((integer % Power(base, place_values)) - (integer % Power(base, place_values - 1))) / Power(base, place_values - 1));
 
-                char data = (value | 0x30);
+                int8 data = (value | 0x30);
 
                 *presult = data;
                 presult++;
@@ -106,8 +106,8 @@ cstring UnsignedIntegerToString(uint64 integer, cstring out_result, uint32 out_r
 
 cstring SignedIntegerToString(int64 integer, cstring out_result, uint32 out_result_length, INTFMT base)
 {
-    static char result[66];
-    cstring presult = (cstring )result;
+    static int8 result[66];
+    cstring presult = (cstring)result;
     bool negative = (integer < 0);
 
     if(negative)
@@ -124,7 +124,7 @@ cstring SignedIntegerToString(int64 integer, cstring out_result, uint32 out_resu
         return (cstring)out_result;
     }
 
-    return (cstring )result;
+    return (cstring)result;
 }
 
 cstring IntegerToString(int64 integer, cstring out_result, uint32 out_result_length, INTFMT base)
@@ -142,12 +142,12 @@ cstring IntegerToString(int64 integer, cstring out_result, uint32 out_result_len
 
 const cstring DoubleToString(double number, cstring out_result, uint32 out_result_length)
 {
-    static char result[83];
+    static int8 result[83];
     cstring presult = result;
 
     bool negative = (number < 0);
 
-    int64 whole = (long long)number;
+    int64 whole = (int64)number;
     double fraction = (number - whole);
 
     INTFMT format = FMT_INT_DECIMAL;
@@ -163,12 +163,12 @@ const cstring DoubleToString(double number, cstring out_result, uint32 out_resul
         fraction = -fraction;
     }
 
-    IntegerToString((long long)fraction, presult, 60, format);
+    IntegerToString((int64)fraction, presult, 60, format);
 
     if(out_result)
     {
         MemoryCopy(out_result, result, out_result_length);
-        return (const cstring )out_result;
+        return (const cstring)out_result;
     }
 
     return (cstring)result;
@@ -179,8 +179,8 @@ const cstring DoubleToString(double number, cstring out_result, uint32 out_resul
 
 uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
 {
-    uint64 result = 0ULL;
-    cstring pstr = (cstring )str;
+    uint64 result = 0;
+    cstring pstr = (cstring)str;
 
     switch(base)
     {
@@ -188,7 +188,7 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
         {
             if((*pstr == '0') && (*(pstr + 1) == 'x'))
             {
-                result = 0xff00ff00ff00ff00ULL;
+                result = 0xff00ff00ff00ff00;
                 break;
             }
 
@@ -210,11 +210,11 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
 
                 else
                 {
-                    result = 0xff00ff00ff00ff00ULL;
+                    result = 0xff00ff00ff00ff00;
                     break;
                 }
 
-                uint64 power = 1ULL;
+                uint64 power = 1;
                 uint16 i;
 
                 for(i = (uint16)power; i < place_values; i++)
@@ -235,13 +235,13 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
         {
             if((*pstr == '0') && (*(pstr + 1) == 'x'))
             {
-                result = 0xff00ff00ff00ff00ULL;
+                result = 0xff00ff00ff00ff00;
                 break;
             }
 
             else if((*pstr == '0') && (*(pstr + 1) == 'b'))
             {
-                result = 0xff00ff00ff00ff00ULL;
+                result = 0xff00ff00ff00ff00;
                 break;
             }
 
@@ -258,7 +258,7 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
 
                 else
                 {
-                    result = 0xff00ff00ff00ff00ULL;
+                    result = 0xff00ff00ff00ff00;
                     break;
                 }
 
@@ -288,7 +288,7 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
 
             else if((*pstr == '0') && (*(pstr + 1) == 'b'))
             {
-                result = 0xff00ff00ff00ff00ULL;
+                result = 0xff00ff00ff00ff00;
                 break;
             }
 
@@ -310,11 +310,11 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
 
                 else
                 {
-                    result = 0xff00ff00ff00ff00ULL;
+                    result = 0xff00ff00ff00ff00;
                     break;
                 }
 
-                uint64 power = 1ULL;
+                uint64 power = 1;
                 uint16 i;
 
                 for(i = (uint16)power; i < place_values; i++)
@@ -333,7 +333,7 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
 
         default:
 
-            result = 0xff00ff00ff00ff00ULL;
+            result = 0xff00ff00ff00ff00;
 
         break;
     }
@@ -346,13 +346,13 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
 
 int64 StringToInteger(const cstring str, INTFMT base)
 {
-    int64 result = 0LL;
-    cstring pstr = (cstring )str;
+    int64 result = 0;
+    cstring pstr = (cstring)str;
     bool negative = (*pstr == '-');
 
     if(negative)
     {
-       result = (long long)StringToUnsignedInteger(pstr + 1, base);
+       result = (int64)StringToUnsignedInteger(pstr + 1, base);
        result = -result;
     }
     
@@ -371,7 +371,7 @@ double StringToDouble(const cstring str)
 {
     double result = 0.0;
 
-    cstring pstr = (cstring )str;
+    cstring pstr = (cstring)str;
 
     int16 exponent = 0;
     uint16 number_of_digits = 0;
@@ -379,7 +379,7 @@ double StringToDouble(const cstring str)
     double power = 10.0;
 
     bool negative = false;
-    int number;
+    int32 number;
 
     if(*pstr == '-')
     {
