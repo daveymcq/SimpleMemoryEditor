@@ -22,19 +22,19 @@ int32 CreateMainWindow(void)
     wc.hCursor = LoadCursor(hInstance, IDC_ARROW);
     wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(AppIcon));
     wc.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(AppIcon));
-    wc.hInstance = GetModuleHandle(0);
+    wc.hInstance = hInstance;
     wc.lpfnWndProc = MainWindowProc;
     wc.lpszClassName = "Main";
     wc.lpszMenuName = 0;
-    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
     UnregisterClass(wc.lpszClassName, 0);
 
     if(RegisterClassEx(&wc))
     {
         MainWindow = CreateWindowEx(WS_EX_STATICEDGE, wc.lpszClassName, title,
-                                    WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX, 100, 
-                                    100, Width, Height, 0, 0, hInstance, 0);
+                                    WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX, 
+                                    100, 100, Width, Height, 0, 0, hInstance, 0);
 
         if(MainWindow)
         {
@@ -54,8 +54,9 @@ int32 CreateMainWindow(void)
             SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0);
             Font = CreateFontIndirect(&metrics.lfMessageFont);
 
-            ListView = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTVIEW, 0, WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_SINGLESEL,
-                                      10, 10, 598, 225, MainWindow, (HMENU)ID_LISTVIEW, GetModuleHandle(0), 0);
+            ListView = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTVIEW, 0, 
+                                      WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_SINGLESEL,
+                                      10, 10, 598, 225, MainWindow, (HMENU)ID_LISTVIEW, hInstance, 0);
 
             #ifndef LVS_EX_DOUBLEBUFFER
                 #define LVS_EX_DOUBLEBUFFER 0x00010000
@@ -75,28 +76,28 @@ int32 CreateMainWindow(void)
 
             SendMessage(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&Column);
 
-            SearchConditionLabel = CreateWindow("static", "Search Condition: ", WS_VISIBLE | WS_CHILD, 10, 245, 100, 25, MainWindow, 0, GetModuleHandle(0), 0);
-            SearchCondition = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 150, 245, 125, 25, MainWindow, (HMENU)ID_SEARCH_CONDITION, GetModuleHandle(0), 0);
+            SearchConditionLabel = CreateWindow("static", "Search Condition: ", WS_VISIBLE | WS_CHILD, 10, 245, 100, 25, MainWindow, 0, hInstance, 0);
+            SearchCondition = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 150, 245, 125, 25, MainWindow, (HMENU)ID_SEARCH_CONDITION, hInstance, 0);
 
             SendMessage(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_EQUALS]);
 
-            ValueLabel = CreateWindow("static", "Value: ", WS_VISIBLE | WS_CHILD, 310, 250, 100, 25, MainWindow, 0, GetModuleHandle(0), 0);
-            Value = CreateWindowEx(WS_EX_CLIENTEDGE, "edit", 0, WS_VISIBLE | WS_CHILD, 400, 247, 100, 20, MainWindow, (HMENU)ID_VALUE, GetModuleHandle(0), 0);
-            ChangeValue = CreateWindow("button", "Change Value", WS_VISIBLE | WS_CHILD, 510, 245, 100, 25, MainWindow, (HMENU)ID_CHANGE_VALUE, GetModuleHandle(0), 0);
-            NewScan = CreateWindow("button", "Reset Scan", WS_VISIBLE | WS_CHILD, 510, 275, 100, 25, MainWindow, (HMENU)ID_NEW_SCAN, GetModuleHandle(0), 0);
+            ValueLabel = CreateWindow("static", "Value: ", WS_VISIBLE | WS_CHILD, 310, 250, 100, 25, MainWindow, 0, hInstance, 0);
+            Value = CreateWindowEx(WS_EX_CLIENTEDGE, "edit", 0, WS_VISIBLE | WS_CHILD, 400, 247, 100, 20, MainWindow, (HMENU)ID_VALUE, hInstance, 0);
+            ChangeValue = CreateWindow("button", "Change Value", WS_VISIBLE | WS_CHILD, 510, 245, 100, 25, MainWindow, (HMENU)ID_CHANGE_VALUE, hInstance, 0);
+            NewScan = CreateWindow("button", "Reset Scan", WS_VISIBLE | WS_CHILD, 510, 275, 100, 25, MainWindow, (HMENU)ID_NEW_SCAN, hInstance, 0);
 
-            Pid = CreateWindow("static", "*No Process Selected*", WS_VISIBLE | WS_CHILD, 10, 280, 150, 25, MainWindow, (HMENU)ID_PROCESS_ID, GetModuleHandle(0), 0);
-            ChoosePid = CreateWindow("button", "Select Process", WS_VISIBLE | WS_CHILD, 175, 275, 100, 25, MainWindow, (HMENU)ID_SELECT_PROCESS, GetModuleHandle(0), 0);
+            Pid = CreateWindow("static", "*No Process Selected*", WS_VISIBLE | WS_CHILD, 10, 280, 150, 25, MainWindow, (HMENU)ID_PROCESS_ID, hInstance, 0);
+            ChoosePid = CreateWindow("button", "Select Process", WS_VISIBLE | WS_CHILD, 175, 275, 100, 25, MainWindow, (HMENU)ID_SELECT_PROCESS, hInstance, 0);
 
             DataSizeLabel = CreateWindow("static", "Type: ", WS_VISIBLE | WS_CHILD, 310, 280, 100, 25, MainWindow, 0, GetModuleHandle(0), 0);
-            DataSize = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 400, 275, 100, 25, MainWindow, (HMENU)ID_VALUE, GetModuleHandle(0), 0);
+            DataSize = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 400, 275, 100, 25, MainWindow, (HMENU)ID_VALUE, hInstance, 0);
 
             for(index = 0; index < ARRAYSIZE(data_types); index++)
             {
                 SendMessage(DataSize, CB_ADDSTRING, 0, (LPARAM)data_types[index]);
             }
 
-            Scan = CreateWindow("button", "Scan Memory", WS_VISIBLE | WS_CHILD, 10, 315, 600, 50, MainWindow, (HMENU)ID_SCAN, GetModuleHandle(0), 0);
+            Scan = CreateWindow("button", "Scan Memory", WS_VISIBLE | WS_CHILD, 10, 315, 600, 50, MainWindow, (HMENU)ID_SCAN, hInstance, 0);
 
             EnableWindow(Scan, false);
 

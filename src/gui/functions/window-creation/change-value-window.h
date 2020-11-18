@@ -6,6 +6,7 @@ void CreateChangeValueWindow(void)
     if(SelectedItem > -1)
     {
         WNDCLASSEX wc;
+        HINSTANCE hInstance = GetModuleHandle(0);
 
         wc.cbSize           = sizeof(wc);
         wc.cbClsExtra       = 0;
@@ -14,10 +15,10 @@ void CreateChangeValueWindow(void)
         wc.hCursor          = LoadCursor(0, IDC_ARROW);
         wc.lpfnWndProc      = ChangeValueWindowProc;
         wc.lpszMenuName     = 0;
-        wc.hInstance        = GetModuleHandle(0);
+        wc.hInstance        = hInstance;
         wc.hbrBackground    = GetSysColorBrush(COLOR_3DFACE);
-        wc.hIcon            = LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(AppIcon));
-        wc.hIconSm          = LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(AppIcon));
+        wc.hIcon            = LoadIcon(hInstance, MAKEINTRESOURCE(AppIcon));
+        wc.hIconSm          = LoadIcon(hInstance, MAKEINTRESOURCE(AppIcon));
         wc.style            = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
 
@@ -25,9 +26,10 @@ void CreateChangeValueWindow(void)
 
         if(RegisterClassEx(&wc))
         {
-            ChangeValueDlg = CreateWindowEx(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName,
-                                            title, WS_SYSMENU | WS_OVERLAPPED, 100,
-                                            100, 300, 75, 0, 0, 0, 0);
+            ChangeValueDlg = CreateWindowEx(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, 
+                                            wc.lpszClassName, title, 
+                                            WS_SYSMENU | WS_OVERLAPPED, 
+                                            100, 100, 300, 75, 0, 0, hInstance, 0);
 
             if(ChangeValueDlg)
             {

@@ -828,6 +828,7 @@ void WINAPI ProcessScan(void)
                     EnableWindow(DataSize, true);
                     EnableWindow(Value, true);
                     EnableWindow(SearchCondition, true);
+                    SetForegroundWindow(MainWindow);
                     EnableWindow(MainWindow, false);
 
                     MessageBox(MainWindow, message, title, MB_OK);

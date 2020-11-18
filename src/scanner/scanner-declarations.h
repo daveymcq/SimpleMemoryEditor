@@ -57,7 +57,6 @@ typedef enum
 
 } TYPE;
 
-
 static TYPE type;
 static MEMORY_BLOCK *scanner;
 
