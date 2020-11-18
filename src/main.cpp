@@ -1,11 +1,12 @@
 /* Memory Editing Application
  Author: David McHugh Jr.
- Last Modified: 06/25/2020 */
+ Last Modified: 11/17/2020 */
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
+#define WIN32_LEAN_AND_MEAN
 #define _WIN32_WINNT _WIN32_WINNT_WINXP
 
 #pragma comment(lib, "comctl32.lib")
@@ -25,7 +26,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 // Entry point.
 
-int main(int argc, char **argv)
+int32 main(int argc, char **argv)
 {
     if(Initialize())
     {

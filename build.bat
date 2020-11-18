@@ -64,33 +64,23 @@ if /i %COMPILER% == vs (
     cls
     
     if defined VS80COMNTOOLS (
-        echo Using Visual Studio 2005
+        echo Using Visual Studio 2005.
         set VCVARS="%VS80COMNTOOLS:~0,-14%VC\vcvarsall.bat"
         goto compile_vs
-    )
-    
-    if defined VS90COMNTOOLS (
-        echo Using Visual Studio 2008
-        set VCVARS="%VS90COMNTOOLS:~0,-14%VC\vcvarsall.bat"
-        goto compile_vs
-    )
-    
-    if defined VS100COMNTOOLS (
-        echo Using Visual Studio 2010
-        set VCVARS="%VS100COMNTOOLS:~0,-14%VC\vcvarsall.bat"
-        goto compile_vs
-    )
-    
-    if defined VS150COMNTOOLS (
-        echo Using Visual Studio 2017
-        set VCVARS="%VS150COMNTOOLS:~0,-14%VC\vcvarsall.bat"
-        goto compile_vs
-    )
-    
-    if defined VS160COMNTOOLS (
-        echo Using Visual Studio 2019
-        set VCVARS="%VS160COMNTOOLS:~0,-14%VC\vcvarsall.bat"
-        goto compile_vs
+    ) else (
+        
+        if defined VS90COMNTOOLS (
+            echo Using Visual Studio 2008.
+            set VCVARS="%VS90COMNTOOLS:~0,-14%VC\vcvarsall.bat"
+            goto compile_vs
+        ) else (
+        
+            if defined VS100COMNTOOLS (
+                echo Using Visual Studio 2010.
+                set VCVARS="%VS100COMNTOOLS:~0,-14%VC\vcvarsall.bat"
+                goto compile_vs
+            )
+        )
     )
     
     goto no_compiler
