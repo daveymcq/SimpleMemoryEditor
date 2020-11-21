@@ -608,7 +608,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
 
 // Add scan results to user interface.
 
-void DisplayScanResults(MEMORY_BLOCK *mblock)
+void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format)
 {
     MEMORY_BLOCK *mb = mblock;
     uint32 limit = (GetMatchCount(mb) > 100) ? 100 : (uint32)GetMatchCount(mb);
@@ -628,7 +628,7 @@ void DisplayScanResults(MEMORY_BLOCK *mblock)
                 if(type == TYPE_INTEGER)
                 {
                     int64 value = PeekDecimal(mb->process, mb->address + offset, mb->data_size);
-                    IntegerToString(value, val, sizeof(val), FMT_INT_DECIMAL);
+                    IntegerToString(value, val, sizeof(val), display_format);
                 }
 
                 else if(type == TYPE_FLOAT)
@@ -668,6 +668,7 @@ void WINAPI ProcessScan(void)
 {
     uint64 matches;
     int8 pid[256], data_size[256], val[256], condition[256], message[256];
+    INTFMT search_number_format;
 
     CopyString(pid, PID, sizeof(pid)); 
     SendMessage(Value, WM_GETTEXT, sizeof(val), (LPARAM)val);
@@ -678,11 +679,15 @@ void WINAPI ProcessScan(void)
 
     if(!IsNumeric(val) || ((val[0] == '0') && (val[1] == 'x')))
     {
-        int8 msg[] = "Search value must be a number.";
-        MessageBox(MainWindow, msg, title, MB_OK);
+        search_number_format = FMT_INT_HEXADECIMAL;
     }
 
-    else if((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (!StringCompare(pid, "*No Process Selected*", false)))
+    else
+    {
+        search_number_format = FMT_INT_DECIMAL;
+    }
+
+    if((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (!StringCompare(pid, "*No Process Selected*", false)))
     {
         scanner = (scanner) ? scanner : CreateMemoryScanner((uint32)StringToInteger(pid, FMT_INT_DECIMAL), (uint16)StringToInteger(data_size, FMT_INT_DECIMAL)); 
 
@@ -726,22 +731,22 @@ void WINAPI ProcessScan(void)
                         {
                             case SEARCH_EQUALS:
 
-                                UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_INTEGER, StringToInteger(val, FMT_INT_DECIMAL)); 
-                                DisplayScanResults(scanner);
+                                UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_INTEGER, StringToInteger(val, search_number_format)); 
+                                DisplayScanResults(scanner, search_number_format);
 
                             break;
 
                             case SEARCH_INCREASED:
 
                                 UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_INTEGER, 0);
-                                DisplayScanResults(scanner);
+                                DisplayScanResults(scanner, search_number_format);
 
                             break;
 
                             case SEARCH_DECREASED:
 
                                 UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_INTEGER, 0);
-                                DisplayScanResults(scanner);
+                                DisplayScanResults(scanner, search_number_format);
 
                             break;
                         }
@@ -754,21 +759,21 @@ void WINAPI ProcessScan(void)
                             case SEARCH_EQUALS:
 
                                 UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_FLOAT, (float)StringToDouble(val));
-                                DisplayScanResults(scanner);
+                                DisplayScanResults(scanner, search_number_format);
 
                             break;
 
                             case SEARCH_INCREASED:
 
                                 UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_FLOAT, 0);
-                                DisplayScanResults(scanner);
+                                DisplayScanResults(scanner, search_number_format);
 
                             break;
 
                             case SEARCH_DECREASED:
 
                                 UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_FLOAT, 0);
-                                DisplayScanResults(scanner);
+                                DisplayScanResults(scanner, search_number_format);
 
                             break;
                         }
@@ -781,21 +786,21 @@ void WINAPI ProcessScan(void)
                             case SEARCH_EQUALS:
 
                                 UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_DOUBLE, StringToDouble(val));
-                                DisplayScanResults(scanner);
+                                DisplayScanResults(scanner, search_number_format);
 
                             break;
 
                             case SEARCH_INCREASED:
 
                                 UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_DOUBLE, 0);
-                                DisplayScanResults(scanner);
+                                DisplayScanResults(scanner, search_number_format);
 
                             break;
 
                             case SEARCH_DECREASED:
 
                                 UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_DOUBLE, 0);
-                                DisplayScanResults(scanner);
+                                DisplayScanResults(scanner, search_number_format);
 
                             break;
                         }
