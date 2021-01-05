@@ -23,14 +23,14 @@
 #define FREEZE_LIMIT (1024 * 128)
 #define PROCESS_LIMIT (1024)
 
-const char *title = "Simple Memory Editor";
-const char *data_sizes[] = { "1", "2", "4", "8", "4", "8" };
-const char *data_types[] = { "Byte", "Short Integer", "Integer", "Long Integer", "Float", "Double" };
-const char *search_conditions[] = { "Equals", "Increased", "Decreased" };
+static const cstring title = "Simple Memory Editor";
+static const cstring data_sizes[] = { "1", "2", "4", "8", "4", "8" };
+static const cstring data_types[] = { "Byte", "Short Integer", "Integer", "Long Integer", "Float", "Double" };
+static const cstring search_conditions[] = { "Equals", "Increased", "Decreased" };
 
-static char frozen_addresses[FREEZE_LIMIT][256];
-static char frozen_values[FREEZE_LIMIT][256]; 
-static char PID[256];
+static int8 frozen_addresses[FREEZE_LIMIT][256];
+static int8 frozen_values[FREEZE_LIMIT][256]; 
+static int8 PID[256];
 
 static DWORD Width;
 static DWORD Height;

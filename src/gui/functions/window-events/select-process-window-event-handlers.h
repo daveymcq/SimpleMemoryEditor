@@ -9,9 +9,9 @@ void ProcessListboxChangeEvent(void)
 
     if(IndexOfSelectedProcess > -1)
     {
-        int8 selected_process[256];
+        int8 selected_process[256] = { 0 };
 
-        CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process));
+        CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process) - 1);
 
         if(StringLength(selected_process))
         {

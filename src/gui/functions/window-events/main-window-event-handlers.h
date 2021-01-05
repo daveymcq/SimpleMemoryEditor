@@ -11,7 +11,7 @@ void ProcessListViewLeftClickEvent(void)
 
     if((SelectedItem != -1) && (StringLength(buffer)))
     {
-        ListView_GetItemText(ListView, SelectedItem, 1, buffer, sizeof(buffer));
+        ListView_GetItemText(ListView, SelectedItem, 1, buffer, sizeof(buffer) - 1);
         SendMessage(Value, WM_SETTEXT, 0, (LPARAM)buffer);
     }
 
@@ -32,13 +32,18 @@ void ProcessListViewRightClickEvent(HWND hWnd)
         {
             int8 buffer[256];
 
-            ListView_GetItemText(ListView, SelectedItem, 0, buffer, sizeof(buffer));
-
-            int32 x = pos.x;
-            int32 y = pos.y;
-
+            int32 x, y;
             uint32 offset;
-            bool address_frozen = false;
+            bool address_frozen;
+            HMENU PopupMenu;
+
+            x = pos.x;
+            y = pos.y;
+
+            address_frozen = false;
+            PopupMenu = CreatePopupMenu();
+
+            ListView_GetItemText(ListView, SelectedItem, 0, buffer, sizeof(buffer) - 1);
 
             for(offset = 0; offset < NumberOfAddressesFrozen; offset++)
             {
@@ -48,8 +53,6 @@ void ProcessListViewRightClickEvent(HWND hWnd)
                     break;
                 }
             }
-
-            HMENU PopupMenu = CreatePopupMenu();
 
             if(address_frozen)
             {
@@ -72,17 +75,20 @@ void ProcessListViewRightClickEvent(HWND hWnd)
 
 void ProcessFreezeValueButtonEvent(void)
 {
-    int8 address[256], value[512];
+    int8 address[256] = { 0 };
+    int8 value[256] = { 0 };
 
-    ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
-    ListView_GetItemText(ListView, SelectedItem, 1, value, sizeof(value));
+    uint32 frozen_index;
+    bool frozen;
 
-    uint32 offset;
-    bool frozen = false;
+    frozen = false;
 
-    for(offset = 0; offset < NumberOfAddressesFrozen; offset++)
+    ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address) - 1);
+    ListView_GetItemText(ListView, SelectedItem, 1, value, sizeof(value) - 1);
+
+    for(frozen_index = 0; frozen_index < NumberOfAddressesFrozen; frozen_index++)
     {
-        if(StringCompare(frozen_addresses[offset], address, false))
+        if(StringCompare(frozen_addresses[frozen_index], address, false))
         {
             frozen = true;
             break;
@@ -93,11 +99,11 @@ void ProcessFreezeValueButtonEvent(void)
     {
         if(NumberOfAddressesFrozen < FREEZE_LIMIT)
         {
-            MemoryZero(&frozen_addresses[NumberOfAddressesFrozen], sizeof(frozen_addresses[NumberOfAddressesFrozen]));
-            CopyMemory(&frozen_addresses[NumberOfAddressesFrozen], address, sizeof(frozen_addresses[NumberOfAddressesFrozen]));
+            MemoryZero(&frozen_addresses[frozen_index], sizeof(frozen_addresses[frozen_index]));
+            CopyMemory(&frozen_addresses[frozen_index], address, sizeof(frozen_addresses[frozen_index]));
 
-            MemoryZero(&frozen_values[NumberOfAddressesFrozen], sizeof(frozen_values[NumberOfAddressesFrozen]));
-            CopyMemory(&frozen_values[NumberOfAddressesFrozen], value, sizeof(frozen_values[NumberOfAddressesFrozen]));
+            MemoryZero(&frozen_values[frozen_index], sizeof(frozen_values[frozen_index]));
+            CopyMemory(&frozen_values[frozen_index], value, sizeof(frozen_values[frozen_index]));
 
             ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(value, (cstring)" (FROZEN)"));
 
@@ -110,22 +116,31 @@ void ProcessFreezeValueButtonEvent(void)
 
 void ProcessUnfreezeValueButtonEvent(void)
 {
-    int8 address[256];
-    uint32 offset;
+    int8 address[256] = { 0 };
+    uint32 frozen_index;
+    bool frozen;
 
-    ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
+    frozen = false;
 
-    for(offset = 0; offset < NumberOfAddressesFrozen; offset++)
+    ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address) - 1);
+
+    for(frozen_index = 0; frozen_index <= NumberOfAddressesFrozen; frozen_index++)
     {
-        if(StringCompare(frozen_addresses[offset], address, false))
+        if(StringCompare(frozen_addresses[frozen_index], address, false))
         {
-            ListView_SetItemText(ListView, SelectedItem, 1, frozen_values[offset]);
-
-            MemoryZero(&frozen_addresses[offset], sizeof(frozen_addresses[offset]));
-            MemoryZero(&frozen_values[offset], sizeof(frozen_values[offset]));
-
-            NumberOfAddressesFrozen--;
+            frozen = true;
+            break;
         }
+    }
+
+    if(frozen)
+    {
+        ListView_SetItemText(ListView, SelectedItem, 1, frozen_values[frozen_index]);
+
+        MemoryZero(&frozen_addresses[frozen_index], sizeof(frozen_addresses[frozen_index]));
+        MemoryZero(&frozen_values[frozen_index], sizeof(frozen_values[frozen_index]));
+
+        NumberOfAddressesFrozen--;
     }
 
     EnableWindow(ChangeValue, true);
@@ -137,45 +152,51 @@ void ProcessSelectProcessButtonEvent(void)
 {
     if(IndexOfSelectedProcess > -1)
     {
-        bool error;
         int8 selected_process[256];
         int8 pid[256];
 
-        CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process));
+        bool error;
+        uint32 process_id;
+        HANDLE process;
+
+        error = false;
 
         if(StringLength(selected_process))
         {
-            CopyString(pid, pids[IndexOfSelectedProcess], sizeof(pid));
-            CopyString(PID, pid, sizeof(PID));
-            SendMessage(Pid, WM_SETTEXT, 0, (LPARAM)processes[IndexOfSelectedProcess]);
+            CopyString(pid, pids[IndexOfSelectedProcess], sizeof(pid) - 1);
+            CopyString(PID, pid, sizeof(PID) - 1);
+            CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process) - 1);
+            process_id = (uint32)StringToInteger(pid, FMT_INT_DECIMAL);
 
-            error = false;
+            SendMessage(Pid, WM_SETTEXT, 0, (LPARAM)processes[IndexOfSelectedProcess]);
         }
 
         else
         {
-            ResetScan(scanner, true, true);
             error = true;
+            ResetScan(scanner, true, true);
         }
 
-        uint32 process_id = (uint32)StringToInteger(pid, FMT_INT_DECIMAL);
-
-        HANDLE process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, process_id);
+        process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, process_id);
 
         if(process)
         {
             if(scanner)
             {
                 int8 data_size[256];
-                LRESULT selection_id = SendMessage(DataSize, CB_GETCURSEL, 0, 0);
+                LRESULT selection_id = (LRESULT)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
 
-                if(selection_id > -1) CopyString(data_size, (cstring)data_sizes[selection_id], sizeof(data_size));
+                if(selection_id > -1) 
+                {
+                    CopyString(data_size, (cstring)data_sizes[selection_id], sizeof(data_size) - 1);
+                }
 
                 if(CurrentProcess != process_id)
                 {
                     CurrentProcess = process_id;
                     ResetScan(scanner, false, true);
                     FreeMemoryScanner(scanner);
+
                     scanner = CreateMemoryScanner(CurrentProcess, (uint16)StringToInteger(data_size, FMT_INT_DECIMAL));
                 }
             }
@@ -187,7 +208,7 @@ void ProcessSelectProcessButtonEvent(void)
         {
             error = true;
             EnableWindow(ChoosePid, true);
-            if(scanner) ResetScan(scanner, true, true);
+            ResetScan(scanner, true, true);
         }
 
         DestroyWindow(PidDlg);

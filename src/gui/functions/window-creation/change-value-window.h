@@ -33,11 +33,11 @@ void CreateChangeValueWindow(void)
 
             if(ChangeValueDlg)
             {
-                int8 val[256];
+                int8 value[256];
 
-                ListView_GetItemText(ListView, SelectedItem, 1, val, sizeof(val));
+                ListView_GetItemText(ListView, SelectedItem, 1, value, sizeof(value) - 1);
 
-                ChangeValueDlgValue = CreateWindowEx(WS_EX_CLIENTEDGE, "edit", val, WS_VISIBLE | WS_CHILD, 10, 10, 180, 25, ChangeValueDlg, (HMENU)ID_CHANGE_DLG_VALUE, 0, 0);
+                ChangeValueDlgValue = CreateWindowEx(WS_EX_CLIENTEDGE, "edit", value, WS_VISIBLE | WS_CHILD, 10, 10, 180, 25, ChangeValueDlg, (HMENU)ID_CHANGE_DLG_VALUE, 0, 0);
                 ChangeValueDlgButton = CreateWindow("button", "Set Value", WS_VISIBLE | WS_CHILD, 200, 10, 85, 25, ChangeValueDlg, (HMENU)ID_CHANGE_DLG_BUTTON, 0, 0); 
 
                 SendMessage(ChangeValueDlgValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));

@@ -5,15 +5,15 @@ int32 CreateMainWindow(void)
 {
     int8 val_header[] = "Value";
     int8 addr_header[] = "Address";
-    HINSTANCE hInstance = GetModuleHandle(0);
-
-    LVCOLUMN Column;
-    NONCLIENTMETRICS metrics; 
 
     uint8 index;
-
+    HINSTANCE hInstance;
+    LVCOLUMN Column;
+    NONCLIENTMETRICS metrics;
     WNDCLASSEX wc;
     MSG Msg;
+
+    hInstance = GetModuleHandle(0);
 
     wc.cbSize = sizeof(wc);
     wc.cbClsExtra = 0;

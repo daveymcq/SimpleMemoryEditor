@@ -12,6 +12,7 @@ cstring UnsignedIntegerToString(uint64 integer, cstring out_result, uint32 out_r
     uint16 value;
     uint16 place_values = 0;
     uint16 exponent = 1;
+    int8 data;
 
     switch(base)
     {
@@ -29,7 +30,7 @@ cstring UnsignedIntegerToString(uint64 integer, cstring out_result, uint32 out_r
             {
                 value = (uint16)(((integer % Power(base, place_values)) - (integer % Power(base, place_values - 1))) / Power(base, place_values - 1));
 
-                int8 data = (value | 0x30);
+                data = (value | 0x30);
 
                 *presult = data;
                 presult++;
@@ -52,7 +53,7 @@ cstring UnsignedIntegerToString(uint64 integer, cstring out_result, uint32 out_r
             {
                 value = (uint16)(((integer % Power(base, place_values)) - (integer % Power(base, place_values - 1))) / Power(base, place_values - 1));
 
-                int8 data = (value | 0x30);
+                data = (value | 0x30);
 
                 *presult = data;
                 presult++;
@@ -75,7 +76,7 @@ cstring UnsignedIntegerToString(uint64 integer, cstring out_result, uint32 out_r
             {
                 value = (uint16)(((integer % Power(base, place_values)) - (integer % Power(base, place_values - 1))) / Power(base, place_values - 1));
 
-                int8 data = (value | 0x30);
+                data = (value | 0x30);
 
                 if(value > 9)
                 {
@@ -179,8 +180,11 @@ const cstring DoubleToString(double number, cstring out_result, uint32 out_resul
 
 uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
 {
-    uint64 result = 0;
+    uint64 result;
     cstring pstr = (cstring)str;
+    uint16 place_values;
+
+    result = 0;
 
     switch(base)
     {
@@ -197,11 +201,15 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
                 pstr += 2;
             }
 
-            uint16 place_values = (uint16)StringLength(pstr);
+            place_values = (uint16)StringLength(pstr);
 
             while(place_values)
             {
                 uint8 data;
+                uint64 power;
+                uint16 i;
+
+                power = 1;
 
                 if((*pstr <= '1') && (*pstr >= '0'))
                 {
@@ -213,9 +221,6 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
                     result = 0xff00ff00ff00ff00;
                     break;
                 }
-
-                uint64 power = 1;
-                uint16 i;
 
                 for(i = (uint16)power; i < place_values; i++)
                 {
@@ -245,11 +250,15 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
                 break;
             }
 
-            uint16 place_values = (uint16)StringLength(pstr);
+            place_values = (uint16)StringLength(pstr);
 
             while(place_values)
             {
                 uint8 data;
+                uint64 power;
+                uint16 i;
+
+                power = 1;
 
                 if((*pstr <= '9') && (*pstr >= '0'))
                 {
@@ -261,9 +270,6 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
                     result = 0xff00ff00ff00ff00;
                     break;
                 }
-
-                uint64 power = 1ULL;
-                uint16 i;
 
                 for(i = (uint16)power; i < place_values; i++)
                 {
@@ -292,11 +298,15 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
                 break;
             }
 
-            uint16 place_values = (uint16)StringLength(pstr);
+            place_values = (uint16)StringLength(pstr);
 
             while(place_values)
             {
                 uint8 data;
+                uint64 power;
+                uint16 i;
+
+                power = 1;
 
                 if((*pstr <= 'f') && (*pstr >= 'A'))
                 {
@@ -313,9 +323,6 @@ uint64 StringToUnsignedInteger(const cstring str, INTFMT base)
                     result = 0xff00ff00ff00ff00;
                     break;
                 }
-
-                uint64 power = 1;
-                uint16 i;
 
                 for(i = (uint16)power; i < place_values; i++)
                 {

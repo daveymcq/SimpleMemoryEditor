@@ -70,10 +70,10 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPara
 
             else if(LOWORD(wParam) == ID_SCAN)
             {
+                DWORD ThreadID;
+
                 TerminateThread(ScanThread, 0);
                 CloseHandle(ScanThread);
-
-                DWORD ThreadID;
                 ScanThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)ProcessScan, 0, 0, &ThreadID);
             }
 

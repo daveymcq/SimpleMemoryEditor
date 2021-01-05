@@ -8,12 +8,13 @@
 
 BOOL Initialize(void)
 {
+    INITCOMMONCONTROLSEX icc;
+
     Width = 625;
     Height = 425;
     FirstScanNotRun = true;
     SelectedItem = -1;
 
-    INITCOMMONCONTROLSEX icc;
     icc.dwICC = ICC_WIN95_CLASSES;
     icc.dwSize = sizeof(icc);
 
