@@ -1,3 +1,6 @@
 bin
 src/test.c
-resources/resource.res
+src/test.cpp
+resources/*.res
+*.log
+*.inf
