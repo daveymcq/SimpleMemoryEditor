@@ -305,15 +305,15 @@ bool PokeDecimal(HANDLE process, void *address, int64 value, uint16 data_size)
 
 MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, uint16 data_size)
 {
-    MEMORY_BLOCK *mb = (MEMORY_BLOCK *)malloc(sizeof(*mb));
+    MEMORY_BLOCK *mb = (MEMORY_BLOCK *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*mb));
 
     if(mb)
     {
         mb->process             = process;
         mb->size                = (uint64)mbi->RegionSize;
         mb->address             = (uint8 *)mbi->BaseAddress;
-        mb->buffer              = (uint8 *)malloc(mbi->RegionSize);
-        mb->match_flag          = (uint8 *)malloc(mbi->RegionSize / 8);
+        mb->buffer              = (uint8 *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, mbi->RegionSize);
+        mb->match_flag          = (uint8 *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (mbi->RegionSize / 8));
         mb->matches             = (uint64)mbi->RegionSize;
         mb->data_size           = data_size; 
         mb->next                = 0;
@@ -338,9 +338,9 @@ void FreeMemoryScanner(MEMORY_BLOCK *mblock)
     {
         MEMORY_BLOCK *tmp = mb;
         mb = mb->next;
-        if(tmp->buffer) free(tmp->buffer);
-        if(tmp->match_flag) free(tmp->match_flag);
-        free(tmp);
+        if(tmp->buffer) HeapFree(GetProcessHeap(), 0, tmp->buffer);
+        if(tmp->match_flag) HeapFree(GetProcessHeap(), 0, tmp->match_flag);
+        HeapFree(GetProcessHeap(), 0, tmp);
     }
 }
 
