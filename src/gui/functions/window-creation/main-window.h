@@ -77,7 +77,7 @@ int32 CreateMainWindow(void)
             SendMessage(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&Column);
 
             SearchConditionLabel = CreateWindow("static", "Search Condition: ", WS_VISIBLE | WS_CHILD, 10, 245, 100, 25, MainWindow, 0, hInstance, 0);
-            SearchCondition = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 150, 245, 125, 25, MainWindow, (HMENU)ID_SEARCH_CONDITION, hInstance, 0);
+            SearchCondition = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 150, 245, 125, 200, MainWindow, (HMENU)ID_SEARCH_CONDITION, hInstance, 0);
 
             SendMessage(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_EQUALS]);
 
@@ -90,7 +90,7 @@ int32 CreateMainWindow(void)
             ChoosePid = CreateWindow("button", "Select Process", WS_VISIBLE | WS_CHILD, 175, 275, 100, 25, MainWindow, (HMENU)ID_SELECT_PROCESS, hInstance, 0);
 
             DataSizeLabel = CreateWindow("static", "Type: ", WS_VISIBLE | WS_CHILD, 310, 280, 100, 25, MainWindow, 0, GetModuleHandle(0), 0);
-            DataSize = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 400, 275, 100, 25, MainWindow, (HMENU)ID_VALUE, hInstance, 0);
+            DataSize = CreateWindow("combobox", 0, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 400, 275, 100, 200, MainWindow, (HMENU)ID_VALUE, hInstance, 0);
 
             for(index = 0; index < ARRAYSIZE(data_types); index++)
             {
