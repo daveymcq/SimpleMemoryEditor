@@ -141,7 +141,7 @@ if %COMPILE_64BIT% == yes (
     
     mkdir bin\x64
     windres ".\resources\resource.rc" -o ".\resources\resource.o" --target=pe-x86-64 
-    g++ ".\src\main.c*" ".\resources\resource.o" -static -mwindows -o ".\bin\x64\Simple Memory Editor (64-bit).exe" -lcomctl32
+    g++ ".\src\main.cpp" ".\resources\resource.o" -static -mwindows -o ".\bin\x64\Simple Memory Editor (64-bit).exe" -lcomctl32
     del ".\resources\resource.o"
         
 ) else (
