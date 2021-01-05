@@ -18,7 +18,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <tlhelp32.h>
 #include <commctrl.h>
 
-#include "misc/libraries/QLIB/qlib.h"
+#include "misc/libraries/QLIB/QLIB/qlib.h"
 #include "resource.h"
 #include "declarations.h"
 #include "scanner/functions/scanner-functions.h"

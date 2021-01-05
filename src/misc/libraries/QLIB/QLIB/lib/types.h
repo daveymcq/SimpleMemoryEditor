@@ -17,7 +17,6 @@
     #define uint64 unsigned long long
 #endif
 
-
 #ifndef int8
     #define int8 char
 #endif
@@ -75,7 +74,6 @@
 #ifdef byte
     #undef byte
 #endif
-
 
 typedef enum _INTFMT
 {

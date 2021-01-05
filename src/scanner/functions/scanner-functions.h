@@ -66,7 +66,7 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
     if(reset_pid)
     {
-        int8 msg[] =  "*No Process Selected*";
+        int8 msg[] = "*No Process Selected*";
         SendMessage(Pid, WM_SETTEXT, 0, (LPARAM)msg);
         EnableWindow(ChoosePid, true);
     }
