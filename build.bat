@@ -101,7 +101,7 @@ if defined VCVARS (
         call %VCVARS% x64>NUL
         mkdir bin\x64
         rc ".\resources\resource.rc"
-        cl ".\src\main.cpp" ".\resources\resource.res" /MT /link /entry:mainCRTStartup /nodefaultlib:libc  /subsystem:windows,5.02 /out:".\bin\x64\Simple Memory Editor (64-bit).exe"
+        cl ".\src\main.c*" ".\resources\resource.res" /MT /link /entry:mainCRTStartup /nodefaultlib:libc  /subsystem:windows,5.02 /out:".\bin\x64\Simple Memory Editor (64-bit).exe"
         del ".\bin\x64\*.manifest"
         del ".\*.obj"
         del ".\resources\resource.res"
