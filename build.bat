@@ -119,7 +119,7 @@ if defined VCVARS (
         call %VCVARS% x86>NUL
         mkdir bin\x86
         rc ".\resources\resource.rc"
-        cl ".\src\main.cpp" ".\resources\resource.res" /MT /link /entry:mainCRTStartup /nodefaultlib:libc /subsystem:windows,4.02 /out:".\bin\x86\Simple Memory Editor (32-bit).exe"
+        cl ".\src\main.c*" ".\resources\resource.res" /MT /link /entry:mainCRTStartup /nodefaultlib:libc /subsystem:windows,4.02 /out:".\bin\x86\Simple Memory Editor (32-bit).exe"
         del ".\bin\x86\*.manifest"
         del ".\*.obj"
         del ".\resources\resource.res"
@@ -141,7 +141,7 @@ if %COMPILE_64BIT% == yes (
     
     mkdir bin\x64
     windres ".\resources\resource.rc" -o ".\resources\resource.o" --target=pe-x86-64 
-    g++ ".\src\main.cpp" ".\resources\resource.o" -static -mwindows -o ".\bin\x64\Simple Memory Editor (64-bit).exe" -lcomctl32
+    g++ ".\src\main.c*" ".\resources\resource.o" -static -mwindows -o ".\bin\x64\Simple Memory Editor (64-bit).exe" -lcomctl32
     del ".\resources\resource.o"
         
 ) else (
