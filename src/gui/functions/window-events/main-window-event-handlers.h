@@ -5,14 +5,20 @@
 
 void ProcessListViewLeftClickEvent(void)
 {
-    int8 buffer[256];
+    int8 value[256];
 
     SelectedItem = (int32)SendMessage(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
 
-    if((SelectedItem != -1) && (StringLength(buffer)))
+    if((SelectedItem != -1) && (StringLength(value)))
     {
-        ListView_GetItemText(ListView, SelectedItem, 1, buffer, sizeof(buffer) - 1);
-        SendMessage(Value, WM_SETTEXT, 0, (LPARAM)buffer);
+        ListView_GetItemText(ListView, SelectedItem, 1, value, sizeof(value) - 1);
+
+        if(SelectedAddressFrozen())
+        {
+            value[FindFirstOccurrenceOfString(value, " (FROZEN)", false)] = 0;
+        }
+
+        SendMessage(Value, WM_SETTEXT, 0, (LPARAM)value);
     }
 
     (SelectedAddressFrozen()) ? EnableWindow(ChangeValue, false) : EnableWindow(ChangeValue, true);
