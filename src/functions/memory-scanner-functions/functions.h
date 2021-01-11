@@ -158,7 +158,7 @@ bool GetProcessNameAndID(void)
                 BOOL IsApplication64Bit;
 
                 typedef BOOL (WINAPI *FP_ISWOW64PROCESS) (HANDLE, PBOOL);
-                FP_ISWOW64PROCESS pIsWow64Process = (FP_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
+                FP_ISWOW64PROCESS pIsWow64Process = (FP_ISWOW64PROCESS)GetProcAddress(GetModuleHandle("kernel32"), "IsWow64Process");
 
                 if(pIsWow64Process && pIsWow64Process(GetCurrentProcess(), &IsApplication64Bit))
                 {
@@ -168,7 +168,7 @@ bool GetProcessNameAndID(void)
                     {
                         if(IsApplication64Bit == IsProcess64Bit)
                         {
-                            IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]), FMT_INT_DECIMAL);
+                            IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]) - 1, FMT_INT_DECIMAL);
                             NumberOfProcesses++; 
                         }
                     }
@@ -176,7 +176,7 @@ bool GetProcessNameAndID(void)
 
                 else
                 {
-                    IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]), FMT_INT_DECIMAL);
+                    IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]) - 1, FMT_INT_DECIMAL);
                     NumberOfProcesses++; 
                 }
 
