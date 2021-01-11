@@ -467,4 +467,21 @@ double StringToDouble(const cstring str)
     return result;
 }
 
+char *WideToAscii(const wstring src)
+{
+    static char result[256];
+    char *dst = result;
+
+    while(*src)
+    {
+        *dst = (char)*src;
+        ++dst;
+        ++src;
+    }
+
+    *dst = 0;
+
+    return (char *)result;
+}
+
 #endif

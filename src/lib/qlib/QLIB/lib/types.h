@@ -33,6 +33,10 @@
     #define int64 long long
 #endif
 
+#ifndef wchar
+    #define wchar uint16
+#endif
+
 #if defined(_MSC_VER)
     #if (_MSC_VER >= 1400)
         #ifndef uint64
@@ -45,7 +49,13 @@
     #endif
 #endif
 
-#define cstring char *
+#ifndef cstring
+    #define cstring int8 *
+#endif
+
+#ifndef wstring
+    #define wstring wchar *
+#endif
 
 #ifndef bool
     #define bool unsigned char
