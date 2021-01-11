@@ -1,8 +1,6 @@
 # SimpleMemoryEditor
-A simple, portable, full featured game cheating utility written in C++.
+A simple, portable, full featured game cheating utility written in C.
 
-Operating System: Windows XP/Vista/7/10
-
-Windows 8/8.1 Should work as well, but has not been tested.
+Operating System: Windows XP/Vista/7/8/8.1/10
 
 ![alt text](https://raw.githubusercontent.com/daveymcq/SimpleMemoryEditor/master/resources/screenshot.png)
