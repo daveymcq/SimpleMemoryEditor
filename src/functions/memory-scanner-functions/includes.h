@@ -1,5 +1,5 @@
-#ifndef _SCANNER_VARIABLES_H
-#define _SCANNER_VARIABLES_H
+#ifndef _MEMORY_SCANNER_INCLUDES_H
+#define _MEMORY_SCANNER_INCLUDES_H
 
 #define MEM_WRITABLE (PAGE_READWRITE | PAGE_WRITECOPY | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)
 
@@ -59,5 +59,7 @@ typedef enum
 
 static TYPE type;
 static MEMORY_BLOCK *scanner;
+
+static void AddItemToListView(void *, const cstring);
 
 #endif

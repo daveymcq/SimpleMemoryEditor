@@ -18,11 +18,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <tlhelp32.h>
 #include <commctrl.h>
 
-#include "src/misc/libraries/QLIB/QLIB/qlib.h"
-#include "src/resource.h"
-#include "src/declarations.h"
-#include "src/scanner/functions/scanner-functions.h"
-#include "src/gui/functions/gui-functions.h"
+#include "src/initialize.h"
 
 // Entry point.
 

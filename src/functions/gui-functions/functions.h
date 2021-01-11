@@ -1,9 +1,5 @@
-#ifndef _GUI_H
-#define _GUI_H
-
-LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-LRESULT CALLBACK SelectProcessWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-LRESULT CALLBACK ChangeValueWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+#ifndef _GUI_FUNCTIONS_H
+#define _GUI_FUNCTIONS_H
 
 #include "window-update/all_windows.h"
 #include "window-update/main-window.h"

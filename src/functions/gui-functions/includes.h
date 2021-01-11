@@ -1,5 +1,5 @@
-#ifndef _GUI_DECLARATIONS_H
-#define _GUI_DECLARATIONS_H
+#ifndef _GUI_INCLUDES_H
+#define _GUI_INCLUDES_H
 
 #define ID_LISTVIEW (WM_USER + 1000)
 #define ID_SCAN (WM_USER + 1001)
@@ -45,5 +45,9 @@ static HWND ListView, Scan, Value, ChangeValue, Pid, ChoosePid, DataSize, DataSi
 static HMENU MenuBar;
 static HMENU FileMenu;
 static HMENU HelpMenu;
+
+static LRESULT CALLBACK MainWindowProc(HWND, UINT, WPARAM, LPARAM);
+static LRESULT CALLBACK SelectProcessWindowProc(HWND, UINT, WPARAM, LPARAM);
+static LRESULT CALLBACK ChangeValueWindowProc(HWND, UINT, WPARAM, LPARAM);
 
 #endif

@@ -1,7 +1,5 @@
-#ifndef _CORE_FUNCTIONS_H
-#define _CORE_FUNCTIONS_H
-
-void AddItemToListView(void *address, const cstring value);
+#ifndef _MEMORY_SCANNER_FUNCTIONS_H
+#define _MEMORY_SCANNER_FUNCTIONS_H
 
 // Checks if the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address was cleared in the previous scan. 
 

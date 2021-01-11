@@ -1,8 +1,15 @@
 #ifndef _GLOBAL_DECLARATIONS_H
 #define _GLOBAL_DECLARATIONS_H
 
-#include "gui/gui-declarations.h"
-#include "scanner/scanner-declarations.h"
+#include "../resources/icon.h"
+
+#include "lib/qlib/QLIB/qlib.h"
+
+#include "functions/gui-functions/includes.h"
+#include "functions/memory-scanner-functions/includes.h"
+
+#include "functions/memory-scanner-functions/functions.h"
+#include "functions/gui-functions/functions.h"
 
 // Initialize local variables.
 
