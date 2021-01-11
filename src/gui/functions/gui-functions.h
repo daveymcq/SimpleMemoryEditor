@@ -11,7 +11,6 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 #include "window-creation/main-window.h"
 #include "window-creation/select-process-window.h"
 #include "window-creation/change-value-window.h"
-#include "window-creation/about-window.h"
 
 #include "window-events/main-window-event-handlers.h"
 #include "window-events/select-process-window-event-handlers.h"

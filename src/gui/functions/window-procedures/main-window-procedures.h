@@ -58,16 +58,6 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPara
                 ProcessUnfreezeValueButtonEvent();
             }
 
-            else if(LOWORD(wParam) == ID_FILE_EXIT)
-            {
-                PostQuitMessage(0);
-            }
-
-            else if(LOWORD(wParam) == ID_HELP_ABOUT)
-            {
-                CreateAboutDialog(hWnd);
-            }
-
             else if(LOWORD(wParam) == ID_SCAN)
             {
                 DWORD ThreadID;

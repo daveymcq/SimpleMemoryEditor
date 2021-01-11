@@ -38,7 +38,7 @@ bool DiscardAddress(MEMORY_BLOCK *mblock, uint64 offset)
 void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monitor)
 {
     MEMORY_BLOCK *mb = mblock;
-    uint16 i;
+    uint16 index;
 
     SelectedProcessOpen = false;
     NumberOfAddressesFrozen = 0;
@@ -73,9 +73,9 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
     ListView_DeleteAllItems(ListView);
 
-    for(i = 0; i < ARRAYSIZE(data_types); i++)
+    for(index = 0; index < ARRAYSIZE(data_types); index++)
     {
-        SendMessage(DataSize, CB_ADDSTRING, 0, (LPARAM)data_types[i]);
+        SendMessage(DataSize, CB_ADDSTRING, 0, (LPARAM)data_types[index]);
     }
 
     TerminateThread(FreezeThread, 0);
@@ -411,7 +411,7 @@ bool SelectedAddressFrozen(void)
 
     bool frozen = false;
 
-    ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address));
+    ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address) - 1);
 
     for(index = 0; index < NumberOfAddressesFrozen; index++)
     {

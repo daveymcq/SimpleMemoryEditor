@@ -3,8 +3,8 @@
 
 int32 CreateMainWindow(void)
 {
-    int8 val_header[] = "Value";
-    int8 addr_header[] = "Address";
+    cstring value = "Value";
+    cstring address = "Address";
 
     uint8 index;
     HINSTANCE hInstance;
@@ -38,18 +38,6 @@ int32 CreateMainWindow(void)
 
         if(MainWindow)
         {
-            MenuBar = CreateMenu();
-            FileMenu = CreateMenu();
-            HelpMenu = CreateMenu();
-
-            AppendMenu(FileMenu, MF_STRING, (UINT_PTR)ID_FILE_EXIT, "Exit");
-            AppendMenu(HelpMenu, MF_STRING, (UINT_PTR)ID_HELP_ABOUT, "About");
-
-            AppendMenu(MenuBar, MF_POPUP, (UINT_PTR)FileMenu, "File");
-            AppendMenu(MenuBar, MF_POPUP, (UINT_PTR)HelpMenu, "Help");
-
-            SetMenu(MainWindow, MenuBar);
-
             metrics.cbSize = sizeof(metrics);
             SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0);
             Font = CreateFontIndirect(&metrics.lfMessageFont);
@@ -66,13 +54,13 @@ int32 CreateMainWindow(void)
 
             Column.cx = 298;
             Column.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
-            Column.pszText = addr_header;
+            Column.pszText = address;
             Column.iSubItem = 0;
 
             SendMessage(ListView, LVM_INSERTCOLUMN, 0, (LPARAM)&Column);
 
             Column.iSubItem = 1;
-            Column.pszText = val_header;
+            Column.pszText = value;
 
             SendMessage(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&Column);
 

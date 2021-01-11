@@ -11,7 +11,7 @@ BOOL Initialize(void)
     INITCOMMONCONTROLSEX icc;
 
     Width = 625;
-    Height = 425;
+    Height = 405;
     FirstScanNotRun = true;
     SelectedItem = -1;
 
