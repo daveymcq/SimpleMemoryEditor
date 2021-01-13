@@ -88,6 +88,8 @@ int32 CreateMainWindow(void)
             Scan = CreateWindow("button", "Scan Memory", WS_VISIBLE | WS_CHILD, 10, 315, 600, 50, MainWindow, (HMENU)ID_SCAN, hInstance, 0);
 
             EnableWindow(Scan, false);
+            EnableWindow(NewScan, false);
+            EnableWindow(ChangeValue, false);
 
             SendMessage(ChangeValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessage(ChoosePid, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));

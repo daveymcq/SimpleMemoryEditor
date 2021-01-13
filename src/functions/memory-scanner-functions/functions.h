@@ -49,6 +49,7 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
     SelectedItem = -1;
 
     EnableWindow(Scan, !reset_pid);
+    EnableWindow(ChangeValue, false);
 
     while(mb)
     {
@@ -892,7 +893,6 @@ void WINAPI ProcessScan(void)
                     SetForegroundWindow(MainWindow);
                     EnableWindow(Scan, true);
                     EnableWindow(NewScan, true);
-                    EnableWindow(ChangeValue, true);
                     EnableWindow(ChoosePid, true);
                     EnableWindow(DataSize, true);
                     EnableWindow(Value, true);

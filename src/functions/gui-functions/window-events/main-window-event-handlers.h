@@ -21,10 +21,10 @@ void ProcessListViewLeftClickEvent(void)
         SendMessage(Value, WM_SETTEXT, 0, (LPARAM)value);
     }
 
-    (SelectedAddressFrozen()) ? EnableWindow(ChangeValue, false) : EnableWindow(ChangeValue, true);
+    (SelectedAddressFrozen()) ? EnableWindow(ChangeValue, false) : EnableWindow(ChangeValue, (SelectedItem > -1));
 }
 
-// Runs when right mouse button is clicked inside ListView on MainWindow if ScanRunning == false.
+// Runs when right mouse button is clicked inside ListView on MainWindow.
 
 void ProcessListViewRightClickEvent(HWND hWnd)
 {
@@ -219,7 +219,18 @@ void ProcessSelectProcessButtonEvent(void)
 
         DestroyWindow(PidDlg);
         EnableWindow(MainWindow, true);
-        (error) ? EnableWindow(Scan, false) : EnableWindow(Scan, true);
+
+        if(error)
+        {
+            EnableWindow(Scan, false);
+        }
+
+        else
+        {
+            EnableWindow(Scan, true);
+            EnableWindow(NewScan, true);
+        }
+
         SetForegroundWindow(MainWindow);
     }
 }
