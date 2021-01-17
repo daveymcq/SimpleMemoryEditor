@@ -49,8 +49,8 @@
     #endif
 #endif
 
-#ifndef cstring
-    #define cstring int8 *
+#ifndef string
+    #define string int8 *
 #endif
 
 #ifndef wstring

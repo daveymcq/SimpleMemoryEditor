@@ -64,7 +64,7 @@ bit *ByteToBits(uint8 byte, bit *bit_array)
 
     if(bit_array)
     {
-        MemoryCopy((cstring)bit_array, (cstring)bits, sizeof(bits));
+        MemoryCopy((string)bit_array, (string)bits, sizeof(bits));
         return bit_array;
     }
 

@@ -736,7 +736,7 @@ void WINAPI ProcessScan(void)
 
     if(selection_id > -1) 
     {
-        CopyString(data_size, (cstring)data_sizes[selection_id], sizeof(data_size) - 1);
+        CopyString(data_size, (string)data_sizes[selection_id], sizeof(data_size) - 1);
     }
 
     if((IsNumeric(val)) && ((val[0] == '0') && (val[1] == 'x')))
@@ -886,7 +886,7 @@ void WINAPI ProcessScan(void)
                         SendMessage(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_DECREASED]);
                     }
 
-                    CopyString(message, (cstring)"Scan Complete!", sizeof(message) - 1);
+                    CopyString(message, (string)"Scan Complete!", sizeof(message) - 1);
 
                     ScanRunning = false;
 

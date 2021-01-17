@@ -3,8 +3,8 @@
 
 int32 CreateMainWindow(void)
 {
-    cstring value = "Value";
-    cstring address = "Address";
+    string value = "Value";
+    string address = "Address";
 
     uint8 index;
     HINSTANCE hInstance;

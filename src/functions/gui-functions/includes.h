@@ -23,10 +23,10 @@
 #define FREEZE_LIMIT (1024 * 128)
 #define PROCESS_LIMIT (1024)
 
-static const cstring title = "Simple Memory Editor";
-static const cstring data_sizes[] = { "1", "2", "4", "8", "4", "8" };
-static const cstring data_types[] = { "Byte", "Short Integer", "Integer", "Long Integer", "Float", "Double" };
-static const cstring search_conditions[] = { "Equals", "Increased", "Decreased" };
+static const string title = "Simple Memory Editor";
+static const string data_sizes[] = { "1", "2", "4", "8", "4", "8" };
+static const string data_types[] = { "Byte", "Short Integer", "Integer", "Long Integer", "Float", "Double" };
+static const string search_conditions[] = { "Equals", "Increased", "Decreased" };
 
 static int8 frozen_addresses[FREEZE_LIMIT][256];
 static int8 frozen_values[FREEZE_LIMIT][256]; 

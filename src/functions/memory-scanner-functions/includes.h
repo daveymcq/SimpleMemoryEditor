@@ -60,6 +60,6 @@ typedef enum
 static TYPE type;
 static MEMORY_BLOCK *scanner;
 
-static void AddItemToListView(void *, const cstring);
+static void AddItemToListView(void *, const string);
 
 #endif

@@ -3,7 +3,7 @@
 
 /* Copies a string from one memory location to an other memory location. */
 
-uint32 CopyString(cstring to, cstring from, uint32 length)
+uint32 CopyString(string to, string from, uint32 length)
 {
     uint32 bytes_copied = 0;
 
@@ -20,10 +20,10 @@ uint32 CopyString(cstring to, cstring from, uint32 length)
 
 /* Find length of string. Rewrite of libc strlen(). */
 
-uint32 StringLength(const cstring str)
+uint32 StringLength(const string str)
 {
     uint32 length = 0;
-    cstring pstr = (cstring)str;
+    string pstr = (string)str;
 
     while(*pstr)
     {
@@ -36,7 +36,7 @@ uint32 StringLength(const cstring str)
 
 // Join two strings.
 
-cstring StringConcat(cstring str1, cstring str2)
+string StringConcat(string str1, string str2)
 {
     CopyString(str1 + StringLength(str1), str2, StringLength(str2));
     return str1;
@@ -44,7 +44,7 @@ cstring StringConcat(cstring str1, cstring str2)
 
 /* Checks equality of two c-strings. */
 
-bool StringCompare(const cstring string_a, const cstring string_b, bool case_sensitive)
+bool StringCompare(const string string_a, const string string_b, bool case_sensitive)
 {
     bool result;
 
@@ -64,7 +64,7 @@ bool StringCompare(const cstring string_a, const cstring string_b, bool case_sen
 
 /* Finds first occurrence of a string within another string. Returns the index into the string or zero if non existent. */
 
-int32 FindFirstOccurrenceOfString(const cstring haystack, const cstring needle, bool case_sensitive)
+int32 FindFirstOccurrenceOfString(const string haystack, const string needle, bool case_sensitive)
 {
     int32 index = 0;
     uint32 needle_length = StringLength(needle);
@@ -84,7 +84,7 @@ int32 FindFirstOccurrenceOfString(const cstring haystack, const cstring needle, 
     {
         int8 haystack_buffer[2048];
  
-        CopyString((cstring)haystack_buffer, (cstring)haystack, haystack_length);
+        CopyString((string)haystack_buffer, (string)haystack, haystack_length);
         haystack_buffer[needle_length] = 0;
 
         if(StringCompare(haystack_buffer, needle, case_sensitive))
@@ -101,10 +101,10 @@ int32 FindFirstOccurrenceOfString(const cstring haystack, const cstring needle, 
 
 /* Checks if a string is numeric. */
 
-bool IsNumeric(const cstring str)
+bool IsNumeric(const string str)
 {
     bool numeric = (str) ? true : false;
-    cstring pstr = (cstring)str;
+    string pstr = (string)str;
     uint32 index = 0;
     bool hex = ((*pstr == '0') && (*(pstr + 1) == 'x'));
 

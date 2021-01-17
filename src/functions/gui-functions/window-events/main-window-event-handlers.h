@@ -111,7 +111,7 @@ void ProcessFreezeValueButtonEvent(void)
             MemoryZero(&frozen_values[frozen_index], sizeof(frozen_values[frozen_index]));
             CopyMemory(&frozen_values[frozen_index], value, sizeof(frozen_values[frozen_index]));
 
-            ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(value, (cstring)" (FROZEN)"));
+            ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(value, (string)" (FROZEN)"));
 
             NumberOfAddressesFrozen++;
         }
@@ -194,7 +194,7 @@ void ProcessSelectProcessButtonEvent(void)
 
                 if(selection_id > -1) 
                 {
-                    CopyString(data_size, (cstring)data_sizes[selection_id], sizeof(data_size) - 1);
+                    CopyString(data_size, (string)data_sizes[selection_id], sizeof(data_size) - 1);
                 }
 
                 if(CurrentProcess != process_id)
