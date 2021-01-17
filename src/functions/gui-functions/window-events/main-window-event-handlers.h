@@ -5,9 +5,9 @@
 
 void ProcessListViewLeftClickEvent(void)
 {
-    int8 value[256];
+    int8 value[MAX_PATH];
 
-    SelectedItem = (int32)SendMessage(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
+    SelectedItem = (int32)SendMessageA(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
 
     if((SelectedItem != -1) && (StringLength(value)))
     {
@@ -15,10 +15,10 @@ void ProcessListViewLeftClickEvent(void)
 
         if(SelectedAddressFrozen())
         {
-            value[FindFirstOccurrenceOfString(value, " (FROZEN)", false)] = 0;
+            value[FindFirstOccurrenceOfString(value, " (FROZEN)", false)] = null;
         }
 
-        SendMessage(Value, WM_SETTEXT, 0, (LPARAM)value);
+        SendMessageA(Value, WM_SETTEXT, 0, (LPARAM)value);
     }
 
     (SelectedAddressFrozen()) ? EnableWindow(ChangeValue, false) : EnableWindow(ChangeValue, (SelectedItem > -1));
@@ -28,7 +28,7 @@ void ProcessListViewLeftClickEvent(void)
 
 void ProcessListViewRightClickEvent(HWND hWnd)
 {
-    SelectedItem = (int32)SendMessage(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
+    SelectedItem = (int32)SendMessageA(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
 
     if(SelectedItem != -1)
     {
@@ -36,9 +36,9 @@ void ProcessListViewRightClickEvent(HWND hWnd)
 
         if(GetCursorPos(&pos))
         {
-            int8 buffer[256];
+            int8 buffer[MAX_PATH];
 
-            int32 x, y;
+            DWORD x, y;
             uint32 offset;
             bool address_frozen;
             HMENU PopupMenu;
@@ -81,8 +81,8 @@ void ProcessListViewRightClickEvent(HWND hWnd)
 
 void ProcessFreezeValueButtonEvent(void)
 {
-    int8 address[256] = { 0 };
-    int8 value[256] = { 0 };
+    int8 address[MAX_PATH] = { 0 };
+    int8 value[MAX_PATH] = { 0 };
 
     uint32 frozen_index;
     bool frozen;
@@ -111,7 +111,7 @@ void ProcessFreezeValueButtonEvent(void)
             MemoryZero(&frozen_values[frozen_index], sizeof(frozen_values[frozen_index]));
             CopyMemory(&frozen_values[frozen_index], value, sizeof(frozen_values[frozen_index]));
 
-            ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(value, (string)" (FROZEN)"));
+            ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(value, " (FROZEN)"));
 
             NumberOfAddressesFrozen++;
         }
@@ -122,7 +122,7 @@ void ProcessFreezeValueButtonEvent(void)
 
 void ProcessUnfreezeValueButtonEvent(void)
 {
-    int8 address[256] = { 0 };
+    int8 address[MAX_PATH] = { 0 };
     uint32 frozen_index;
     bool frozen;
 
@@ -158,8 +158,8 @@ void ProcessSelectProcessButtonEvent(void)
 {
     if(IndexOfSelectedProcess > -1)
     {
-        int8 selected_process[256];
-        int8 pid[256];
+        int8 selected_process[MAX_PATH];
+        int8 pid[MAX_PATH];
 
         bool error;
         uint32 process_id;
@@ -170,11 +170,12 @@ void ProcessSelectProcessButtonEvent(void)
         if(StringLength(selected_process))
         {
             CopyString(pid, pids[IndexOfSelectedProcess], sizeof(pid) - 1);
-            CopyString(PID, pid, sizeof(PID) - 1);
+            CopyString(list_of_pids, pid, sizeof(list_of_pids) - 1);
             CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process) - 1);
-            process_id = (uint32)StringToInteger(pid, FMT_INT_DECIMAL);
 
-            SendMessage(Pid, WM_SETTEXT, 0, (LPARAM)processes[IndexOfSelectedProcess]);
+            SendMessageA(Pid, WM_SETTEXT, 0, (LPARAM)processes[IndexOfSelectedProcess]);
+
+            process_id = (uint32)StringToInteger(pid, FMT_INT_DECIMAL);
         }
 
         else
@@ -189,8 +190,8 @@ void ProcessSelectProcessButtonEvent(void)
         {
             if(scanner)
             {
-                int8 data_size[256];
-                LRESULT selection_id = (LRESULT)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
+                int8 data_size[MAX_PATH];
+                LRESULT selection_id = (LRESULT)SendMessageA(DataSize, CB_GETCURSEL, 0, 0);
 
                 if(selection_id > -1) 
                 {
@@ -217,9 +218,6 @@ void ProcessSelectProcessButtonEvent(void)
             ResetScan(scanner, true, true);
         }
 
-        DestroyWindow(PidDlg);
-        EnableWindow(MainWindow, true);
-
         if(error)
         {
             EnableWindow(Scan, false);
@@ -230,6 +228,9 @@ void ProcessSelectProcessButtonEvent(void)
             EnableWindow(Scan, true);
             EnableWindow(NewScan, true);
         }
+
+        DestroyWindow(PidDlg);
+        EnableWindow(MainWindow, true);
 
         SetForegroundWindow(MainWindow);
     }

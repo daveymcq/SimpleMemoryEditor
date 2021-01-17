@@ -1,16 +1,21 @@
 #ifndef _MEMORY_SCANNER_INCLUDES_H
 #define _MEMORY_SCANNER_INCLUDES_H
 
-#define MEM_WRITABLE (PAGE_READWRITE | PAGE_WRITECOPY | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)
+#ifndef MEM_WRITABLE
+    #define MEM_WRITABLE (PAGE_READWRITE | PAGE_WRITECOPY | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)
+#endif
 
-static int8 processes[PROCESS_LIMIT][256];
-static int8 pids[PROCESS_LIMIT][256];
+static int8 processes[PROCESS_LIMIT][MAX_PATH];
+static int8 pids[PROCESS_LIMIT][MAX_PATH];
 
 static LRESULT SelectedItem;
 
 static HANDLE ScanThread;
 static HANDLE FreezeThread;
 static HANDLE MonitorSelectedProcessThread;
+static HANDLE ScanThreadMutex;
+static HANDLE FreezeThreadMutex;
+static HANDLE MonitorSelectedProcessThreadMutex;
 
 static double CurrentValue;
 static uint32 CurrentProcess;
@@ -60,6 +65,6 @@ typedef enum
 static TYPE type;
 static MEMORY_BLOCK *scanner;
 
-static void AddItemToListView(void *, const string);
+static void AddItemToListView(const string, const string);
 
 #endif

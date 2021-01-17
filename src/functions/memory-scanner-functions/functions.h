@@ -51,6 +51,14 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
     EnableWindow(Scan, !reset_pid);
     EnableWindow(ChangeValue, false);
 
+    SetDlgItemText(MainWindow, ID_VALUE, 0);
+
+    SendMessageA(DataSize, CB_RESETCONTENT, 0, 0);
+    SendMessageA(SearchCondition, CB_RESETCONTENT, 0, 0);
+    SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_EQUALS]);
+
+    ListView_DeleteAllItems(ListView);
+
     while(mb)
     {
         MemorySet(mb->match_flag, 0xff, mb->size / 8); 
@@ -58,28 +66,17 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
         mb = mb->next;
     }
 
-    SetDlgItemText(MainWindow, ID_VALUE, 0);
-    SendMessage(DataSize, CB_RESETCONTENT, 0, 0);
-    SendMessage(SearchCondition, CB_RESETCONTENT, 0, 0);
-    SendMessage(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_EQUALS]);
-
     if(reset_pid)
     {
-        int8 msg[] = "*No Process Selected*";
-        SendMessage(Pid, WM_SETTEXT, 0, (LPARAM)msg);
+        string msg = "*No Process Selected*";
+        SendMessageA(Pid, WM_SETTEXT, 0, (LPARAM)msg);
         EnableWindow(ChoosePid, true);
     }
 
-    ListView_DeleteAllItems(ListView);
-
     for(index = 0; index < ARRAYSIZE(data_types); index++)
     {
-        SendMessage(DataSize, CB_ADDSTRING, 0, (LPARAM)data_types[index]);
+        SendMessageA(DataSize, CB_ADDSTRING, 0, (LPARAM)data_types[index]);
     }
-
-    TerminateThread(FreezeThread, 0);
-    WaitForSingleObject(FreezeThread, INFINITE); 
-    CloseHandle(FreezeThread);
 
     if(disable_process_monitor)
     {
@@ -88,9 +85,31 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
         CloseHandle(MonitorSelectedProcessThread);
     }
 
-    TerminateThread(ScanThread, 0);
-    WaitForSingleObject(ScanThread, INFINITE); 
-    CloseHandle(ScanThread);
+    if(FreezeThread)
+    {
+        if(FreezeThreadMutex)
+        {
+            WaitForSingleObject(FreezeThreadMutex, INFINITE);
+            CloseHandle(FreezeThreadMutex);
+        }
+
+        TerminateThread(FreezeThread, 0);
+        WaitForSingleObject(FreezeThread, INFINITE); 
+        CloseHandle(FreezeThread);
+    }
+
+    if(ScanThread)
+    {
+        if(ScanThreadMutex)
+        {
+            WaitForSingleObject(ScanThreadMutex, INFINITE);
+            CloseHandle(ScanThreadMutex);
+        }
+
+        TerminateThread(ScanThread, 0);
+        WaitForSingleObject(ScanThread, INFINITE);
+        CloseHandle(ScanThread);
+    }
 }
 
 // Calls ResetScan() if the selected thread terminates.
@@ -315,7 +334,7 @@ MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, u
         mb->match_flag          = (uint8 *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (mbi->RegionSize / 8));
         mb->matches             = (uint64)mbi->RegionSize;
         mb->data_size           = data_size; 
-        mb->next                = 0;
+        mb->next                = null;
 
         if(mb->match_flag) 
         {
@@ -331,7 +350,11 @@ MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, u
 void FreeMemoryScanner(MEMORY_BLOCK *mblock)
 {
     MEMORY_BLOCK *mb = mblock;
-    CloseHandle(mb->process);
+
+    if(mb->process)
+    {
+        CloseHandle(mb->process);
+    }
 
     while(mb)
     {
@@ -356,7 +379,7 @@ void FreeMemoryScanner(MEMORY_BLOCK *mblock)
 
 MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
 {
-    MEMORY_BLOCK *mblock = 0;
+    MEMORY_BLOCK *mblock = null;
     uint8 *address;
     MEMORY_BASIC_INFORMATION mbi;
     HANDLE process;
@@ -405,7 +428,7 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
 
 bool SelectedAddressFrozen(void)
 {
-    int8 address[256];
+    int8 address[MAX_PATH];
     uint32 index;
 
     bool frozen = false;
@@ -435,6 +458,7 @@ void WINAPI FreezeAddresses(void)
             uint32 offset;
             double value;
             void *address;
+
             INTFMT search_number_format;
 
             for(offset = 0; offset < NumberOfAddressesFrozen; offset++)
@@ -526,7 +550,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
             total_read = 0;
             mb->matches = 0;
             bytes_left = mb->size;
-            selection_id = (int32)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
+            selection_id = (int32)SendMessageA(DataSize, CB_GETCURSEL, 0, 0);
             mb->data_size = (uint16)StringToInteger(data_sizes[selection_id], FMT_INT_DECIMAL);
 
             while(bytes_left)
@@ -660,8 +684,8 @@ void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format)
         {
             if(AddressNotDiscarded(mb, offset))
             {
-                int8 address[256];
-                int8 val[256];
+                int8 address[MAX_PATH];
+                int8 val[MAX_PATH];
 
                 IntegerToString((uint64)(uintptr_t)mb->address + offset, address, sizeof(address) - 1, FMT_INT_HEXADECIMAL);
 
@@ -718,21 +742,22 @@ void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format)
 
 void WINAPI ProcessScan(void)
 {
-    int8 pid[256];
-    int8 data_size[256];
-    int8 val[256];
-    int8 condition[256];
-    int8 message[256];
+    int8 pid[MAX_PATH];
+    int8 data_size[MAX_PATH];
+    int8 val[MAX_PATH];
+    int8 condition[MAX_PATH];
+    int8 message[MAX_PATH];
 
-    uint64 matches;
-    INTFMT search_number_format;
     int32 selection_id;
+    uint64 matches;
 
-    selection_id = (int32)SendMessage(DataSize, CB_GETCURSEL, 0, 0);
+    INTFMT search_number_format;
 
-    CopyString(pid, PID, sizeof(pid) - 1); 
-    SendMessage(Value, WM_GETTEXT, sizeof(val) - 1, (LPARAM)val);
-    SendMessage(SearchCondition, WM_GETTEXT, sizeof(condition) - 1, (LPARAM)condition);
+    selection_id = (int32)SendMessageA(DataSize, CB_GETCURSEL, 0, 0);
+
+    CopyString(pid, list_of_pids, sizeof(pid) - 1); 
+    SendMessageA(Value, WM_GETTEXT, sizeof(val) - 1, (LPARAM)val);
+    SendMessageA(SearchCondition, WM_GETTEXT, sizeof(condition) - 1, (LPARAM)condition);
 
     if(selection_id > -1) 
     {
@@ -770,12 +795,12 @@ void WINAPI ProcessScan(void)
                 NumberOfAddressesFrozen = 0;
                 ScanRunning = true;
 
-                SendMessage(ListView, LVM_DELETEALLITEMS, 0, 0);
+                SendMessageA(ListView, LVM_DELETEALLITEMS, 0, 0);
                 TerminateThread(FreezeThread, 0);
                 WaitForSingleObject(FreezeThread, INFINITE);
                 CloseHandle(FreezeThread);
 
-                selected_search_condition = (int8)SendMessage(SearchCondition, CB_GETCURSEL, 0, 0);
+                selected_search_condition = (int8)SendMessageA(SearchCondition, CB_GETCURSEL, 0, 0);
 
                 if(selected_search_condition > -1)
                 {
@@ -882,8 +907,8 @@ void WINAPI ProcessScan(void)
                     {
                         FirstScanNotRun = false;
 
-                        SendMessage(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_INCREASED]);
-                        SendMessage(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_DECREASED]);
+                        SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_INCREASED]);
+                        SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_DECREASED]);
                     }
 
                     CopyString(message, (string)"Scan Complete!", sizeof(message) - 1);
@@ -912,9 +937,9 @@ void WINAPI ProcessScan(void)
 
 bool UpdateValue(void)
 {
-    int8 address[256];
-    int8 value[256];
-    int8 buffer[256];
+    int8 address[MAX_PATH];
+    int8 value[MAX_PATH];
+    int8 buffer[MAX_PATH];
 
     LVITEM Item;
     INTFMT search_number_format;
@@ -928,8 +953,8 @@ bool UpdateValue(void)
     Item.pszText = buffer;
 
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address) - 1);
-    SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
-    SendMessage(Value, WM_GETTEXT, sizeof(buffer) - 1, (LPARAM)buffer);
+    SendMessageA(ChangeValueDlgValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
+    SendMessageA(Value, WM_GETTEXT, sizeof(buffer) - 1, (LPARAM)buffer);
     
     ListView_SetItem(ListView, &Item);
 
@@ -954,7 +979,7 @@ bool UpdateValue(void)
 
             DestroyWindow(ChangeValueDlg);
             SetForegroundWindow(MainWindow);
-            SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
+            SendMessageA(ChangeValueDlgValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
 
             current_value = PeekFloat(scanner->process, addr, scanner->data_size);
 
@@ -985,7 +1010,7 @@ bool UpdateValue(void)
 
             DestroyWindow(ChangeValueDlg);
             SetForegroundWindow(MainWindow);
-            SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
+            SendMessageA(ChangeValueDlgValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
 
             current_value = PeekFloat(scanner->process, addr, scanner->data_size);
 
@@ -1016,7 +1041,7 @@ bool UpdateValue(void)
 
             DestroyWindow(ChangeValueDlg);
             SetForegroundWindow(MainWindow);
-            SendMessage(ChangeValueDlgValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
+            SendMessageA(ChangeValueDlgValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
 
             current_value = PeekInteger(scanner->process, addr, scanner->data_size);
 

@@ -469,7 +469,7 @@ double StringToDouble(const string str)
 
 char *WideToAscii(const wstring src)
 {
-    static char result[256];
+    static char result[MAX_PATH];
     char *dst = result;
 
     while(*src)

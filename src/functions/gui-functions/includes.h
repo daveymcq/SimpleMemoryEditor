@@ -6,8 +6,8 @@
 #define ID_NEW_SCAN (WM_USER + 1002)
 #define ID_VALUE (WM_USER + 1003)
 #define ID_CHANGE_VALUE (WM_USER + 1004)
-#define ID_PID (WM_USER + 1005)
-#define ID_SIZE (WM_USER + 1006)
+#define ID_SIZE (WM_USER + 1005)
+#define ID_PID (WM_USER + 1006)
 #define ID_SEARCH_CONDITION (WM_USER + 1007)
 #define ID_SELECT_PROCESS (WM_USER + 1008)
 #define ID_PROCESS_ID (WM_USER + 1009)
@@ -20,31 +20,32 @@
 #define ID_FREEZE_VALUE (WM_USER + 1016)
 #define ID_UNFREEZE_VALUE (WM_USER + 1017)
 
-#define FREEZE_LIMIT (1024 * 128)
-#define PROCESS_LIMIT (1024)
+#define PROCESS_LIMIT (128)
+#define FREEZE_LIMIT (32)
+
+#ifndef LVS_EX_DOUBLEBUFFER
+    #define LVS_EX_DOUBLEBUFFER 0x00010000
+#endif
 
 static const string title = "Simple Memory Editor";
 static const string data_sizes[] = { "1", "2", "4", "8", "4", "8" };
 static const string data_types[] = { "Byte", "Short Integer", "Integer", "Long Integer", "Float", "Double" };
 static const string search_conditions[] = { "Equals", "Increased", "Decreased" };
 
-static int8 frozen_addresses[FREEZE_LIMIT][256];
-static int8 frozen_values[FREEZE_LIMIT][256]; 
-static int8 PID[256];
+static int8 frozen_addresses[FREEZE_LIMIT][MAX_PATH];
+static int8 frozen_values[FREEZE_LIMIT][MAX_PATH];
+static int8 list_of_pids[MAX_PATH];
 
-static DWORD Width;
-static DWORD Height;
-
-static HFONT Font;
+static uint32 Width;
+static uint32 Height;
 
 static HWND ListView, Scan, Value, ChangeValue, Pid, ChoosePid, DataSize, DataSizeLabel,
             PidLabel, ValueLabel, SearchConditionLabel, SearchCondition, NewScan, PidDlg,
             ProcessSelection, ChooseProcess, MainWindow, ChangeValueDlg, ChangeValueDlgValue,
             ChangeValueDlgButton;
 
-static HMENU MenuBar;
-static HMENU FileMenu;
-static HMENU HelpMenu;
+static HINSTANCE Instance;
+static HFONT Font;
 
 static LRESULT CALLBACK MainWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK SelectProcessWindowProc(HWND, UINT, WPARAM, LPARAM);

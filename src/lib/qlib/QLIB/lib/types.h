@@ -37,6 +37,10 @@
     #define wchar uint16
 #endif
 
+#ifndef null
+    #define null 0
+#endif
+
 #if defined(_MSC_VER)
     #if (_MSC_VER >= 1400)
         #ifndef uint64
