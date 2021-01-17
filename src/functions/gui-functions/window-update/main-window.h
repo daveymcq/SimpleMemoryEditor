@@ -3,7 +3,7 @@
 
 void AddItemToListView(const string address, const string value)
 {
-    LVITEM Item;
+    static LVITEM Item;
 
     Item.mask        = LVIF_TEXT;
     Item.iSubItem    = 0;
