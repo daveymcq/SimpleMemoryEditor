@@ -13,9 +13,6 @@ static LRESULT SelectedItem;
 static HANDLE ScanThread;
 static HANDLE FreezeThread;
 static HANDLE MonitorSelectedProcessThread;
-static HANDLE ScanThreadMutex;
-static HANDLE FreezeThreadMutex;
-static HANDLE MonitorSelectedProcessThreadMutex;
 
 static double CurrentValue;
 static uint32 CurrentProcess;

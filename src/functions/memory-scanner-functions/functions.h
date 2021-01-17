@@ -87,12 +87,6 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
     if(FreezeThread)
     {
-        if(FreezeThreadMutex)
-        {
-            WaitForSingleObject(FreezeThreadMutex, INFINITE);
-            CloseHandle(FreezeThreadMutex);
-        }
-
         TerminateThread(FreezeThread, 0);
         WaitForSingleObject(FreezeThread, INFINITE); 
         CloseHandle(FreezeThread);
@@ -100,12 +94,6 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
     if(ScanThread)
     {
-        if(ScanThreadMutex)
-        {
-            WaitForSingleObject(ScanThreadMutex, INFINITE);
-            CloseHandle(ScanThreadMutex);
-        }
-
         TerminateThread(ScanThread, 0);
         WaitForSingleObject(ScanThread, INFINITE);
         CloseHandle(ScanThread);
