@@ -14,8 +14,8 @@ void CreateSelectProcessWindow(void)
     wc.lpszMenuName     = null;
     wc.hInstance        = Instance;
     wc.hbrBackground    = GetSysColorBrush(COLOR_3DFACE);
-    wc.hIcon            = LoadIconA(Instance, MAKEINTRESOURCE(AppIcon));
-    wc.hIconSm          = LoadIconA(Instance, MAKEINTRESOURCE(AppIcon));
+    wc.hIcon            = LoadIconA(Instance, MAKEINTRESOURCEA(AppIcon));
+    wc.hIconSm          = LoadIconA(Instance, MAKEINTRESOURCEA(AppIcon));
     wc.style            = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
     UnregisterClassA(wc.lpszClassName, Instance);

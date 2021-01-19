@@ -17,8 +17,8 @@ int32 CreateMainWindow(void)
     wc.cbWndExtra = 0;
     wc.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
     wc.hCursor = LoadCursorA(Instance, IDC_ARROW);
-    wc.hIcon = LoadIconA(Instance, MAKEINTRESOURCE(AppIcon));
-    wc.hIconSm = LoadIconA(Instance, MAKEINTRESOURCE(AppIcon));
+    wc.hIcon = LoadIconA(Instance, MAKEINTRESOURCEA(AppIcon));
+    wc.hIconSm = LoadIconA(Instance, MAKEINTRESOURCEA(AppIcon));
     wc.hInstance = Instance;
     wc.lpfnWndProc = MainWindowProc;
     wc.lpszClassName = "Main";
