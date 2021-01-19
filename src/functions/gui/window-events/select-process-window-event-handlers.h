@@ -9,7 +9,7 @@ void ProcessListboxChangeEvent(void)
 
     if(IndexOfSelectedProcess > -1)
     {
-        int8 selected_process[MAX_PATH] = { 0 };
+        int8 selected_process[256] = { 0 };
 
         CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process) - 1);
 

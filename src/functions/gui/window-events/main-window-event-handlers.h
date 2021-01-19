@@ -5,7 +5,7 @@
 
 void ProcessListViewLeftClickEvent(void)
 {
-    int8 value[MAX_PATH];
+    int8 value[256];
 
     SelectedItem = (int32)SendMessageA(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
 
@@ -36,7 +36,7 @@ void ProcessListViewRightClickEvent(HWND hWnd)
 
         if(GetCursorPos(&pos))
         {
-            int8 buffer[MAX_PATH];
+            int8 buffer[256];
 
             DWORD x, y;
             uint32 offset;
@@ -81,8 +81,8 @@ void ProcessListViewRightClickEvent(HWND hWnd)
 
 void ProcessFreezeValueButtonEvent(void)
 {
-    int8 address[MAX_PATH] = { 0 };
-    int8 value[MAX_PATH] = { 0 };
+    int8 address[256] = { 0 };
+    int8 value[256] = { 0 };
 
     uint32 frozen_index;
     bool frozen;
@@ -122,7 +122,7 @@ void ProcessFreezeValueButtonEvent(void)
 
 void ProcessUnfreezeValueButtonEvent(void)
 {
-    int8 address[MAX_PATH] = { 0 };
+    int8 address[256] = { 0 };
     uint32 frozen_index;
     bool frozen;
 
@@ -158,8 +158,8 @@ void ProcessSelectProcessButtonEvent(void)
 {
     if(IndexOfSelectedProcess > -1)
     {
-        int8 selected_process[MAX_PATH];
-        int8 pid[MAX_PATH];
+        int8 selected_process[256];
+        int8 pid[256];
 
         bool error;
         uint32 process_id;
@@ -190,7 +190,7 @@ void ProcessSelectProcessButtonEvent(void)
         {
             if(scanner)
             {
-                int8 data_size[MAX_PATH];
+                int8 data_size[256];
                 LRESULT selection_id = (LRESULT)SendMessageA(DataSize, CB_GETCURSEL, 0, 0);
 
                 if(selection_id > -1) 

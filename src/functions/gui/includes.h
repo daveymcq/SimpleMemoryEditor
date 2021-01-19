@@ -32,9 +32,9 @@ static const string data_sizes[] = { "1", "2", "4", "8", "4", "8" };
 static const string data_types[] = { "Byte", "Short Integer", "Integer", "Long Integer", "Float", "Double" };
 static const string search_conditions[] = { "Equals", "Increased", "Decreased" };
 
-static int8 frozen_addresses[FREEZE_LIMIT][MAX_PATH];
-static int8 frozen_values[FREEZE_LIMIT][MAX_PATH];
-static int8 selected_pid[MAX_PATH];
+static int8 frozen_addresses[FREEZE_LIMIT][256];
+static int8 frozen_values[FREEZE_LIMIT][256];
+static int8 selected_pid[256];
 
 static uint32 Width;
 static uint32 Height;

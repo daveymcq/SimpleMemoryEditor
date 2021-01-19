@@ -398,25 +398,12 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
         }
     }
 
-    else
-    {
-        ShowWindow(MainWindow, false);
-        ShowWindow(ChoosePid, false);
-
-        EnableWindow(MainWindow, false);
-        EnableWindow(ChoosePid, false);
-
-        MessageBox(0, "A unexpected error occourred that the program cannot recover from. Exiting!" ,"Fatal Error!", MB_OK | MB_ICONERROR);
-
-        PostQuitMessage(-1);
-    }
-
     return mblock;
 }
 
 bool SelectedAddressFrozen(void)
 {
-    int8 address[MAX_PATH];
+    int8 address[256];
     uint32 index;
 
     bool frozen = false;
@@ -672,8 +659,8 @@ void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format)
         {
             if(AddressNotDiscarded(mb, offset))
             {
-                int8 address[MAX_PATH];
-                int8 val[MAX_PATH];
+                int8 address[256];
+                int8 val[256];
 
                 IntegerToString((uint64)(uintptr_t)mb->address + offset, address, sizeof(address) - 1, FMT_INT_HEXADECIMAL);
 
@@ -730,16 +717,15 @@ void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format)
 
 void WINAPI ProcessScan(void)
 {
-    int8 pid[MAX_PATH];
-    int8 data_size[MAX_PATH];
-    int8 val[MAX_PATH];
-    int8 condition[MAX_PATH];
-    int8 message[MAX_PATH];
+    int8 pid[256];
+    int8 data_size[256];
+    int8 val[256];
+    int8 condition[256];
 
     int32 selection_id;
     uint64 matches;
 
-    INTFMT search_number_format;
+    INTFMT search_number_format = FMT_INT_DECIMAL;
 
     selection_id = (int32)SendMessageA(DataSize, CB_GETCURSEL, 0, 0);
 
@@ -755,11 +741,6 @@ void WINAPI ProcessScan(void)
     if((IsNumeric(val)) && ((val[0] == '0') && (val[1] == 'x')))
     {
         search_number_format = FMT_INT_HEXADECIMAL;
-    }
-
-    else if(IsNumeric(val) && ((val[0] != '0') && (val[1] != 'x')))
-    {
-        search_number_format = FMT_INT_DECIMAL;
     }
 
     if((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (!StringCompare(pid, "*No Process Selected*", false)))
@@ -899,11 +880,8 @@ void WINAPI ProcessScan(void)
                         SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_DECREASED]);
                     }
 
-                    CopyString(message, (string)"Scan Complete!", sizeof(message) - 1);
-
                     ScanRunning = false;
 
-                    SetForegroundWindow(MainWindow);
                     EnableWindow(Scan, true);
                     EnableWindow(NewScan, true);
                     EnableWindow(ChoosePid, true);
@@ -912,9 +890,11 @@ void WINAPI ProcessScan(void)
                     EnableWindow(SearchCondition, true);
                     EnableWindow(MainWindow, false);
 
-                    MessageBox(MainWindow, message, title, MB_OK);
+                    MessageBeep(MB_OK);
 
                     EnableWindow(MainWindow, true);
+
+                    SetForegroundWindow(MainWindow);
                 }
             }
         }
@@ -925,9 +905,9 @@ void WINAPI ProcessScan(void)
 
 bool UpdateValue(void)
 {
-    int8 address[MAX_PATH];
-    int8 value[MAX_PATH];
-    int8 buffer[MAX_PATH];
+    int8 address[256];
+    int8 value[256];
+    int8 buffer[256];
 
     LVITEM Item;
     INTFMT search_number_format;
@@ -976,15 +956,6 @@ bool UpdateValue(void)
 
             return true;
         }
-
-        else
-        {
-            EnableWindow(MainWindow, false);
-            MessageBox(MainWindow, "Memory operation failed!", "Error!", MB_OK);
-            EnableWindow(MainWindow, true);
-
-            return false;
-        }
     }
 
     else if(type == TYPE_DOUBLE)
@@ -1006,15 +977,6 @@ bool UpdateValue(void)
             ListView_SetItemText(ListView, SelectedItem, 1, value);
 
             return true;
-        }
-
-        else
-        {
-            EnableWindow(MainWindow, false);
-            MessageBox(MainWindow, "Memory operation failed!", "Error!", MB_OK);
-            EnableWindow(MainWindow, true);
-
-            return false;
         }
     }
 
@@ -1049,15 +1011,6 @@ bool UpdateValue(void)
             ListView_SetItemText(ListView, SelectedItem, 1, value);
 
             return true;
-        }
-
-        else
-        {
-            EnableWindow(MainWindow, false);
-            MessageBox(MainWindow, "Memory operation failed!", "Error!", MB_OK);
-            EnableWindow(MainWindow, true);
-
-            return false;
         }
     }
 

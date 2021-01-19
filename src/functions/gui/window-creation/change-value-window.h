@@ -32,7 +32,7 @@ void CreateChangeValueWindow(void)
 
             if(ChangeValueDlg)
             {
-                int8 value[MAX_PATH];
+                int8 value[256];
 
                 ListView_GetItemText(ListView, SelectedItem, 1, value, sizeof(value) - 1);
 
