@@ -29,6 +29,7 @@ LRESULT CALLBACK SelectProcessWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPA
 
             EnableWindow(MainWindow, true);
             ShowWindow(MainWindow, SW_SHOW);
+            SetForegroundWindow(MainWindow);
 
         break;
 

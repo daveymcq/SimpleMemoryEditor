@@ -11,13 +11,13 @@ void CreateChangeValueWindow(void)
         wc.cbClsExtra       = 0;
         wc.cbWndExtra       = 0;
         wc.lpszClassName    = "ChangeValueDlg";
-        wc.hCursor          = LoadCursor(null, IDC_ARROW);
+        wc.hCursor          = LoadCursorA(null, IDC_ARROW);
         wc.lpfnWndProc      = ChangeValueWindowProc;
         wc.lpszMenuName     = null;
         wc.hInstance        = Instance;
         wc.hbrBackground    = GetSysColorBrush(COLOR_3DFACE);
-        wc.hIcon            = LoadIcon(Instance, MAKEINTRESOURCE(AppIcon));
-        wc.hIconSm          = LoadIcon(Instance, MAKEINTRESOURCE(AppIcon));
+        wc.hIcon            = LoadIconA(Instance, MAKEINTRESOURCE(AppIcon));
+        wc.hIconSm          = LoadIconA(Instance, MAKEINTRESOURCE(AppIcon));
         wc.style            = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
 
