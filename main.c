@@ -22,7 +22,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 // Entry point.
 
-int32 main(int argc, char **argv)
+int32 main(int32 argc, string argv[])
 {
     if(Initialize())
     {
