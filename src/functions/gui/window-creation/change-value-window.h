@@ -11,7 +11,7 @@ void CreateChangeValueWindow(void)
         wc.cbClsExtra       = 0;
         wc.cbWndExtra       = 0;
         wc.lpszClassName    = "ChangeValueDlg";
-        wc.hCursor          = LoadCursorA(null, IDC_ARROW);
+        wc.hCursor          = LoadCursorA(Instance, IDC_ARROW);
         wc.lpfnWndProc      = ChangeValueWindowProc;
         wc.lpszMenuName     = null;
         wc.hInstance        = Instance;

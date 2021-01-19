@@ -9,7 +9,7 @@ void CreateSelectProcessWindow(void)
     wc.cbClsExtra       = 0;
     wc.cbWndExtra       = 0;
     wc.lpszClassName    = "SelectPidDlg";
-    wc.hCursor          = LoadCursorA(null, IDC_ARROW);
+    wc.hCursor          = LoadCursorA(Instance, IDC_ARROW);
     wc.lpfnWndProc      = SelectProcessWindowProc;
     wc.lpszMenuName     = null;
     wc.hInstance        = Instance;
