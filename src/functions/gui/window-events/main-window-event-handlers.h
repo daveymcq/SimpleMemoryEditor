@@ -170,7 +170,7 @@ void ProcessSelectProcessButtonEvent(void)
         if(StringLength(selected_process))
         {
             CopyString(pid, pids[IndexOfSelectedProcess], sizeof(pid) - 1);
-            CopyString(list_of_pids, pid, sizeof(list_of_pids) - 1);
+            CopyString(selected_pid, pid, sizeof(selected_pid) - 1);
             CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process) - 1);
 
             SendMessageA(Pid, WM_SETTEXT, 0, (LPARAM)processes[IndexOfSelectedProcess]);

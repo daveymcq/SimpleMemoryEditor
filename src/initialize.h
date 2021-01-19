@@ -5,11 +5,11 @@
 
 #include "lib/qlib/QLIB/qlib.h"
 
-#include "functions/gui-functions/includes.h"
-#include "functions/memory-scanner-functions/includes.h"
+#include "functions/gui/includes.h"
+#include "functions/memory-scanner/includes.h"
 
-#include "functions/memory-scanner-functions/functions.h"
-#include "functions/gui-functions/functions.h"
+#include "functions/memory-scanner/functions.h"
+#include "functions/gui/functions.h"
 
 // Initialize local variables.
 

@@ -743,7 +743,7 @@ void WINAPI ProcessScan(void)
 
     selection_id = (int32)SendMessageA(DataSize, CB_GETCURSEL, 0, 0);
 
-    CopyString(pid, list_of_pids, sizeof(pid) - 1); 
+    CopyString(pid, selected_pid, sizeof(pid) - 1); 
     SendMessageA(Value, WM_GETTEXT, sizeof(val) - 1, (LPARAM)val);
     SendMessageA(SearchCondition, WM_GETTEXT, sizeof(condition) - 1, (LPARAM)condition);
 

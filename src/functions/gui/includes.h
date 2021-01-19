@@ -34,7 +34,7 @@ static const string search_conditions[] = { "Equals", "Increased", "Decreased" }
 
 static int8 frozen_addresses[FREEZE_LIMIT][MAX_PATH];
 static int8 frozen_values[FREEZE_LIMIT][MAX_PATH];
-static int8 list_of_pids[MAX_PATH];
+static int8 selected_pid[MAX_PATH];
 
 static uint32 Width;
 static uint32 Height;
