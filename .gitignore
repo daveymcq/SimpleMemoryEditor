@@ -4,3 +4,4 @@ src/test.cpp
 resources/*.res
 *.log
 *.inf
+.DS_Store
