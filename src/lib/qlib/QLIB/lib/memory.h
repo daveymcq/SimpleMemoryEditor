@@ -19,7 +19,7 @@ uint64 MemoryZero(void *address, uint64 length)
 
 /* Rewrite of libc memset(). */
 
-uint64 MemorySet(void *address, int8 value, uint64 length)
+void *MemorySet(void *address, int8 value, uint64 length)
 {
     uint64 bytes_set = 0;
     int8 *paddress = (int8 *)address;
@@ -30,24 +30,24 @@ uint64 MemorySet(void *address, int8 value, uint64 length)
         bytes_set += sizeof(value);
     }
 
-    return bytes_set;
+    return address;
 }
 
 /* Copies memory from one memory location to an other memory location. */
 
-uint64 MemoryCopy(void *to_address, void *from_address, uint64 length_in_bytes)
+void *MemoryCopy(void *dest, void *src, uint64 length)
 {
     uint64 bytes_copied = 0;
-    int8 *pto = (int8 *)to_address;
-    int8 *pfrom = (int8 *)from_address;
+    int8 *pdest = (int8 *)dest;
+    int8 *psrc = (int8 *)src;
 
-    while(length_in_bytes - bytes_copied)
+    while(length - bytes_copied)
     {
-        pto[bytes_copied] = pfrom[bytes_copied];
+        *pdest++ = *psrc++;
         bytes_copied++;
     }
 
-    return bytes_copied;
+    return dest;
 }
 
 /* Bitwies functions. Bits to bytes and vice-versa. */

@@ -629,10 +629,10 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
                     }
                 }
 
-                bytes_copied = MemoryCopy(mb->buffer + total_read, buffer, bytes_read);
+                MemoryCopy(mb->buffer + total_read, buffer, bytes_read);
 
-                bytes_left -= bytes_copied;
-                total_read += bytes_copied;
+                bytes_left -= bytes_read;
+                total_read += bytes_read;
             }
 
             mb->size = total_read;

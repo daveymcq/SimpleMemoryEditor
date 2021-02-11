@@ -29,7 +29,5 @@ int32 main(int32 argc, string argv[])
         return CreateMainWindow();
     }
 
-    MessageBoxA(null, "The application failed to start.", title, MB_OK | MB_ICONERROR);
-
-    return -1;
+    return MessageBoxA(null, "The application failed to start.", title, MB_OK | MB_ICONERROR);
 }
