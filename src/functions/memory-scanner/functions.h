@@ -80,23 +80,41 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
     if(disable_process_monitor)
     {
-        TerminateThread(MonitorSelectedProcessThread, 0);
-        WaitForSingleObject(MonitorSelectedProcessThread, INFINITE); 
-        CloseHandle(MonitorSelectedProcessThread);
+        if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
+        {    
+            DWORD status = WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
+
+            if(status == WAIT_OBJECT_0)
+            {
+                CloseHandle(MonitorSelectedProcessThread);
+            }
+        }
     }
 
     if(FreezeThread)
     {
-        TerminateThread(FreezeThread, 0);
-        WaitForSingleObject(FreezeThread, INFINITE); 
-        CloseHandle(FreezeThread);
+        if(FreezeThread && TerminateThread(FreezeThread, 0))
+        {    
+            DWORD status = WaitForSingleObject(FreezeThread, INFINITE);
+
+            if(status == WAIT_OBJECT_0)
+            {
+                CloseHandle(FreezeThread);
+            }
+        }
     }
 
     if(ScanThread)
     {
-        TerminateThread(ScanThread, 0);
-        WaitForSingleObject(ScanThread, INFINITE);
-        CloseHandle(ScanThread);
+        if(ScanThread && TerminateThread(ScanThread, 0))
+        {    
+            DWORD status = WaitForSingleObject(ScanThread, INFINITE);
+
+            if(status == WAIT_OBJECT_0)
+            {
+                CloseHandle(ScanThread);
+            }
+        }
     }
 }
 
@@ -717,10 +735,10 @@ void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format)
 
 void WINAPI ProcessScan(void)
 {
-    int8 pid[256];
-    int8 data_size[256];
-    int8 val[256];
-    int8 condition[256];
+    static int8 pid[256];
+    static int8 data_size[256];
+    static int8 val[256];
+    static int8 condition[256];
 
     int32 selection_id;
     uint64 matches;
@@ -751,28 +769,40 @@ void WINAPI ProcessScan(void)
         {
             DWORD ThreadID;
 
-            TerminateThread(MonitorSelectedProcessThread, 0);
-            WaitForSingleObject(MonitorSelectedProcessThread, INFINITE); 
-            CloseHandle(MonitorSelectedProcessThread);
+            if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
+            {    
+                DWORD status = WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
+
+                if(status == WAIT_OBJECT_0)
+                {
+                    CloseHandle(MonitorSelectedProcessThread);
+                }
+            }
 
             MonitorSelectedProcessThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)MonitorSelectedProcess, 0, 0, &ThreadID);
 
             if(MonitorSelectedProcessThread)
             {
                 int8 selected_search_condition;
-
                 NumberOfAddressesFrozen = 0;
                 ScanRunning = true;
 
-                SendMessageA(ListView, LVM_DELETEALLITEMS, 0, 0);
-                TerminateThread(FreezeThread, 0);
-                WaitForSingleObject(FreezeThread, INFINITE);
-                CloseHandle(FreezeThread);
+                if(FreezeThread && TerminateThread(FreezeThread, 0))
+                {    
+                    DWORD status = WaitForSingleObject(FreezeThread, INFINITE);
+
+                    if(status == WAIT_OBJECT_0)
+                    {
+                        CloseHandle(FreezeThread);
+                    }
+                }
 
                 selected_search_condition = (int8)SendMessageA(SearchCondition, CB_GETCURSEL, 0, 0);
 
                 if(selected_search_condition > -1)
                 {
+                    SendMessageA(ListView, LVM_DELETEALLITEMS, 0, 0);
+
                     EnableWindow(ChangeValue, false);
                     EnableWindow(Scan, false);
                     EnableWindow(NewScan, false);

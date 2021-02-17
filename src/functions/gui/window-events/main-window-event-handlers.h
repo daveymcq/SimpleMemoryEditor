@@ -238,19 +238,39 @@ void ProcessSelectProcessButtonEvent(void)
 
 void ProcessMainWindowCloseEvent(HWND hWnd)
 {
-    TerminateThread(FreezeThread, 0);
-    WaitForSingleObject(FreezeThread, INFINITE);
-    CloseHandle(FreezeThread);
-    TerminateThread(MonitorSelectedProcessThread, 0);
-    WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
-    CloseHandle(MonitorSelectedProcessThread);
-    TerminateThread(ScanThread, 0);
-    WaitForSingleObject(ScanThread, INFINITE);
-    CloseHandle(ScanThread);
-
     if(scanner)
     {
         FreeMemoryScanner(scanner);
+    }
+
+    if(FreezeThread && TerminateThread(FreezeThread, 0))
+    {    
+        DWORD status = WaitForSingleObject(FreezeThread, INFINITE);
+
+        if(status == WAIT_OBJECT_0)
+        {
+            CloseHandle(FreezeThread);
+        }
+    }
+
+    if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
+    {    
+        DWORD status = WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
+
+        if(status == WAIT_OBJECT_0)
+        {
+            CloseHandle(MonitorSelectedProcessThread);
+        }
+    }
+
+    if(ScanThread && TerminateThread(ScanThread, 0))
+    {    
+        DWORD status = WaitForSingleObject(ScanThread, INFINITE);
+
+        if(status == WAIT_OBJECT_0)
+        {
+            CloseHandle(ScanThread);
+        }
     }
 
     DestroyWindow(hWnd);

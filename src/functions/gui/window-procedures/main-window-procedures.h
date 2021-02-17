@@ -62,8 +62,16 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPara
             {
                 DWORD ThreadID;
 
-                TerminateThread(ScanThread, 0);
-                CloseHandle(ScanThread);
+                if(ScanThread && TerminateThread(ScanThread, 0))
+                {    
+                    DWORD status = WaitForSingleObject(ScanThread, INFINITE);
+
+                    if(status == WAIT_OBJECT_0)
+                    {
+                        CloseHandle(ScanThread);
+                    }
+                }
+
                 ScanThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)ProcessScan, 0, 0, &ThreadID);
             }
 
