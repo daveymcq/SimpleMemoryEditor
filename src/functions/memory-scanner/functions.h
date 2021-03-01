@@ -96,7 +96,7 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
 // Calls ResetScan() if the selected thread terminates.
 
-void WINAPI MonitorSelectedProcess(void)
+DWORD WINAPI MonitorSelectedProcess(void)
 {
     while(SelectedProcessOpen)
     {
@@ -110,6 +110,8 @@ void WINAPI MonitorSelectedProcess(void)
             break;
         }
     }
+
+    return 0;
 }
 
 // Finds the number of matches from the last scan.
