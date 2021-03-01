@@ -80,42 +80,18 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
     if(disable_process_monitor)
     {
-        if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
-        {    
-            DWORD status = WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
-
-            if(status == WAIT_OBJECT_0)
-            {
-                CloseHandle(MonitorSelectedProcessThread);
-            }
-        }
+        TerminateThread(MonitorSelectedProcessThread, 0);
+        WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
+        CloseHandle(MonitorSelectedProcessThread);
     }
 
-    if(FreezeThread)
-    {
-        if(FreezeThread && TerminateThread(FreezeThread, 0))
-        {    
-            DWORD status = WaitForSingleObject(FreezeThread, INFINITE);
+    TerminateThread(FreezeThread, 0);
+    WaitForSingleObject(FreezeThread, INFINITE);
+    CloseHandle(FreezeThread);
 
-            if(status == WAIT_OBJECT_0)
-            {
-                CloseHandle(FreezeThread);
-            }
-        }
-    }
-
-    if(ScanThread)
-    {
-        if(ScanThread && TerminateThread(ScanThread, 0))
-        {    
-            DWORD status = WaitForSingleObject(ScanThread, INFINITE);
-
-            if(status == WAIT_OBJECT_0)
-            {
-                CloseHandle(ScanThread);
-            }
-        }
-    }
+    TerminateThread(ScanThread, 0);
+    WaitForSingleObject(ScanThread, INFINITE);
+    CloseHandle(ScanThread);
 }
 
 // Calls ResetScan() if the selected thread terminates.
@@ -769,33 +745,22 @@ void WINAPI ProcessScan(void)
         {
             DWORD ThreadID;
 
-            if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
-            {    
-                DWORD status = WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
-
-                if(status == WAIT_OBJECT_0)
-                {
-                    CloseHandle(MonitorSelectedProcessThread);
-                }
-            }
+            TerminateThread(MonitorSelectedProcessThread, 0);
+            WaitForSingleObject(MonitorSelectedProcessThread, INFINITE); 
+            CloseHandle(MonitorSelectedProcessThread);
 
             MonitorSelectedProcessThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)MonitorSelectedProcess, 0, 0, &ThreadID);
 
             if(MonitorSelectedProcessThread)
             {
                 int8 selected_search_condition;
+
+                TerminateThread(FreezeThread, 0);
+                WaitForSingleObject(FreezeThread, INFINITE); 
+                CloseHandle(FreezeThread);
+
                 NumberOfAddressesFrozen = 0;
                 ScanRunning = true;
-
-                if(FreezeThread && TerminateThread(FreezeThread, 0))
-                {    
-                    DWORD status = WaitForSingleObject(FreezeThread, INFINITE);
-
-                    if(status == WAIT_OBJECT_0)
-                    {
-                        CloseHandle(FreezeThread);
-                    }
-                }
 
                 selected_search_condition = (int8)SendMessageA(SearchCondition, CB_GETCURSEL, 0, 0);
 

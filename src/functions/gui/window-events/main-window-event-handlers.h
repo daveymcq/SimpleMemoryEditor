@@ -158,31 +158,30 @@ void ProcessSelectProcessButtonEvent(void)
 {
     if(IndexOfSelectedProcess > -1)
     {
-        int8 selected_process[256];
-        int8 pid[256];
-
-        bool error;
-        uint32 process_id;
         HANDLE process;
+        unsigned int process_id;
+        bool error;
+        char selected_process[256];
+        char pid[256];
 
-        error = false;
+        CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process) - 1);
 
         if(StringLength(selected_process))
         {
             CopyString(pid, pids[IndexOfSelectedProcess], sizeof(pid) - 1);
             CopyString(selected_pid, pid, sizeof(selected_pid) - 1);
-            CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process) - 1);
+            SendMessage(Pid, WM_SETTEXT, 0, (LPARAM)processes[IndexOfSelectedProcess]);
 
-            SendMessageA(Pid, WM_SETTEXT, 0, (LPARAM)processes[IndexOfSelectedProcess]);
-
-            process_id = (uint32)StringToInteger(pid, FMT_INT_DECIMAL);
+            error = false;
         }
 
         else
         {
-            error = true;
             ResetScan(scanner, true, true);
+            error = true;
         }
+
+        process_id = (unsigned int)StringToInteger(pid, FMT_INT_DECIMAL);
 
         process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, process_id);
 
@@ -190,88 +189,62 @@ void ProcessSelectProcessButtonEvent(void)
         {
             if(scanner)
             {
-                int8 data_size[256];
-                LRESULT selection_id = (LRESULT)SendMessageA(DataSize, CB_GETCURSEL, 0, 0);
+                char data_size[256];
 
-                if(selection_id > -1) 
-                {
-                    CopyString(data_size, (string)data_sizes[selection_id], sizeof(data_size) - 1);
-                }
+                LRESULT selection_id = SendMessage(DataSize, CB_GETCURSEL, 0, 0);
+
+                if(selection_id > -1) CopyString(data_size, (char *)data_sizes[selection_id], sizeof(data_size) - 1);
 
                 if(CurrentProcess != process_id)
                 {
                     CurrentProcess = process_id;
                     ResetScan(scanner, false, true);
                     FreeMemoryScanner(scanner);
-
-                    scanner = CreateMemoryScanner(CurrentProcess, (uint16)StringToInteger(data_size, FMT_INT_DECIMAL));
+                    scanner = CreateMemoryScanner(CurrentProcess, (unsigned short)StringToInteger(data_size, FMT_INT_DECIMAL));
                 }
             }
 
             CloseHandle(process);
-        }
-
-        else
-        {
-            error = true;
-            EnableWindow(ChoosePid, true);
-            ResetScan(scanner, true, true);
-        }
-
-        if(error)
-        {
-            EnableWindow(Scan, false);
-        }
-
-        else
-        {
             EnableWindow(Scan, true);
-            EnableWindow(NewScan, true);
+
+            error = false;
+        }
+
+        else
+        {
+            if(scanner) 
+            {
+                ResetScan(scanner, true, true);
+            }
+
+            EnableWindow(Scan, false);
+            EnableWindow(ChoosePid, true);
+
+            error = true;
         }
 
         DestroyWindow(PidDlg);
         EnableWindow(MainWindow, true);
-
         SetForegroundWindow(MainWindow);
     }
 }
 
+
 void ProcessMainWindowCloseEvent(HWND hWnd)
 {
-    if(scanner)
-    {
-        FreeMemoryScanner(scanner);
-    }
+    FreeMemoryScanner(scanner);
 
-    if(FreezeThread && TerminateThread(FreezeThread, 0))
-    {    
-        DWORD status = WaitForSingleObject(FreezeThread, INFINITE);
+    TerminateThread(FreezeThread, 0);
+    WaitForSingleObject(FreezeThread, INFINITE);
+    CloseHandle(FreezeThread);
 
-        if(status == WAIT_OBJECT_0)
-        {
-            CloseHandle(FreezeThread);
-        }
-    }
+    TerminateThread(MonitorSelectedProcessThread, 0);
+    WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
+    CloseHandle(MonitorSelectedProcessThread);
 
-    if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
-    {    
-        DWORD status = WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
-
-        if(status == WAIT_OBJECT_0)
-        {
-            CloseHandle(MonitorSelectedProcessThread);
-        }
-    }
-
-    if(ScanThread && TerminateThread(ScanThread, 0))
-    {    
-        DWORD status = WaitForSingleObject(ScanThread, INFINITE);
-
-        if(status == WAIT_OBJECT_0)
-        {
-            CloseHandle(ScanThread);
-        }
-    }
+    TerminateThread(ScanThread, 0);
+    WaitForSingleObject(ScanThread, INFINITE);
+    CloseHandle(ScanThread);
 
     DestroyWindow(hWnd);
 }
