@@ -3,6 +3,7 @@
 
 #include "window-update/all_windows.h"
 #include "window-update/main-window.h"
+#include "window-update/select-process-window.h"
 
 #include "window-creation/main-window.h"
 #include "window-creation/select-process-window.h"
