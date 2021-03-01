@@ -348,7 +348,7 @@ bool SelectedAddressFrozen(void)
 
 // A thread to monitor addresses for change.
 
-void WINAPI FreezeAddresses(void)
+DWORD WINAPI FreezeAddresses(void)
 {
     while(scanner)
     {
@@ -394,6 +394,7 @@ void WINAPI FreezeAddresses(void)
                         if(value != CurrentValue)
                         {
                             PokeFloat(scanner->process, address, value, scanner->data_size);
+                            return 0;
                         }
 
                     break;
@@ -405,6 +406,7 @@ void WINAPI FreezeAddresses(void)
                         if(value != CurrentValue)
                         {
                             PokeDouble(scanner->process, address, value, scanner->data_size);
+                            return 0;
                         }
 
                     break;
@@ -416,6 +418,7 @@ void WINAPI FreezeAddresses(void)
                         if(value != CurrentValue)
                         {
                             PokeInteger(scanner->process, address, value, scanner->data_size);
+                            return 0;
                         }
 
                     break;
@@ -423,6 +426,8 @@ void WINAPI FreezeAddresses(void)
             }
         }
     }
+
+    return -1;
 }
 
 // Filters memory information aquired by CreateMemoryScanner() and subsequent calls to this function.
@@ -639,7 +644,7 @@ void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format)
 
 // The thread function responsible for performing the scan.
 
-void WINAPI ProcessScan(void)
+DWORD WINAPI ProcessScan(void)
 {
     static int8 pid[256];
     static int8 data_size[256];
@@ -820,10 +825,14 @@ void WINAPI ProcessScan(void)
                     EnableWindow(MainWindow, true);
 
                     SetForegroundWindow(MainWindow);
+
+                    return 0;
                 }
             }
         }
     }
+
+    return -1;
 }
 
 // Once an address is found, this function updates the value at that address.
