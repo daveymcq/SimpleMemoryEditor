@@ -98,7 +98,7 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
 DWORD WINAPI MonitorSelectedProcess(void)
 {
-    while(SelectedProcessOpen)
+    while(true)
     {
         DWORD code;
         GetExitCodeProcess(scanner->process, &code);
@@ -575,12 +575,12 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
 
 // Add scan results to user interface.
 
-void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format)
+void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 display_limit)
 {
     MEMORY_BLOCK *mb = mblock;
     uint32 limit;
 
-    limit = (GetMatchCount(mb) > 100) ? 100 : (uint32)GetMatchCount(mb);
+    limit = (GetMatchCount(mb) > display_limit) ? display_limit : (uint32)GetMatchCount(mb);
 
     while(mb)
     {
@@ -722,21 +722,21 @@ DWORD WINAPI ProcessScan(void)
                             case SEARCH_EQUALS:
 
                                 UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_INTEGER, StringToInteger(val, search_number_format)); 
-                                DisplayScanResults(scanner, search_number_format);
+                                DisplayScanResults(scanner, search_number_format, 100);
 
                             break;
 
                             case SEARCH_INCREASED:
 
                                 UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_INTEGER, 0);
-                                DisplayScanResults(scanner, search_number_format);
+                                DisplayScanResults(scanner, search_number_format, 100);
 
                             break;
 
                             case SEARCH_DECREASED:
 
                                 UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_INTEGER, 0);
-                                DisplayScanResults(scanner, search_number_format);
+                                DisplayScanResults(scanner, search_number_format, 100);
 
                             break;
                         }
@@ -749,21 +749,21 @@ DWORD WINAPI ProcessScan(void)
                             case SEARCH_EQUALS:
 
                                 UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_FLOAT, (float)StringToDouble(val));
-                                DisplayScanResults(scanner, search_number_format);
+                                DisplayScanResults(scanner, search_number_format, 100);
 
                             break;
 
                             case SEARCH_INCREASED:
 
                                 UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_FLOAT, 0);
-                                DisplayScanResults(scanner, search_number_format);
+                                DisplayScanResults(scanner, search_number_format, 100);
 
                             break;
 
                             case SEARCH_DECREASED:
 
                                 UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_FLOAT, 0);
-                                DisplayScanResults(scanner, search_number_format);
+                                DisplayScanResults(scanner, search_number_format, 100);
 
                             break;
                         }
@@ -776,21 +776,21 @@ DWORD WINAPI ProcessScan(void)
                             case SEARCH_EQUALS:
 
                                 UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_DOUBLE, StringToDouble(val));
-                                DisplayScanResults(scanner, search_number_format);
+                                DisplayScanResults(scanner, search_number_format, 100);
 
                             break;
 
                             case SEARCH_INCREASED:
 
                                 UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_DOUBLE, 0);
-                                DisplayScanResults(scanner, search_number_format);
+                                DisplayScanResults(scanner, search_number_format, 100);
 
                             break;
 
                             case SEARCH_DECREASED:
 
                                 UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_DOUBLE, 0);
-                                DisplayScanResults(scanner, search_number_format);
+                                DisplayScanResults(scanner, search_number_format, 100);
 
                             break;
                         }
