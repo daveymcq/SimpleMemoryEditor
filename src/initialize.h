@@ -11,15 +11,15 @@
 
 /* GUI code import */
 
-    #include "application/user-interface/parent-windows/scanner/window.h"
+    #include "application/user-interface/parent-windows/memory-scanner/window.h"
     #include "application/user-interface/parent-windows/select-process/window.h"
     #include "application/user-interface/parent-windows/change-value/window.h"
 
-    #include "application/user-interface/parent-windows/scanner/window-procedure-event-handlers.h"
-    #include "application/user-interface/parent-windows/select-process/window-procedure-event-handlers.h"
-    #include "application/user-interface/parent-windows/change-value/window-procedure-event-handlers.h"
+    #include "application/user-interface/parent-windows/memory-scanner/window-procedure-message-handlers.h"
+    #include "application/user-interface/parent-windows/select-process/window-procedure-message-handlers.h"
+    #include "application/user-interface/parent-windows/change-value/window-procedure-message-handlers.h"
 
-    #include "application/user-interface/parent-windows/scanner/window-procedure.h"
+    #include "application/user-interface/parent-windows/memory-scanner/window-procedure.h"
     #include "application/user-interface/parent-windows/select-process/window-procedure.h"
     #include "application/user-interface/parent-windows/change-value/window-procedure.h"
 
