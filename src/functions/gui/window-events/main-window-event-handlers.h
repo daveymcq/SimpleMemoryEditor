@@ -232,7 +232,10 @@ void ProcessSelectProcessButtonEvent(void)
 
 void ProcessMainWindowCloseEvent(HWND window)
 {
-    FreeMemoryScanner(Scanner);
+    if(Scanner)
+    {
+        FreeMemoryScanner(Scanner);
+    }
 
     if(FreezeThread && TerminateThread(FreezeThread, 0))
     {
