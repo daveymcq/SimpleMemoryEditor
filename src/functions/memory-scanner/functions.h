@@ -673,15 +673,13 @@ DWORD WINAPI ProcessScan(void)
 
         if(Scanner)
         {
-            DWORD ThreadID;
-
             if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
             {
                 WaitForSingleObject(MonitorSelectedProcessThread, INFINITE); 
                 CloseHandle(MonitorSelectedProcessThread);
             }
 
-            MonitorSelectedProcessThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)MonitorSelectedProcess, null, null, &ThreadID);
+            MonitorSelectedProcessThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)MonitorSelectedProcess, null, null, null);
 
             if(MonitorSelectedProcessThread)
             {
@@ -689,12 +687,6 @@ DWORD WINAPI ProcessScan(void)
                 NumberOfAddressesFrozen = 0;
                 ScanRunning = true;
                 selected_search_condition = (int8)SendMessageA(SearchCondition, CB_GETCURSEL, 0, 0);
-
-                if(FreezeThread && TerminateThread(FreezeThread, 0))
-                {
-                    WaitForSingleObject(FreezeThread, INFINITE); 
-                    CloseHandle(FreezeThread);
-                }
 
                 if(selected_search_condition > -1)
                 {
@@ -796,13 +788,19 @@ DWORD WINAPI ProcessScan(void)
 
                     if(matches)
                     {
-                        DWORD ThreadID;
-                        FreezeThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)FreezeAddresses, null, null, &ThreadID); 
+                        if(FreezeThread && TerminateThread(FreezeThread, 0))
+                        {
+                            WaitForSingleObject(FreezeThread, INFINITE); 
+                            CloseHandle(FreezeThread);
+                        }
+
+                        FreezeThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)FreezeAddresses, null, null, null); 
                     }
 
                     if(FirstScanNotRun)
                     {
                         FirstScanNotRun = false;
+
                         SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_INCREASED]);
                         SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_DECREASED]);
                     }
@@ -815,13 +813,12 @@ DWORD WINAPI ProcessScan(void)
                     EnableWindow(SearchCondition, true);
                     EnableWindow(MainWindow, false);
                     EnableWindow(MainWindow, true);
+
                     SetForegroundWindow(MainWindow);
 
                     ScanRunning = false;
 
-                    MessageBeep(MB_OK);
-
-                    return 0;
+                    return (DWORD)MessageBeep(MB_OK);
                 }
             }
         }
