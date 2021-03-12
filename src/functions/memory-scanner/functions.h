@@ -80,9 +80,11 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
     if(disable_process_monitor)
     {
-        TerminateThread(MonitorSelectedProcessThread, 0);
-        WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
-        CloseHandle(MonitorSelectedProcessThread);
+        if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
+        {
+            WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
+            CloseHandle(MonitorSelectedProcessThread);
+        }
     }
 
     if(FreezeThread && TerminateThread(FreezeThread, 0))
@@ -673,14 +675,6 @@ DWORD WINAPI ProcessScan(void)
 
         if(Scanner)
         {
-            if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
-            {
-                WaitForSingleObject(MonitorSelectedProcessThread, INFINITE); 
-                CloseHandle(MonitorSelectedProcessThread);
-            }
-
-            MonitorSelectedProcessThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)MonitorSelectedProcess, null, null, null);
-
             if(MonitorSelectedProcessThread)
             {
                 int8 selected_search_condition;

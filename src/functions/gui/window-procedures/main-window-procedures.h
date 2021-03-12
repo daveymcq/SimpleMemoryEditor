@@ -60,11 +60,14 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
 
             else if(LOWORD(wparam) == ID_SCAN)
             {
-                WaitForSingleObject(ScanThread, INFINITE);
-
-                if(!ScanRunning)
+                if(ScanThread)
                 {
-                    CloseHandle(ScanThread);
+                    WaitForSingleObject(ScanThread, INFINITE);
+
+                    if(!ScanRunning)
+                    {
+                        CloseHandle(ScanThread);
+                    }
                 }
 
                 ScanThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)ProcessScan, null, null, null);
@@ -88,7 +91,7 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
             {
                 if(Scanner) 
                 {
-                    ResetScan(Scanner, false, true);
+                    ResetScan(Scanner, false, false);
                 }
             }
 

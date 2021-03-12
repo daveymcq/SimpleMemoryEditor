@@ -27,6 +27,7 @@ LRESULT CALLBACK SelectProcessWindowProc(HWND window, UINT message, WPARAM wpara
 
         case WM_DESTROY:
 
+            EnableWindow(MainWindow, TRUE);
             ShowWindow(MainWindow, SW_SHOW);
             SetForegroundWindow(MainWindow);
 
