@@ -1,7 +1,7 @@
 #ifndef _SELECT_PROCESS_WINDOW_EVENT_HANDLERS_H
 #define _SELECT_PROCESS_WINDOW_EVENT_HANDLERS_H
 
-// Runs when a selection is made or changed in listbox containing process names on process selection dialog.
+/* Runs when a selection is made or changed in listbox containing process names on process selection dialog. */
 
 void ProcessListboxChangeEvent(void)
 {
@@ -11,7 +11,7 @@ void ProcessListboxChangeEvent(void)
     {
         int8 selected_process[256] = { 0 };
 
-        CopyString(selected_process, pids[IndexOfSelectedProcess], sizeof(selected_process) - 1);
+        CopyString(selected_process, Pids[IndexOfSelectedProcess], sizeof(selected_process) - 1);
 
         if(StringLength(selected_process))
         {

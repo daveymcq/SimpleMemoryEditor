@@ -141,7 +141,7 @@ string IntegerToString(int64 integer, string out_result, uint32 out_result_lengt
 /* Convert double precision floating point number to a string.
    Supports only decimal conversions. */
 
-const string DoubleToString(double number, string out_result, uint32 out_result_length)
+string DoubleToString(double number, string out_result, uint32 out_result_length)
 {
     static int8 result[83];
     string presult = result;
@@ -169,7 +169,7 @@ const string DoubleToString(double number, string out_result, uint32 out_result_
     if(out_result)
     {
         MemoryCopy(out_result, result, out_result_length);
-        return (const string)out_result;
+        return (string)out_result;
     }
 
     return (string)result;
@@ -178,7 +178,7 @@ const string DoubleToString(double number, string out_result, uint32 out_result_
 /* Convert string to an unsigned 64 bit integer.
    Supports hexadecimal, decimal, and binary conversions. */
 
-uint64 StringToUnsignedInteger(const string str, INTFMT base)
+uint64 StringToUnsignedInteger(string str, INTFMT base)
 {
     uint64 result;
     string pstr = (string)str;
@@ -351,7 +351,7 @@ uint64 StringToUnsignedInteger(const string str, INTFMT base)
 /* Convert string to a signed 64 bit integer.
    Supports hexadecimal, decimal, and binary conversions. */
 
-int64 StringToInteger(const string str, INTFMT base)
+int64 StringToInteger(string str, INTFMT base)
 {
     int64 result = 0;
     string pstr = (string)str;
@@ -374,7 +374,7 @@ int64 StringToInteger(const string str, INTFMT base)
 /* Convert string to a double precision floating point.
    Supports only decimal conversions. */
 
-double StringToDouble(const string str) 
+double StringToDouble(string str) 
 {
     double result = 0.0;
 
@@ -467,21 +467,23 @@ double StringToDouble(const string str)
     return result;
 }
 
-char *WideToAscii(const wstring src)
+string WideToAscii(wstring src)
 {
-    static char result[256];
-    char *dst = result;
+    static int8 result[256];
+    uint16 chars_converted = 0;
+    string dst = result;
 
-    while(*src)
+    while(*src && (chars_converted < sizeof(result)))
     {
-        *dst = (char)*src;
+        *dst = (int8)*src;
         ++dst;
         ++src;
+        ++chars_converted;
     }
 
-    *dst = 0;
+    *dst = null;
 
-    return (char *)result;
+    return (string)result;
 }
 
 #endif

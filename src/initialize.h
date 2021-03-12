@@ -6,26 +6,24 @@
 #include "lib/qlib/QLIB/qlib.h"
 
 #include "functions/gui/includes.h"
-#include "functions/memory-scanner/includes.h"
+#include "functions/memory-Scanner/includes.h"
 
-#include "functions/memory-scanner/functions.h"
+#include "functions/memory-Scanner/functions.h"
 #include "functions/gui/functions.h"
 
-// Initialize local variables.
+/* Initialize local variables. */
 
 BOOL Initialize(void)
 {
-    INITCOMMONCONTROLSEX icc;
-
     Width = 625;
     Height = 405;
     FirstScanNotRun = true;
     SelectedItem = -1;
 
-    icc.dwICC = ICC_WIN95_CLASSES;
-    icc.dwSize = sizeof(icc);
+    CommonControls.dwICC = ICC_WIN95_CLASSES;
+    CommonControls.dwSize = sizeof(CommonControls);
 
-    return InitCommonControlsEx(&icc);
+    return InitCommonControlsEx(&CommonControls);
 }
 
 #endif

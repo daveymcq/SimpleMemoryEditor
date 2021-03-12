@@ -1,17 +1,19 @@
 #ifndef _ALL_WINDOW_UPDATE_H
 #define _ALL_WINDOW_UPDATE_H
 
-void CenterWindow(HWND hWnd)
+void CenterWindow(HWND window)
 {
-    RECT window;
-    DWORD X, Y;
+    RECT window_rect;
+    DWORD x, y, width, height;
 
-    GetWindowRect(hWnd, &window);
+    GetWindowRect(window, &window_rect);
 
-    X =  (((GetSystemMetrics(SM_CXSCREEN)) - (window.right)) / 2);
-    Y =  (((GetSystemMetrics(SM_CYSCREEN)) - (window.bottom)) / 2);
+    x =  (((GetSystemMetrics(SM_CXSCREEN)) - (window_rect.right)) / 2);
+    y =  (((GetSystemMetrics(SM_CYSCREEN)) - (window_rect.bottom)) / 2);
+    width = (window_rect.right - window_rect.left);
+    height = (window_rect.bottom - window_rect.top);
 
-    MoveWindow(hWnd, X, Y, window.right - window.left, window.bottom - window.top, true);
+    MoveWindow(window, x, y, width, height, true);
 }
 
 #endif

@@ -5,11 +5,11 @@
 
 /* ************************************************************************************ */
 
-// The window procedure for the dialog that modifies the value of a scan result.
+/* The window procedure for the dialog that modifies the value of a scan result. */
 
-LRESULT CALLBACK ChangeValueWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK ChangeValueWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
-    switch(Msg)
+    switch(message)
     {
         case WM_DESTROY:
 
@@ -22,13 +22,13 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
         case WM_CREATE:
 
             ShowWindow(MainWindow, SW_HIDE);
-            CenterWindow(hWnd);
+            CenterWindow(window);
 
         break;
 
         case WM_COMMAND:
 
-            if(LOWORD(wParam) == ID_CHANGE_DLG_BUTTON)
+            if(LOWORD(wparam) == ID_CHANGE_VALUE_WINDOW_BUTTON)
             {
                 UpdateValue();
             }
@@ -37,7 +37,7 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 
         default:
 
-            return DefWindowProc(hWnd, Msg, wParam, lParam);
+            return DefWindowProc(window, message, wparam, lparam);
     }
 
     return 0;

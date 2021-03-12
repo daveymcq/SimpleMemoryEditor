@@ -7,7 +7,7 @@ int32 CreateMainWindow(void)
     LVCOLUMNA AddressColumn, ValueColumn;
     NONCLIENTMETRICSA metrics;
     WNDCLASSEXA wc;
-    MSG Msg;
+    MSG message;
 
     data_types_list_index = 0;
     Instance = GetModuleHandleA(null);
@@ -21,17 +21,17 @@ int32 CreateMainWindow(void)
     wc.hIconSm = LoadIconA(Instance, MAKEINTRESOURCEA(AppIcon));
     wc.hInstance = Instance;
     wc.lpfnWndProc = MainWindowProc;
-    wc.lpszClassName = "Main";
+    wc.lpszClassName = "MainWindow";
     wc.lpszMenuName = null;
-    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+    wc.style = CS_HREDRAW | CS_VREDRAW;
 
     UnregisterClassA(wc.lpszClassName, Instance);
 
     if(RegisterClassExA(&wc))
     {
-        MainWindow = CreateWindowExA(WS_EX_STATICEDGE, wc.lpszClassName, title,
-                                     WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX, 
-                                     100, 100, Width, Height, null, 
+        MainWindow = CreateWindowExA(WS_EX_STATICEDGE, wc.lpszClassName, Title,
+                                     WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE, 
+                                     100, 100, Width, Height, null,
                                      null, Instance, null);
 
         if(MainWindow)
@@ -103,19 +103,19 @@ int32 CreateMainWindow(void)
                                  10, 315, 600, 50, MainWindow, (HMENU)ID_SCAN, 
                                  Instance, null);
 
+            while(data_types_list_index < (uint8)ARRAYSIZE(Datatypes))
+            {
+                SendMessageA(DataSize, CB_ADDSTRING, 0, (LPARAM)Datatypes[data_types_list_index]);
+                data_types_list_index++;
+            }
+
             EnableWindow(Scan, false);
             EnableWindow(NewScan, false);
             EnableWindow(ChangeValue, false);
 
-            while(data_types_list_index < (uint8)ARRAYSIZE(data_types))
-            {
-                SendMessageA(DataSize, CB_ADDSTRING, 0, (LPARAM)data_types[data_types_list_index]);
-                data_types_list_index++;
-            }
-
             SendMessageA(ListView, LVM_INSERTCOLUMN, 0, (LPARAM)&AddressColumn);
             SendMessageA(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&ValueColumn);
-            SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_EQUALS]);
+            SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
             SendMessageA(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 
             SendMessageA(ChangeValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
@@ -131,16 +131,13 @@ int32 CreateMainWindow(void)
             SendMessageA(SearchCondition, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(SearchConditionLabel, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
 
-            ShowWindow(MainWindow, SW_SHOW);
-            UpdateWindow(MainWindow);
-
-            while(GetMessage(&Msg, null, 0, 0) > 0)
+            while(GetMessage(&message, null, 0, 0) > 0)
             {
-                TranslateMessage(&Msg);
-                DispatchMessage(&Msg);
+                TranslateMessage(&message);
+                DispatchMessage(&message);
             }
 
-            return (int32)Msg.wParam;
+            return (int32)message.wParam;
         }
     }
 

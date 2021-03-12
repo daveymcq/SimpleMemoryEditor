@@ -1,20 +1,20 @@
 #ifndef _MAIN_WINDOW_UPDATE_H
 #define _MAIN_WINDOW_UPDATE_H
 
-void AddItemToListView(const string address, const string value)
+void AddItemToListView(string address, string value)
 {
-    static LVITEMA Item;
+    static LVITEMA item;
 
-    Item.mask        = LVIF_TEXT;
-    Item.iSubItem    = 0;
-    Item.pszText     = (string)address;
+    item.mask        = LVIF_TEXT;
+    item.iSubItem    = 0;
+    item.pszText     = (string)address;
 
-    SendMessageA(ListView, LVM_INSERTITEM, 0, (LPARAM)&Item);
+    SendMessageA(ListView, LVM_INSERTITEM, 0, (LPARAM)&item);
 
-    Item.iSubItem    = 1;
-    Item.pszText     = (string)value;
+    item.iSubItem    = 1;
+    item.pszText     = (string)value;
 
-    SendMessageA(ListView, LVM_SETITEM, 0, (LPARAM)&Item);
+    SendMessageA(ListView, LVM_SETITEM, 0, (LPARAM)&item);
 }
 
 #endif

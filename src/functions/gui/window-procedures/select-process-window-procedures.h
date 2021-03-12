@@ -5,15 +5,15 @@
 
 /* ************************************************************************************ */
 
-// The window procedure for the process selection dialog.
+/* The window procedure for the process selection dialog. */
 
-LRESULT CALLBACK SelectProcessWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK SelectProcessWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
-    switch(Msg)
+    switch(message)
     {
         case WM_CLOSE:
 
-            DestroyWindow(hWnd);
+            DestroyWindow(window);
             SetForegroundWindow(MainWindow);
 
         break;
@@ -21,13 +21,12 @@ LRESULT CALLBACK SelectProcessWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPA
         case WM_CREATE:
 
             ShowWindow(MainWindow, SW_HIDE);
-            CenterWindow(hWnd);
+            CenterWindow(window);
 
         break;
 
         case WM_DESTROY:
 
-            EnableWindow(MainWindow, true);
             ShowWindow(MainWindow, SW_SHOW);
             SetForegroundWindow(MainWindow);
 
@@ -35,12 +34,12 @@ LRESULT CALLBACK SelectProcessWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPA
 
         case WM_COMMAND:
 
-            if(LOWORD(wParam) == ID_CHOOSE_PROCESS)
+            if(LOWORD(wparam) == ID_CHOOSE_PROCESS)
             {
                 ProcessSelectProcessButtonEvent();
             }
 
-            else if((LOWORD(wParam) == ID_PROCESSES) && (HIWORD(wParam) == LBN_SELCHANGE))
+            else if((LOWORD(wparam) == ID_PROCESSES) && (HIWORD(wparam) == LBN_SELCHANGE))
             {
                 ProcessListboxChangeEvent();
             }
@@ -49,7 +48,7 @@ LRESULT CALLBACK SelectProcessWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPA
 
         default:
 
-            return DefWindowProc(hWnd, Msg, wParam, lParam);
+            return DefWindowProc(window, message, wparam, lparam);
     }
 
     return 0;

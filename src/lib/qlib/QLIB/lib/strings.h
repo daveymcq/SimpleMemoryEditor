@@ -20,7 +20,7 @@ uint32 CopyString(string to, string from, uint32 length)
 
 /* Find length of string. Rewrite of libc strlen(). */
 
-uint32 StringLength(const string str)
+uint32 StringLength(string str)
 {
     uint32 length = 0;
     string pstr = (string)str;
@@ -34,7 +34,7 @@ uint32 StringLength(const string str)
     return length;
 }
 
-// Join two strings.
+/* Join two strings. */
 
 string StringConcat(string str1, string str2)
 {
@@ -44,7 +44,7 @@ string StringConcat(string str1, string str2)
 
 /* Checks equality of two c-strings. */
 
-bool StringCompare(const string string_a, const string string_b, bool case_sensitive)
+bool StringCompare(string string_a, string string_b, bool case_sensitive)
 {
     bool result;
 
@@ -64,7 +64,7 @@ bool StringCompare(const string string_a, const string string_b, bool case_sensi
 
 /* Finds first occurrence of a string within another string. Returns the index into the string or zero if non existent. */
 
-int32 FindFirstOccurrenceOfString(const string haystack, const string needle, bool case_sensitive)
+int32 FindFirstOccurrenceOfString(string haystack, string needle, bool case_sensitive)
 {
     int32 index = 0;
     uint32 needle_length = StringLength(needle);
@@ -101,7 +101,7 @@ int32 FindFirstOccurrenceOfString(const string haystack, const string needle, bo
 
 /* Checks if a string is numeric. */
 
-bool IsNumeric(const string str)
+bool IsNumeric(string str)
 {
     bool numeric = (str) ? true : false;
     string pstr = (string)str;

@@ -1,6 +1,6 @@
 /* Memory Editing Application
  Author: David McHugh Jr.
- Last Modified: 03/04/2021 */
+ Last Modified: 03/11/2021 */
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
@@ -20,7 +20,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #include "src/initialize.h"
 
-// Entry point.
+/* Entry point. */
 
 int32 main(int32 argc, string argv[])
 {
@@ -29,5 +29,5 @@ int32 main(int32 argc, string argv[])
         return CreateMainWindow();
     }
 
-    return MessageBoxA(null, "The application failed to start.", title, MB_OK | MB_ICONERROR);
+    return MessageBoxA(null, "The application failed to start.", Title, MB_OK | MB_ICONERROR);
 }

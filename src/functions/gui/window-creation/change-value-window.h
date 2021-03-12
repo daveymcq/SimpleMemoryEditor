@@ -10,7 +10,7 @@ void CreateChangeValueWindow(void)
         wc.cbSize           = sizeof(wc);
         wc.cbClsExtra       = 0;
         wc.cbWndExtra       = 0;
-        wc.lpszClassName    = "ChangeValueDlg";
+        wc.lpszClassName    = "ChangeValueWindow";
         wc.hCursor          = LoadCursorA(Instance, IDC_ARROW);
         wc.lpfnWndProc      = ChangeValueWindowProc;
         wc.lpszMenuName     = null;
@@ -18,42 +18,38 @@ void CreateChangeValueWindow(void)
         wc.hbrBackground    = GetSysColorBrush(COLOR_3DFACE);
         wc.hIcon            = LoadIconA(Instance, MAKEINTRESOURCEA(AppIcon));
         wc.hIconSm          = LoadIconA(Instance, MAKEINTRESOURCEA(AppIcon));
-        wc.style            = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-
+        wc.style            = CS_HREDRAW | CS_VREDRAW;
 
         UnregisterClassA(wc.lpszClassName, Instance);
 
         if(RegisterClassExA(&wc))
         {
-            ChangeValueDlg = CreateWindowExA(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, 
-                                             title, WS_SYSMENU | WS_OVERLAPPED, 100, 
-                                             100, 300, 75, null, null, 
-                                             Instance, null);
+            ChangeValueWindow = CreateWindowExA(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, 
+                                             Title, WS_SYSMENU | WS_OVERLAPPED | WS_VISIBLE, 100, 
+                                             100, 300, 75, null, null, Instance, null);
 
-            if(ChangeValueDlg)
+            if(ChangeValueWindow)
             {
                 int8 value[256];
 
                 ListView_GetItemText(ListView, SelectedItem, 1, value, sizeof(value) - 1);
 
-                ChangeValueDlgValue = CreateWindowExA(WS_EX_CLIENTEDGE, "edit", value, WS_VISIBLE | WS_CHILD, 
-                                                      10, 10, 180, 25, ChangeValueDlg, 
-                                                      (HMENU)ID_CHANGE_DLG_VALUE, 
+                ChangeValueWindowNewValue = CreateWindowExA(WS_EX_CLIENTEDGE, "edit", value, WS_VISIBLE | WS_CHILD, 
+                                                      10, 10, 180, 25, ChangeValueWindow, 
+                                                      (HMENU)ID_CHANGE_VALUE_WINDOW, 
                                                       null, null);
 
-                ChangeValueDlgButton = CreateWindowA("button", "Set Value", WS_VISIBLE | WS_CHILD, 
-                                                     200, 10, 85, 25, ChangeValueDlg, 
-                                                     (HMENU)ID_CHANGE_DLG_BUTTON, 
+                ChangeValueWindowButton = CreateWindowA("button", "Set Value", WS_VISIBLE | WS_CHILD, 
+                                                     200, 10, 85, 25, ChangeValueWindow, 
+                                                     (HMENU)ID_CHANGE_VALUE_WINDOW_BUTTON, 
                                                      null, null);
 
-                EnableWindow(MainWindow, false);
-
-                SendMessageA(ChangeValueDlgValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
-                SendMessageA(ChangeValueDlgButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
-                SendMessageA(ChangeValueDlgValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
-                SendMessageA(ChangeValueDlgButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+                SendMessageA(ChangeValueWindowNewValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+                SendMessageA(ChangeValueWindowButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+                SendMessageA(ChangeValueWindowNewValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
+                SendMessageA(ChangeValueWindowButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
                 
-                ShowWindow(ChangeValueDlg, SW_SHOW); 
+                EnableWindow(MainWindow, false);
             }
         }
     }

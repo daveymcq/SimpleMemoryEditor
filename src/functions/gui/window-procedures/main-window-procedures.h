@@ -5,21 +5,21 @@
 
 /* ************************************************************************************ */
 
-// The window procedure for the main window.
+/* The window procedure for the main window. */
 
-LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
-    switch(Msg)
+    switch(message)
     {
         case WM_CREATE:
 
-            CenterWindow(hWnd);
+            CenterWindow(window);
 
         break;
 
         case WM_CLOSE:
 
-            ProcessMainWindowCloseEvent(hWnd);
+            ProcessMainWindowCloseEvent(window);
 
         break;
 
@@ -33,14 +33,14 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPara
 
             if(!ScanRunning)
             {
-                if(((LPNMHDR)lParam)->code == NM_CLICK)
+                if(((LPNMHDR)lparam)->code == NM_CLICK)
                 {
                     ProcessListViewLeftClickEvent();
                 }
 
-                else if((((LPNMHDR)lParam)->code == NM_RCLICK) && (((LPNMHDR)lParam)->idFrom == ID_LISTVIEW))
+                else if((((LPNMHDR)lparam)->code == NM_RCLICK) && (((LPNMHDR)lparam)->idFrom == ID_LISTVIEW))
                 {
-                    ProcessListViewRightClickEvent(hWnd);
+                    ProcessListViewRightClickEvent(window);
                 }
             }
 
@@ -48,47 +48,55 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPara
 
         case WM_COMMAND:
 
-            if((LOWORD(wParam) == ID_FREEZE_VALUE) && (SelectedItem != -1))
+            if((LOWORD(wparam) == ID_FREEZE_VALUE) && (SelectedItem != -1))
             {
                 ProcessFreezeValueButtonEvent();
             }
 
-            else if((LOWORD(wParam) == ID_UNFREEZE_VALUE) && (SelectedItem != -1))
+            else if((LOWORD(wparam) == ID_UNFREEZE_VALUE) && (SelectedItem != -1))
             {
                 ProcessUnfreezeValueButtonEvent();
             }
 
-            else if(LOWORD(wParam) == ID_SCAN)
+            else if(LOWORD(wparam) == ID_SCAN)
             {
-                DWORD ThreadID;
+                WaitForSingleObject(ScanThread, INFINITE);
 
-                TerminateThread(ScanThread, 0);
-                CloseHandle(ScanThread);
+                if(!ScanRunning)
+                {
+                    CloseHandle(ScanThread);
+                }
 
-                ScanThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)ProcessScan, 0, 0, &ThreadID);
+                ScanThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)ProcessScan, null, null, null);
             }
 
-            else if(LOWORD(wParam) == ID_SELECT_PROCESS)
+            else if(LOWORD(wparam) == ID_SELECT_PROCESS)
             {
                 GetProcessNameAndID();
                 CreateSelectProcessWindow();
             }
 
-            else if(LOWORD(wParam) == ID_CHANGE_VALUE)
+            else if(LOWORD(wparam) == ID_CHANGE_VALUE)
             {
-                if((!SelectedAddressFrozen()) && (GetMatchCount(scanner))) CreateChangeValueWindow();
+                if((!SelectedAddressFrozen()) && (GetMatchCount(Scanner))) 
+                {
+                    CreateChangeValueWindow();
+                }
             }
 
-            else if(LOWORD(wParam) == ID_NEW_SCAN)
+            else if(LOWORD(wparam) == ID_NEW_SCAN)
             {
-                if(scanner) ResetScan(scanner, false, true);
+                if(Scanner) 
+                {
+                    ResetScan(Scanner, false, true);
+                }
             }
 
         break;
 
         default:
 
-            return DefWindowProc(hWnd, Msg, wParam, lParam);
+            return DefWindowProc(window, message, wparam, lparam);
     }
 
     return 0;

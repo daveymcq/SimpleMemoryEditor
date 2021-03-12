@@ -1,7 +1,8 @@
 #ifndef _MEMORY_SCANNER_FUNCTIONS_H
 #define _MEMORY_SCANNER_FUNCTIONS_H
 
-// Checks if the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address was cleared in the previous scan. 
+/* Checks if the bit in MEMORY_BLOCK.match_flag corresponding to an offset in 
+   MEMORY_BLOCK.address was cleared in the previous scan. */
 
 bool AddressNotDiscarded(MEMORY_BLOCK *mblock, uint64 offset)
 {
@@ -16,7 +17,7 @@ bool AddressNotDiscarded(MEMORY_BLOCK *mblock, uint64 offset)
     return false;
 }
 
-// Clears the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address.
+/* Clears the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address. */
 
 bool DiscardAddress(MEMORY_BLOCK *mblock, uint64 offset)
 {
@@ -31,22 +32,21 @@ bool DiscardAddress(MEMORY_BLOCK *mblock, uint64 offset)
     return false;
 }
 
-// Resets all previosly filtered addresses.
+/* Resets all previosly filtered addresses. */
 
 void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monitor)
 {
-    MEMORY_BLOCK *mb = mblock;
     uint16 index;
+    MEMORY_BLOCK *mb;
 
     SelectedProcessOpen = false;
     NumberOfAddressesFrozen = 0;
-    SelectedItem = -1;
-
-    MemoryZero(frozen_addresses, sizeof(frozen_addresses));
-    MemoryZero(frozen_values, sizeof(frozen_values));
-
     FirstScanNotRun = true;
     SelectedItem = -1;
+    mb = mblock;
+
+    MemoryZero(FrozenAddresses, sizeof(FrozenAddresses));
+    MemoryZero(FrozenValues, sizeof(FrozenValues));
 
     EnableWindow(Scan, !reset_pid);
     EnableWindow(ChangeValue, false);
@@ -55,7 +55,7 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
     SendMessageA(DataSize, CB_RESETCONTENT, 0, 0);
     SendMessageA(SearchCondition, CB_RESETCONTENT, 0, 0);
-    SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_EQUALS]);
+    SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
 
     ListView_DeleteAllItems(ListView);
 
@@ -73,9 +73,9 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
         EnableWindow(ChoosePid, true);
     }
 
-    for(index = 0; index < ARRAYSIZE(data_types); index++)
+    for(index = 0; index < ARRAYSIZE(Datatypes); index++)
     {
-        SendMessageA(DataSize, CB_ADDSTRING, 0, (LPARAM)data_types[index]);
+        SendMessageA(DataSize, CB_ADDSTRING, 0, (LPARAM)Datatypes[index]);
     }
 
     if(disable_process_monitor)
@@ -85,28 +85,26 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
         CloseHandle(MonitorSelectedProcessThread);
     }
 
-    TerminateThread(FreezeThread, 0);
-    WaitForSingleObject(FreezeThread, INFINITE);
-    CloseHandle(FreezeThread);
-
-    TerminateThread(ScanThread, 0);
-    WaitForSingleObject(ScanThread, INFINITE);
-    CloseHandle(ScanThread);
+    if(FreezeThread && TerminateThread(FreezeThread, 0))
+    {
+        WaitForSingleObject(FreezeThread, INFINITE);
+        CloseHandle(FreezeThread);
+    }
 }
 
-// Calls ResetScan() if the selected thread terminates.
+/* Calls ResetScan() if the selected thread terminates. */
 
 DWORD WINAPI MonitorSelectedProcess(void)
 {
     while(true)
     {
         DWORD code;
-        GetExitCodeProcess(scanner->process, &code);
+        GetExitCodeProcess(Scanner->process, &code);
         SelectedProcessOpen = (code == STILL_ACTIVE);
 
         if(!SelectedProcessOpen)
         {
-            ResetScan(scanner, true, true);
+            ResetScan(Scanner, true, true);
             break;
         }
     }
@@ -114,12 +112,12 @@ DWORD WINAPI MonitorSelectedProcess(void)
     return 0;
 }
 
-// Finds the number of matches from the last scan.
+/* Finds the number of matches from the last scan. */
 
 uint64 GetMatchCount(MEMORY_BLOCK *mblock)
 {
-    uint64 matches = 0;
     MEMORY_BLOCK *mb = mblock;
+    uint64 matches = 0;
 
     while(mb)
     {
@@ -130,7 +128,7 @@ uint64 GetMatchCount(MEMORY_BLOCK *mblock)
     return matches;
 }
 
-// A set of helper functions that reads/writes the memory at the address specified.
+/* A set of helper functions that reads/writes the memory at the address specified. */
 
 float PeekFloat(HANDLE process, void *address, uint16 data_size)
 {
@@ -233,7 +231,7 @@ bool PokeInteger(HANDLE process, void *address, int64 value, uint16 data_size)
     return false;
 }
 
-// Constructs and allocates the MEMORY_BLOCK linked list structure.
+/* Constructs and allocates the MEMORY_BLOCK linked list structure. */
 
 MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, uint16 data_size)
 {
@@ -259,7 +257,7 @@ MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, u
     return mb;
 }
 
-// Cleans up the memory allocated by CreateMemoryScanner().
+/* Cleans up the memory allocated by CreateMemoryScanner(). */
 
 void FreeMemoryScanner(MEMORY_BLOCK *mblock)
 {
@@ -289,25 +287,25 @@ void FreeMemoryScanner(MEMORY_BLOCK *mblock)
     }
 }
 
-// Finds the initial valid memory information and sets up for UpdateMemoryBlock().
+/* Finds the initial valid memory information and sets up for UpdateMemoryBlock(). */
 
 MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
 {
-    MEMORY_BLOCK *mblock = null;
-    uint8 *address;
+    MEMORY_BLOCK *mblock;
     MEMORY_BASIC_INFORMATION mbi;
     HANDLE process;
-
-    CurrentProcess = pid;
-    address = 0;
+    uint8 *address;
 
     process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, pid);
 
     if(process)
     {
+        CurrentProcess = pid;
         SelectedProcessOpen = true;
+        address = 0;
+        mblock = null;
 
-        while(VirtualQueryEx(process, (void *)address, &mbi, sizeof(mbi)))
+        while(VirtualQueryEx(process, address, &mbi, sizeof(mbi)))
         {
             if((mbi.State & MEM_COMMIT) && (mbi.Protect & MEM_WRITABLE))
             {
@@ -332,47 +330,43 @@ bool SelectedAddressFrozen(void)
     int8 address[256];
     uint32 index;
 
-    bool frozen = false;
-
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address) - 1);
 
     for(index = 0; index < NumberOfAddressesFrozen; index++)
     {
-        if(StringCompare(frozen_addresses[index], address, false))
+        if(StringCompare(FrozenAddresses[index], address, false))
         {
-            frozen = true;
-            break;
+            return true;
         }
     }
     
-    return frozen;
+    return false;
 }
 
-// A thread to monitor addresses for change.
+/* A thread to monitor addresses for change. */
 
 DWORD WINAPI FreezeAddresses(void)
 {
-    while(scanner)
+    while(Scanner)
     {
         if(NumberOfAddressesFrozen)
         {
+            INTFMT search_number_format;
             uint32 offset;
             double value;
             void *address;
 
-            INTFMT search_number_format;
-
             for(offset = 0; offset < NumberOfAddressesFrozen; offset++)
             {
-                address = (void *)(uintptr_t)StringToInteger(frozen_addresses[offset], FMT_INT_HEXADECIMAL);
-                value = StringToDouble(frozen_values[offset]);
+                address = (void *)(uintptr_t)StringToInteger(FrozenAddresses[offset], FMT_INT_HEXADECIMAL);
+                value = StringToDouble(FrozenValues[offset]);
 
-                if((IsNumeric(frozen_values[offset])) && ((frozen_values[offset][0] == '0') && (frozen_values[offset][1] == 'x')))
+                if((IsNumeric(FrozenValues[offset])) && ((FrozenValues[offset][0] == '0') && (FrozenValues[offset][1] == 'x')))
                 {
                     search_number_format = FMT_INT_HEXADECIMAL;
                 }
 
-                else if(IsNumeric(frozen_values[offset]) && ((frozen_values[offset][0] != '0') && (frozen_values[offset][1] != 'x')))
+                else if(IsNumeric(FrozenValues[offset]) && ((FrozenValues[offset][0] != '0') && (FrozenValues[offset][1] != 'x')))
                 {
                     search_number_format = FMT_INT_DECIMAL;
                 }
@@ -384,18 +378,18 @@ DWORD WINAPI FreezeAddresses(void)
 
                 if(search_number_format)
                 {
-                    value = StringToInteger(frozen_values[offset], search_number_format);
+                    value = StringToInteger(FrozenValues[offset], search_number_format);
                 }
 
-                switch(type)
+                switch(Type)
                 {
                     case TYPE_FLOAT:
 
-                        CurrentValue = PeekFloat(scanner->process, address, scanner->data_size);
+                        CurrentValue = PeekFloat(Scanner->process, address, Scanner->data_size);
 
                         if(value != CurrentValue)
                         {
-                            PokeFloat(scanner->process, address, value, scanner->data_size);
+                            PokeFloat(Scanner->process, address, value, Scanner->data_size);
                             return 0;
                         }
 
@@ -403,11 +397,11 @@ DWORD WINAPI FreezeAddresses(void)
 
                     case TYPE_DOUBLE:
 
-                        CurrentValue = PeekDouble(scanner->process, address, scanner->data_size);
+                        CurrentValue = PeekDouble(Scanner->process, address, Scanner->data_size);
 
                         if(value != CurrentValue)
                         {
-                            PokeDouble(scanner->process, address, value, scanner->data_size);
+                            PokeDouble(Scanner->process, address, value, Scanner->data_size);
                             return 0;
                         }
 
@@ -415,11 +409,11 @@ DWORD WINAPI FreezeAddresses(void)
 
                     case TYPE_INTEGER:
                         
-                        CurrentValue = PeekInteger(scanner->process, address, scanner->data_size);
+                        CurrentValue = PeekInteger(Scanner->process, address, Scanner->data_size);
 
                         if(value != CurrentValue)
                         {
-                            PokeInteger(scanner->process, address, value, scanner->data_size);
+                            PokeInteger(Scanner->process, address, value, Scanner->data_size);
                             return 0;
                         }
 
@@ -432,12 +426,11 @@ DWORD WINAPI FreezeAddresses(void)
     return -1;
 }
 
-// Filters memory information aquired by CreateMemoryScanner() and subsequent calls to this function.
+/* Filters memory information aquired by CreateMemoryScanner() and subsequent calls to this function. */
 
-void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE type, double value)
+void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Type, double value)
 {
     MEMORY_BLOCK *mb = mblock;
-    SelectedItem = -1;
 
     while(mb)
     {
@@ -456,8 +449,9 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
             total_read = 0;
             mb->matches = 0;
             bytes_left = mb->size;
+
             selection_id = (int32)SendMessageA(DataSize, CB_GETCURSEL, 0, 0);
-            mb->data_size = (uint16)StringToInteger(data_sizes[selection_id], FMT_INT_DECIMAL);
+            mb->data_size = (uint16)StringToInteger(DataSizes[selection_id], FMT_INT_DECIMAL);
 
             while(bytes_left)
             {
@@ -475,7 +469,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
                 {
                     if(AddressNotDiscarded(mb, total_read + offset)) 
                     {
-                        if(type == TYPE_INTEGER)
+                        if(Type == TYPE_INTEGER)
                         {
                             switch(mb->data_size)
                             {
@@ -509,7 +503,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
                             }
                         }
 
-                        else if(type == TYPE_FLOAT)
+                        else if(Type == TYPE_FLOAT)
                         {
                             if(mb->data_size == sizeof(float))
                             {
@@ -518,7 +512,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
                             }
                         }
 
-                        else if(type == TYPE_DOUBLE)
+                        else if(Type == TYPE_DOUBLE)
                         {
                             if(mb->data_size == sizeof(double))
                             {
@@ -550,7 +544,7 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
 
                         if(match)
                         {
-                            mb->matches++;
+                            ++mb->matches;
                         }
 
                         else 
@@ -573,14 +567,12 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE ty
     }
 }
 
-// Add scan results to user interface.
+/* Add scan results to user interface. */
 
 void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 display_limit)
 {
     MEMORY_BLOCK *mb = mblock;
-    uint32 limit;
-
-    limit = (GetMatchCount(mb) > display_limit) ? display_limit : (uint32)GetMatchCount(mb);
+    uint32 limit = (GetMatchCount(mb) > display_limit) ? display_limit : (uint32)GetMatchCount(mb);
 
     while(mb)
     {
@@ -595,7 +587,7 @@ void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 disp
 
                 IntegerToString((uint64)(uintptr_t)mb->address + offset, address, sizeof(address) - 1, FMT_INT_HEXADECIMAL);
 
-                if(type == TYPE_INTEGER)
+                if(Type == TYPE_INTEGER)
                 {
                     int64 value = PeekInteger(mb->process, mb->address + offset, mb->data_size);
 
@@ -613,13 +605,13 @@ void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 disp
                     }
                 }
 
-                else if(type == TYPE_FLOAT)
+                else if(Type == TYPE_FLOAT)
                 {
                     float value = PeekFloat(mb->process, mb->address + offset, mb->data_size);
                     DoubleToString((double)value, val, sizeof(val) - 1);
                 }
 
-                else if(type == TYPE_DOUBLE)
+                else if(Type == TYPE_DOUBLE)
                 {
                     double value = PeekDouble(mb->process, mb->address + offset, mb->data_size);
                     DoubleToString(value, val, sizeof(val) - 1);
@@ -628,7 +620,7 @@ void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 disp
                 if(limit)
                 {
                     AddItemToListView(address, val);
-                    limit--;
+                    --limit;
                 }
 
                 else
@@ -644,7 +636,7 @@ void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 disp
     EnableWindow(ListView, true); 
 }
 
-// The thread function responsible for performing the scan.
+/* The thread function responsible for performing the scan. */
 
 DWORD WINAPI ProcessScan(void)
 {
@@ -653,20 +645,21 @@ DWORD WINAPI ProcessScan(void)
     static int8 val[256];
     static int8 condition[256];
 
+    INTFMT search_number_format;
     int32 selection_id;
     uint64 matches;
 
-    INTFMT search_number_format = FMT_INT_DECIMAL;
-
+    search_number_format = FMT_INT_DECIMAL;
     selection_id = (int32)SendMessageA(DataSize, CB_GETCURSEL, 0, 0);
 
-    CopyString(pid, selected_pid, sizeof(pid) - 1); 
+    CopyString(pid, SelectedPid, sizeof(pid) - 1); 
+
     SendMessageA(Value, WM_GETTEXT, sizeof(val) - 1, (LPARAM)val);
     SendMessageA(SearchCondition, WM_GETTEXT, sizeof(condition) - 1, (LPARAM)condition);
 
     if(selection_id > -1) 
     {
-        CopyString(data_size, (string)data_sizes[selection_id], sizeof(data_size) - 1);
+        CopyString(data_size, (string)DataSizes[selection_id], sizeof(data_size) - 1);
     }
 
     if((IsNumeric(val)) && ((val[0] == '0') && (val[1] == 'x')))
@@ -676,33 +669,38 @@ DWORD WINAPI ProcessScan(void)
 
     if((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (!StringCompare(pid, "*No Process Selected*", false)))
     {
-        scanner = (scanner) ? scanner : CreateMemoryScanner((uint32)StringToInteger(pid, FMT_INT_DECIMAL), (uint16)StringToInteger(data_size, FMT_INT_DECIMAL)); 
+        Scanner = (Scanner) ? Scanner : CreateMemoryScanner((uint32)StringToInteger(pid, FMT_INT_DECIMAL), (uint16)StringToInteger(data_size, FMT_INT_DECIMAL)); 
 
-        if(scanner)
+        if(Scanner)
         {
             DWORD ThreadID;
 
-            TerminateThread(MonitorSelectedProcessThread, 0);
-            WaitForSingleObject(MonitorSelectedProcessThread, INFINITE); 
-            CloseHandle(MonitorSelectedProcessThread);
+            if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
+            {
+                WaitForSingleObject(MonitorSelectedProcessThread, INFINITE); 
+                CloseHandle(MonitorSelectedProcessThread);
+            }
 
-            MonitorSelectedProcessThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)MonitorSelectedProcess, 0, 0, &ThreadID);
+            MonitorSelectedProcessThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)MonitorSelectedProcess, null, null, &ThreadID);
 
             if(MonitorSelectedProcessThread)
             {
                 int8 selected_search_condition;
-
-                TerminateThread(FreezeThread, 0);
-                WaitForSingleObject(FreezeThread, INFINITE); 
-                CloseHandle(FreezeThread);
-
                 NumberOfAddressesFrozen = 0;
                 ScanRunning = true;
-
                 selected_search_condition = (int8)SendMessageA(SearchCondition, CB_GETCURSEL, 0, 0);
+
+                if(FreezeThread && TerminateThread(FreezeThread, 0))
+                {
+                    WaitForSingleObject(FreezeThread, INFINITE); 
+                    CloseHandle(FreezeThread);
+                }
 
                 if(selected_search_condition > -1)
                 {
+                    SelectedItem = -1;
+                    Type = (selection_id <= 3) ? TYPE_INTEGER : (selection_id == 5) ? TYPE_DOUBLE : TYPE_FLOAT;
+
                     SendMessageA(ListView, LVM_DELETEALLITEMS, 0, 0);
 
                     EnableWindow(ChangeValue, false);
@@ -713,106 +711,101 @@ DWORD WINAPI ProcessScan(void)
                     EnableWindow(Value, false);
                     EnableWindow(SearchCondition, false);
 
-                    type = (selection_id <= 3) ? TYPE_INTEGER : (selection_id == 5) ? TYPE_DOUBLE : TYPE_FLOAT;
-
-                    if(type == TYPE_INTEGER)
+                    if(Type == TYPE_INTEGER)
                     {
                         switch(selected_search_condition)
                         {
                             case SEARCH_EQUALS:
 
-                                UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_INTEGER, StringToInteger(val, search_number_format)); 
-                                DisplayScanResults(scanner, search_number_format, 100);
+                                UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_INTEGER, StringToInteger(val, search_number_format)); 
+                                DisplayScanResults(Scanner, search_number_format, 100);
 
                             break;
 
                             case SEARCH_INCREASED:
 
-                                UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_INTEGER, 0);
-                                DisplayScanResults(scanner, search_number_format, 100);
+                                UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_INTEGER, 0);
+                                DisplayScanResults(Scanner, search_number_format, 100);
 
                             break;
 
                             case SEARCH_DECREASED:
 
-                                UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_INTEGER, 0);
-                                DisplayScanResults(scanner, search_number_format, 100);
+                                UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_INTEGER, 0);
+                                DisplayScanResults(Scanner, search_number_format, 100);
 
                             break;
                         }
                     }
 
-                    else if(type == TYPE_FLOAT)
+                    else if(Type == TYPE_FLOAT)
                     {
                         switch(selected_search_condition)
                         {
                             case SEARCH_EQUALS:
 
-                                UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_FLOAT, (float)StringToDouble(val));
-                                DisplayScanResults(scanner, search_number_format, 100);
+                                UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_FLOAT, (float)StringToDouble(val));
+                                DisplayScanResults(Scanner, search_number_format, 100);
 
                             break;
 
                             case SEARCH_INCREASED:
 
-                                UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_FLOAT, 0);
-                                DisplayScanResults(scanner, search_number_format, 100);
+                                UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_FLOAT, 0);
+                                DisplayScanResults(Scanner, search_number_format, 100);
 
                             break;
 
                             case SEARCH_DECREASED:
 
-                                UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_FLOAT, 0);
-                                DisplayScanResults(scanner, search_number_format, 100);
+                                UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_FLOAT, 0);
+                                DisplayScanResults(Scanner, search_number_format, 100);
 
                             break;
                         }
                     }
 
-                    else if(type == TYPE_DOUBLE)
+                    else if(Type == TYPE_DOUBLE)
                     {
                         switch(selected_search_condition)
                         {
                             case SEARCH_EQUALS:
 
-                                UpdateMemoryBlock(scanner, SEARCH_EQUALS, TYPE_DOUBLE, StringToDouble(val));
-                                DisplayScanResults(scanner, search_number_format, 100);
+                                UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_DOUBLE, StringToDouble(val));
+                                DisplayScanResults(Scanner, search_number_format, 100);
 
                             break;
 
                             case SEARCH_INCREASED:
 
-                                UpdateMemoryBlock(scanner, SEARCH_INCREASED, TYPE_DOUBLE, 0);
-                                DisplayScanResults(scanner, search_number_format, 100);
+                                UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_DOUBLE, 0);
+                                DisplayScanResults(Scanner, search_number_format, 100);
 
                             break;
 
                             case SEARCH_DECREASED:
 
-                                UpdateMemoryBlock(scanner, SEARCH_DECREASED, TYPE_DOUBLE, 0);
-                                DisplayScanResults(scanner, search_number_format, 100);
+                                UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_DOUBLE, 0);
+                                DisplayScanResults(Scanner, search_number_format, 100);
 
                             break;
                         }
                     }
 
-                    matches = GetMatchCount(scanner);
+                    matches = GetMatchCount(Scanner);
 
                     if(matches)
                     {
                         DWORD ThreadID;
-                        FreezeThread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)FreezeAddresses, 0, 0, &ThreadID); 
+                        FreezeThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)FreezeAddresses, null, null, &ThreadID); 
                     }
 
                     if(FirstScanNotRun)
                     {
                         FirstScanNotRun = false;
-
-                        SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_INCREASED]);
-                        SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)search_conditions[SEARCH_DECREASED]);
+                        SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_INCREASED]);
+                        SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_DECREASED]);
                     }
-
-                    ScanRunning = false;
 
                     EnableWindow(Scan, true);
                     EnableWindow(NewScan, true);
@@ -821,12 +814,12 @@ DWORD WINAPI ProcessScan(void)
                     EnableWindow(Value, true);
                     EnableWindow(SearchCondition, true);
                     EnableWindow(MainWindow, false);
+                    EnableWindow(MainWindow, true);
+                    SetForegroundWindow(MainWindow);
+
+                    ScanRunning = false;
 
                     MessageBeep(MB_OK);
-
-                    EnableWindow(MainWindow, true);
-
-                    SetForegroundWindow(MainWindow);
 
                     return 0;
                 }
@@ -837,7 +830,7 @@ DWORD WINAPI ProcessScan(void)
     return -1;
 }
 
-// Once an address is found, this function updates the value at that address.
+/* Once an address is found, this function updates the value at that address. */
 
 bool UpdateValue(void)
 {
@@ -845,22 +838,22 @@ bool UpdateValue(void)
     int8 value[256];
     int8 buffer[256];
 
-    LVITEM Item;
+    LVITEM item;
     INTFMT search_number_format;
 
     void *addr;
     double val;
 
-    Item.mask = LVIF_TEXT;
-    Item.iItem = SelectedItem;
-    Item.iSubItem = 1;
-    Item.pszText = buffer;
+    item.mask = LVIF_TEXT;
+    item.iItem = SelectedItem;
+    item.iSubItem = 1;
+    item.pszText = buffer;
 
     ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address) - 1);
-    SendMessageA(ChangeValueDlgValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
+    SendMessageA(ChangeValueWindowNewValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
     SendMessageA(Value, WM_GETTEXT, sizeof(buffer) - 1, (LPARAM)buffer);
     
-    ListView_SetItem(ListView, &Item);
+    ListView_SetItem(ListView, &item);
 
     if((IsNumeric(value)) && ((value[0] == '0') && (value[1] == 'x')))
     {
@@ -872,20 +865,20 @@ bool UpdateValue(void)
         search_number_format = FMT_INT_DECIMAL;
     }
 
-    if(type == TYPE_FLOAT)
+    if(Type == TYPE_FLOAT)
     {
         addr = (void *)(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
         val = StringToDouble(value);
 
-        if(PokeFloat(scanner->process, addr, (float)val, scanner->data_size))
+        if(PokeFloat(Scanner->process, addr, (float)val, Scanner->data_size))
         {
             float current_value;
 
-            DestroyWindow(ChangeValueDlg);
+            DestroyWindow(ChangeValueWindow);
             SetForegroundWindow(MainWindow);
-            SendMessageA(ChangeValueDlgValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
+            SendMessageA(ChangeValueWindowNewValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
 
-            current_value = PeekFloat(scanner->process, addr, scanner->data_size);
+            current_value = PeekFloat(Scanner->process, addr, Scanner->data_size);
 
             DoubleToString((double)current_value, value, sizeof(value) - 1);
             ListView_SetItemText(ListView, SelectedItem, 1, value);
@@ -894,20 +887,20 @@ bool UpdateValue(void)
         }
     }
 
-    else if(type == TYPE_DOUBLE)
+    else if(Type == TYPE_DOUBLE)
     {
         addr = (void *)(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
         val = StringToDouble(value);
 
-        if(PokeDouble(scanner->process, addr, val, scanner->data_size))
+        if(PokeDouble(Scanner->process, addr, val, Scanner->data_size))
         {
             double current_value;
 
-            DestroyWindow(ChangeValueDlg);
+            DestroyWindow(ChangeValueWindow);
             SetForegroundWindow(MainWindow);
-            SendMessageA(ChangeValueDlgValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
+            SendMessageA(ChangeValueWindowNewValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
 
-            current_value = PeekFloat(scanner->process, addr, scanner->data_size);
+            current_value = PeekFloat(Scanner->process, addr, Scanner->data_size);
 
             DoubleToString(current_value, value, sizeof(value) - 1);
             ListView_SetItemText(ListView, SelectedItem, 1, value);
@@ -916,20 +909,20 @@ bool UpdateValue(void)
         }
     }
 
-    else if(type == TYPE_INTEGER)
+    else if(Type == TYPE_INTEGER)
     {
         addr = (void *)(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
         val = StringToInteger(value, search_number_format);
 
-        if(PokeInteger(scanner->process, addr, (int64)val, scanner->data_size))
+        if(PokeInteger(Scanner->process, addr, (int64)val, Scanner->data_size))
         {
             int64 current_value;
 
-            DestroyWindow(ChangeValueDlg);
+            DestroyWindow(ChangeValueWindow);
             SetForegroundWindow(MainWindow);
-            SendMessageA(ChangeValueDlgValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
+            SendMessageA(ChangeValueWindowNewValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
 
-            current_value = PeekInteger(scanner->process, addr, scanner->data_size);
+            current_value = PeekInteger(Scanner->process, addr, Scanner->data_size);
 
             if(search_number_format == FMT_INT_HEXADECIMAL)
             {

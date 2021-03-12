@@ -1,7 +1,7 @@
 #ifndef _SELECT_PROCESS_WINDOW_UPDATE_H
 #define _SELECT_PROCESS_WINDOW_UPDATE_H
 
-// Finds all running processes on machine and finds their process id.
+/* Finds all running processes on machine and finds their process id. */
 
 bool GetProcessNameAndID(void)
 {
@@ -22,9 +22,10 @@ bool GetProcessNameAndID(void)
 
         do
         {
-            if(pe.th32ProcessID == GetCurrentProcessId()) continue;
-
-            CopyString(processes[NumberOfProcesses], pe.szExeFile, sizeof(processes[NumberOfProcesses]));
+            if(pe.th32ProcessID == GetCurrentProcessId()) 
+            {
+                continue;
+            }
 
             process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, pe.th32ProcessID); 
 
@@ -35,6 +36,8 @@ bool GetProcessNameAndID(void)
                 typedef BOOL (WINAPI *FP_ISWOW64PROCESS) (HANDLE, PBOOL);
                 FP_ISWOW64PROCESS pIsWow64Process = (FP_ISWOW64PROCESS)GetProcAddress(GetModuleHandleA("kernel32"), "IsWow64Process");
 
+                CopyString(Processes[NumberOfProcesses], pe.szExeFile, sizeof(Processes[NumberOfProcesses]));
+
                 if(pIsWow64Process && pIsWow64Process(GetCurrentProcess(), &IsApplication64Bit))
                 {
                     BOOL IsProcess64Bit;
@@ -43,7 +46,7 @@ bool GetProcessNameAndID(void)
                     {
                         if(IsApplication64Bit == IsProcess64Bit)
                         {
-                            IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]) - 1, FMT_INT_DECIMAL);
+                            IntegerToString(pe.th32ProcessID, Pids[NumberOfProcesses], sizeof(Pids[NumberOfProcesses]) - 1, FMT_INT_DECIMAL);
                             NumberOfProcesses++; 
                         }
                     }
@@ -51,7 +54,7 @@ bool GetProcessNameAndID(void)
 
                 else
                 {
-                    IntegerToString(pe.th32ProcessID, pids[NumberOfProcesses], sizeof(pids[NumberOfProcesses]) - 1, FMT_INT_DECIMAL);
+                    IntegerToString(pe.th32ProcessID, Pids[NumberOfProcesses], sizeof(Pids[NumberOfProcesses]) - 1, FMT_INT_DECIMAL);
                     NumberOfProcesses++; 
                 }
 
