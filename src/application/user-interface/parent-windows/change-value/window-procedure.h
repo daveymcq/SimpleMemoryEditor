@@ -1,5 +1,5 @@
-#ifndef _CHANGE_VALUE_WINDOW_PROCEDURES_H
-#define _CHANGE_VALUE_WINDOW_PROCEDURES_H
+#ifndef _CHANGE_VALUE_WINDOW_PROCEDURE_H
+#define _CHANGE_VALUE_WINDOW_PROCEDURE_H
 
 /* ************************************************************************************ */
 

@@ -25,8 +25,8 @@ void CreateChangeValueWindow(void)
         if(RegisterClassExA(&wc))
         {
             ChangeValueWindow = CreateWindowExA(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, 
-                                             Title, WS_SYSMENU | WS_OVERLAPPED | WS_VISIBLE, 100, 
-                                             100, 300, 75, null, null, Instance, null);
+                                                Title, WS_SYSMENU | WS_OVERLAPPED | WS_VISIBLE, 100, 
+                                                100, 300, 75, null, null, Instance, null);
 
             if(ChangeValueWindow)
             {
@@ -35,14 +35,14 @@ void CreateChangeValueWindow(void)
                 ListView_GetItemText(ListView, SelectedItem, 1, value, sizeof(value) - 1);
 
                 ChangeValueWindowNewValue = CreateWindowExA(WS_EX_CLIENTEDGE, "edit", value, WS_VISIBLE | WS_CHILD, 
-                                                      10, 10, 180, 25, ChangeValueWindow, 
-                                                      (HMENU)ID_CHANGE_VALUE_WINDOW, 
-                                                      null, null);
+                                                            10, 10, 180, 25, ChangeValueWindow, 
+                                                            (HMENU)ID_CHANGE_VALUE_WINDOW, 
+                                                            null, null);
 
                 ChangeValueWindowButton = CreateWindowA("button", "Set Value", WS_VISIBLE | WS_CHILD, 
-                                                     200, 10, 85, 25, ChangeValueWindow, 
-                                                     (HMENU)ID_CHANGE_VALUE_WINDOW_BUTTON, 
-                                                     null, null);
+                                                        200, 10, 85, 25, ChangeValueWindow, 
+                                                        (HMENU)ID_CHANGE_VALUE_WINDOW_BUTTON, 
+                                                        null, null);
 
                 SendMessageA(ChangeValueWindowNewValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
                 SendMessageA(ChangeValueWindowButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));

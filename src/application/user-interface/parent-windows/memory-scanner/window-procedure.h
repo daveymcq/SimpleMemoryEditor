@@ -1,11 +1,11 @@
-#ifndef _MAIN_WINDOW_PROCEDURES_H
-#define _MAIN_WINDOW_PROCEDURES_H
+#ifndef _MEMORY_SCANNER_WINDOW_PROCEDURE_H
+#define _MEMORY_SCANNER_WINDOW_PROCEDURE_H
 
 /* ************************************************************************************ */
 
 /* ************************************************************************************ */
 
-/* The window procedure for the main window. */
+/* The window procedure for the memory scanner window. */
 
 LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {

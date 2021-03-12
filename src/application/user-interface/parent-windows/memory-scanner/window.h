@@ -1,5 +1,5 @@
-#ifndef _MAIN_WINDOW_H
-#define _MAIN_WINDOW_H
+#ifndef _MEMORY_SCANNER_WINDOW_H
+#define _MEMORY_SCANNER_WINDOW_H
 
 int32 CreateMainWindow(void)
 {

@@ -1,5 +1,5 @@
-#ifndef _MAIN_WINDOW_EVENT_HANDLERS_H
-#define _MAIN_WINDOW_EVENT_HANDLERS_H
+#ifndef _MEMORY_SCANNER_WINDOW_PROCEDURE_MESSAGE_HANDLERS_H
+#define _MEMORY_SCANNER_WINDOW_PROCEDURE_MESSAGE_HANDLERS_H
 
 /* Runs when left mouse button is clicked inside ListView on MainWindow if ScanRunning == false. */
 

@@ -1,5 +1,5 @@
-#ifndef _SELECT_PROCESS_WINDOW_EVENT_HANDLERS_H
-#define _SELECT_PROCESS_WINDOW_EVENT_HANDLERS_H
+#ifndef _SELECT_PROCESS_WINDOW_PROCEDURE_MESSAGE_HANDLERS_H
+#define _SELECT_PROCESS_WINDOW_PROCEDURE_MESSAGE_HANDLERS_H
 
 /* Runs when a selection is made or changed in listbox containing process names on process selection dialog. */
 

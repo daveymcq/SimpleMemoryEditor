@@ -1,5 +1,5 @@
-#ifndef _SELECT_PROCESS_WINDOW_PROCEDURES_H
-#define _SELECT_PROCESS_WINDOW_PROCEDURES_H
+#ifndef _SELECT_PROCESS_WINDOW_PROCEDURE_H
+#define _SELECT_PROCESS_WINDOW_PROCEDURE_H
 
 /* ************************************************************************************ */
 
