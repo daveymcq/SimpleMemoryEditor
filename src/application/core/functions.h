@@ -99,6 +99,97 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
     }
 }
 
+/* Finds all running processes on machine and finds their process id. */
+
+bool GetProcessNameAndID(void)
+{
+    HANDLE snapshot, process;
+    PROCESSENTRY32 pe;
+
+    snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+    if(snapshot != INVALID_HANDLE_VALUE)
+    {
+        pe.dwSize = sizeof(pe);
+
+        if(!Process32First(snapshot, &pe))
+        {
+            CloseHandle(snapshot);
+            return false;
+        }
+
+        do
+        {
+            if(pe.th32ProcessID == GetCurrentProcessId()) 
+            {
+                continue;
+            }
+
+            process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, pe.th32ProcessID); 
+
+            if(process)
+            {
+                BOOL IsApplication64Bit;
+
+                typedef BOOL (WINAPI *FP_ISWOW64PROCESS) (HANDLE, PBOOL);
+                FP_ISWOW64PROCESS pIsWow64Process = (FP_ISWOW64PROCESS)GetProcAddress(GetModuleHandleA("kernel32"), "IsWow64Process");
+
+                CopyString(Processes[NumberOfProcesses], pe.szExeFile, sizeof(Processes[NumberOfProcesses]));
+
+                if(pIsWow64Process && pIsWow64Process(GetCurrentProcess(), &IsApplication64Bit))
+                {
+                    BOOL IsProcess64Bit;
+
+                    if(pIsWow64Process && pIsWow64Process(process, &IsProcess64Bit))
+                    {
+                        if(IsApplication64Bit == IsProcess64Bit)
+                        {
+                            IntegerToString(pe.th32ProcessID, Pids[NumberOfProcesses], sizeof(Pids[NumberOfProcesses]) - 1, FMT_INT_DECIMAL);
+                            NumberOfProcesses++; 
+                        }
+                    }
+                }
+
+                else
+                {
+                    IntegerToString(pe.th32ProcessID, Pids[NumberOfProcesses], sizeof(Pids[NumberOfProcesses]) - 1, FMT_INT_DECIMAL);
+                    NumberOfProcesses++; 
+                }
+
+                CloseHandle(process);
+            }
+
+        } while(Process32Next(snapshot, &pe));
+
+        ProcessCounter = NumberOfProcesses;
+        NumberOfProcesses = 0;
+
+        CloseHandle(snapshot);
+
+        return true;
+    }
+
+    return false;
+}
+
+/* Add scan results to ListView control. */
+
+void AddItemToListView(string address, string value)
+{
+    static LVITEMA item;
+
+    item.mask        = LVIF_TEXT;
+    item.iSubItem    = 0;
+    item.pszText     = (string)address;
+
+    SendMessageA(ListView, LVM_INSERTITEM, 0, (LPARAM)&item);
+
+    item.iSubItem    = 1;
+    item.pszText     = (string)value;
+
+    SendMessageA(ListView, LVM_SETITEM, 0, (LPARAM)&item);
+}
+
 /* Calls ResetScan() if the selected thread terminates. */
 
 DWORD WINAPI MonitorSelectedProcess(void)
@@ -314,7 +405,7 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
 
         while(VirtualQueryEx(process, address, &mbi, sizeof(mbi)))
         {
-            if((mbi.State & MEM_COMMIT) && (mbi.Protect & MEM_WRITABLE))
+            if((mbi.State & MEM_COMMIT) && (mbi.Protect & WRITABLE_MEMORY))
             {
                 MEMORY_BLOCK *mb = CreateMemoryBlock(process, &mbi, data_size); 
 
@@ -938,6 +1029,24 @@ BOOL UpdateValue(void)
     }
 
     return false;
+}
+
+/* Center a window using the default display. */
+
+void CenterWindow(HWND window)
+{
+    RECT window_rect;
+    DWORD x, y, width, height;
+
+    GetWindowRect(window, &window_rect);
+
+    width = (window_rect.right - window_rect.left);
+    height = (window_rect.bottom - window_rect.top);
+
+    x =  ((GetSystemMetrics(SM_CXSCREEN) - width) / 2);
+    y =  ((GetSystemMetrics(SM_CYSCREEN) - height) / 2);
+
+    MoveWindow(window, x, y, width, height, true);
 }
 
 #endif

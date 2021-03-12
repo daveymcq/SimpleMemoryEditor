@@ -56,7 +56,6 @@ void ProcessSelectProcessButtonEvent(void)
 
         if(process)
         {
-          
             int8 data_size[256];
             LRESULT selection_id = SendMessage(DataSize, CB_GETCURSEL, 0, 0);
 
@@ -86,7 +85,6 @@ void ProcessSelectProcessButtonEvent(void)
                 MonitorSelectedProcessThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)MonitorSelectedProcess, null, null, null);
             }
         
-
             CloseHandle(process);
             EnableWindow(Scan, true);
             EnableWindow(DataSize, true);
