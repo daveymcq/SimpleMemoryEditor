@@ -11,19 +11,25 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND window, UINT message, WPARAM wparam,
 {
     switch(message)
     {
-        case WM_DESTROY:
-
-            EnableWindow(MainWindow, TRUE);
-            ShowWindow(MainWindow, SW_SHOW);
-            CenterWindow(MainWindow);
-            SetForegroundWindow(MainWindow);
-
-        break;
-
         case WM_CREATE:
 
             ShowWindow(MainWindow, SW_HIDE);
             CenterWindow(window);
+
+        break;
+
+        case WM_CLOSE:
+
+            DestroyWindow(window);
+
+        break;
+
+        case WM_DESTROY:
+
+            EnableWindow(MainWindow, true);
+            ShowWindow(MainWindow, SW_SHOW);
+            CenterWindow(MainWindow);
+            SetForegroundWindow(MainWindow);
 
         break;
 

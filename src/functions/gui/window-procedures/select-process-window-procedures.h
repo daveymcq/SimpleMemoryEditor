@@ -11,13 +11,6 @@ LRESULT CALLBACK SelectProcessWindowProc(HWND window, UINT message, WPARAM wpara
 {
     switch(message)
     {
-        case WM_CLOSE:
-
-            DestroyWindow(window);
-            SetForegroundWindow(MainWindow);
-
-        break;
-
         case WM_CREATE:
 
             ShowWindow(MainWindow, SW_HIDE);
@@ -25,9 +18,15 @@ LRESULT CALLBACK SelectProcessWindowProc(HWND window, UINT message, WPARAM wpara
 
         break;
 
+        case WM_CLOSE:
+
+            DestroyWindow(window);
+
+        break;
+
         case WM_DESTROY:
 
-            EnableWindow(MainWindow, TRUE);
+            EnableWindow(MainWindow, true);
             ShowWindow(MainWindow, SW_SHOW);
             CenterWindow(MainWindow);
             SetForegroundWindow(MainWindow);

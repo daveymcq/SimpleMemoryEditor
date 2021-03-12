@@ -89,6 +89,10 @@ void ProcessSelectProcessButtonEvent(void)
 
             CloseHandle(process);
             EnableWindow(Scan, true);
+            EnableWindow(DataSize, true);
+            EnableWindow(SearchCondition, true);
+            EnableWindow(Value, true);
+            EnableWindow(NewScan, false);
         }
 
         else

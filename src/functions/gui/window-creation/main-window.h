@@ -106,12 +106,15 @@ int32 CreateMainWindow(void)
             while(data_types_list_index < (uint8)ARRAYSIZE(Datatypes))
             {
                 SendMessageA(DataSize, CB_ADDSTRING, 0, (LPARAM)Datatypes[data_types_list_index]);
-                data_types_list_index++;
+                ++data_types_list_index;
             }
 
             EnableWindow(Scan, false);
             EnableWindow(NewScan, false);
             EnableWindow(ChangeValue, false);
+            EnableWindow(DataSize, false);
+            EnableWindow(SearchCondition, false);
+            EnableWindow(Value, false);
 
             SendMessageA(ListView, LVM_INSERTCOLUMN, 0, (LPARAM)&AddressColumn);
             SendMessageA(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&ValueColumn);

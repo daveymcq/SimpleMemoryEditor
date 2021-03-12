@@ -29,23 +29,6 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
 
         break;
 
-        case WM_NOTIFY:
-
-            if(!ScanRunning)
-            {
-                if(((LPNMHDR)lparam)->code == NM_CLICK)
-                {
-                    ProcessListViewLeftClickEvent();
-                }
-
-                else if((((LPNMHDR)lparam)->code == NM_RCLICK) && (((LPNMHDR)lparam)->idFrom == ID_LISTVIEW))
-                {
-                    ProcessListViewRightClickEvent(window);
-                }
-            }
-
-        break;
-
         case WM_COMMAND:
 
             if((LOWORD(wparam) == ID_FREEZE_VALUE) && (SelectedItem != -1))
@@ -92,6 +75,23 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
                 if(Scanner) 
                 {
                     ResetScan(Scanner, false, false);
+                }
+            }
+
+        break;
+
+        case WM_NOTIFY:
+
+            if(!ScanRunning)
+            {
+                if(((LPNMHDR)lparam)->code == NM_CLICK)
+                {
+                    ProcessListViewLeftClickEvent();
+                }
+
+                else if((((LPNMHDR)lparam)->code == NM_RCLICK) && (((LPNMHDR)lparam)->idFrom == ID_LISTVIEW))
+                {
+                    ProcessListViewRightClickEvent(window);
                 }
             }
 

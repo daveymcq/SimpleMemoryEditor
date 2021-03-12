@@ -41,6 +41,14 @@
     #define null 0
 #endif
 
+#ifndef EXIT_SUCCESS
+    #define EXIT_SUCCESS 0
+#endif
+
+#ifndef EXIT_FAILURE
+    #define EXIT_FAILURE -1
+#endif
+
 #if defined(_MSC_VER)
     #if (_MSC_VER >= 1400)
         #ifndef uint64

@@ -50,6 +50,7 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
     EnableWindow(Scan, !reset_pid);
     EnableWindow(ChangeValue, false);
+    EnableWindow(NewScan, false);
 
     SetDlgItemText(MainWindow, ID_VALUE, 0);
 
@@ -70,7 +71,11 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
     {
         string msg = "*No Process Selected*";
         SendMessageA(Pid, WM_SETTEXT, 0, (LPARAM)msg);
+
         EnableWindow(ChoosePid, true);
+        EnableWindow(DataSize, false);
+        EnableWindow(SearchCondition, false);
+        EnableWindow(Value, false);
     }
 
     for(index = 0; index < ARRAYSIZE(Datatypes); index++)
@@ -111,7 +116,7 @@ DWORD WINAPI MonitorSelectedProcess(void)
         }
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 /* Finds the number of matches from the last scan. */
@@ -392,7 +397,6 @@ DWORD WINAPI FreezeAddresses(void)
                         if(value != CurrentValue)
                         {
                             PokeFloat(Scanner->process, address, value, Scanner->data_size);
-                            return 0;
                         }
 
                     break;
@@ -404,7 +408,6 @@ DWORD WINAPI FreezeAddresses(void)
                         if(value != CurrentValue)
                         {
                             PokeDouble(Scanner->process, address, value, Scanner->data_size);
-                            return 0;
                         }
 
                     break;
@@ -416,7 +419,6 @@ DWORD WINAPI FreezeAddresses(void)
                         if(value != CurrentValue)
                         {
                             PokeInteger(Scanner->process, address, value, Scanner->data_size);
-                            return 0;
                         }
 
                     break;
@@ -425,7 +427,7 @@ DWORD WINAPI FreezeAddresses(void)
         }
     }
 
-    return -1;
+    return EXIT_SUCCESS;
 }
 
 /* Filters memory information aquired by CreateMemoryScanner() and subsequent calls to this function. */
@@ -809,21 +811,22 @@ DWORD WINAPI ProcessScan(void)
                     EnableWindow(MainWindow, true);
 
                     SetForegroundWindow(MainWindow);
+                    MessageBeep(MB_OK);
 
                     ScanRunning = false;
 
-                    return (DWORD)MessageBeep(MB_OK);
+                    return EXIT_SUCCESS;
                 }
             }
         }
     }
 
-    return -1;
+    return EXIT_FAILURE;
 }
 
 /* Once an address is found, this function updates the value at that address. */
 
-bool UpdateValue(void)
+BOOL UpdateValue(void)
 {
     int8 address[256];
     int8 value[256];
@@ -874,7 +877,7 @@ bool UpdateValue(void)
             DoubleToString((double)current_value, value, sizeof(value) - 1);
             ListView_SetItemText(ListView, SelectedItem, 1, value);
 
-            return true;
+            return MessageBeep(MB_OK);
         }
     }
 
@@ -896,7 +899,7 @@ bool UpdateValue(void)
             DoubleToString(current_value, value, sizeof(value) - 1);
             ListView_SetItemText(ListView, SelectedItem, 1, value);
 
-            return true;
+            return MessageBeep(MB_OK);
         }
     }
 
@@ -930,7 +933,7 @@ bool UpdateValue(void)
 
             ListView_SetItemText(ListView, SelectedItem, 1, value);
 
-            return true;
+            return MessageBeep(MB_OK);
         }
     }
 
