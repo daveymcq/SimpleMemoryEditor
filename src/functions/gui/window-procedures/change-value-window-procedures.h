@@ -13,8 +13,9 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND window, UINT message, WPARAM wparam,
     {
         case WM_DESTROY:
 
-            EnableWindow(MainWindow, true);
+            EnableWindow(MainWindow, TRUE);
             ShowWindow(MainWindow, SW_SHOW);
+            CenterWindow(MainWindow);
             SetForegroundWindow(MainWindow);
 
         break;

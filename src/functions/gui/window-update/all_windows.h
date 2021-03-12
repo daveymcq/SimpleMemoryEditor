@@ -8,10 +8,11 @@ void CenterWindow(HWND window)
 
     GetWindowRect(window, &window_rect);
 
-    x =  (((GetSystemMetrics(SM_CXSCREEN)) - (window_rect.right)) / 2);
-    y =  (((GetSystemMetrics(SM_CYSCREEN)) - (window_rect.bottom)) / 2);
     width = (window_rect.right - window_rect.left);
     height = (window_rect.bottom - window_rect.top);
+
+    x =  ((GetSystemMetrics(SM_CXSCREEN) - width) / 2);
+    y =  ((GetSystemMetrics(SM_CYSCREEN) - height) / 2);
 
     MoveWindow(window, x, y, width, height, true);
 }
