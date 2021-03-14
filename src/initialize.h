@@ -25,7 +25,7 @@
 
 /* End GUI code import */
 
-/* Initialize local variables. */
+/* Initialize global variables. */
 
 BOOL Initialize(void)
 {
