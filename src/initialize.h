@@ -27,13 +27,13 @@
 
 /* Initialize global variables. */
 
-BOOL Initialize(void)
+BOOL Initialize(HINSTANCE instance)
 {
     Width = 625;
     Height = 405;
     FirstScanNotRun = true;
     SelectedItem = -1;
-    Instance = GetModuleHandleA(null);
+    Instance = (instance) ? instance : GetModuleHandleA(null);
 
     CommonControls.dwICC = ICC_WIN95_CLASSES;
     CommonControls.dwSize = sizeof(CommonControls);

@@ -22,9 +22,12 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 /* Entry point. */
 
-int32 main(int32 argc, string argv[])
+int32 WINAPI WinMain(HINSTANCE instance_handle, 
+                     HINSTANCE prev_instance_handle, 
+                     LPSTR command_line_args, 
+                     int32 show_option)
 {
-    if(Initialize())
+    if(Initialize(instance_handle))
     {
         if(CreateMemoryScannerWindow())
         {
