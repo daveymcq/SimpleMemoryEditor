@@ -50,7 +50,7 @@
 
     static HWND ListView, Scan, Value, ChangeValue, Pid, ChoosePid, DataSize, DataSizeLabel,
                 PidLabel, ValueLabel, SearchConditionLabel, SearchCondition, NewScan, SelectPidWindow,
-                ProcessSelection, ChooseProcess, MainWindow, ChangeValueWindow, ChangeValueWindowNewValue,
+                ProcessSelection, ChooseProcess, MemoryScannerWindow, ChangeValueWindow, ChangeValueWindowNewValue,
                 ChangeValueWindowButton;
 
     static INITCOMMONCONTROLSEX CommonControls;

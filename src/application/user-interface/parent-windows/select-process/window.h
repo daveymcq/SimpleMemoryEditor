@@ -1,14 +1,14 @@
 #ifndef _SELECT_PROCESS_WINDOW_H
 #define _SELECT_PROCESS_WINDOW_H
 
-void CreateSelectProcessWindow(void)
+HWND CreateSelectProcessWindow(void)
 {
     WNDCLASSEXA wc;
 
     wc.cbSize           = sizeof(wc);
     wc.cbClsExtra       = 0;
     wc.cbWndExtra       = 0;
-    wc.lpszClassName    = "SelectPidWindow";
+    wc.lpszClassName    = "SelectProcessWindow";
     wc.hCursor          = LoadCursorA(Instance, IDC_ARROW);
     wc.lpfnWndProc      = SelectProcessWindowProc;
     wc.lpszMenuName     = null;
@@ -48,9 +48,13 @@ void CreateSelectProcessWindow(void)
             SendMessageA(ChooseProcess, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
 
             EnableWindow(ChooseProcess, false);
-            EnableWindow(MainWindow, false);
+            EnableWindow(MemoryScannerWindow, false);
+
+            return SelectPidWindow;
         }
     }
+
+    return null;
 }
 
 #endif

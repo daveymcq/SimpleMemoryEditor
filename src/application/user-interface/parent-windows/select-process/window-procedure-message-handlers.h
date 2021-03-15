@@ -105,8 +105,8 @@ void ProcessSelectProcessButtonEvent(void)
         }
 
         DestroyWindow(SelectPidWindow);
-        EnableWindow(MainWindow, true);
-        SetForegroundWindow(MainWindow);
+        EnableWindow(MemoryScannerWindow, true);
+        SetForegroundWindow(MemoryScannerWindow);
     }
 }
 

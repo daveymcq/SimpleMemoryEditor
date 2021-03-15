@@ -1,7 +1,7 @@
 #ifndef _CHANGE_VALUE_WINDOW_H
 #define _CHANGE_VALUE_WINDOW_H
 
-void CreateChangeValueWindow(void)
+HWND CreateChangeValueWindow(void)
 {
     if(SelectedItem > -1)
     {
@@ -49,10 +49,14 @@ void CreateChangeValueWindow(void)
                 SendMessageA(ChangeValueWindowNewValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
                 SendMessageA(ChangeValueWindowButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
                 
-                EnableWindow(MainWindow, false);
+                EnableWindow(MemoryScannerWindow, false);
+
+                return ChangeValueWindow;
             }
         }
     }
+
+    return null;
 }
 
 

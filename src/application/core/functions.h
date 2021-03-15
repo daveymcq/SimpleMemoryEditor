@@ -52,7 +52,7 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
     EnableWindow(ChangeValue, false);
     EnableWindow(NewScan, false);
 
-    SetDlgItemText(MainWindow, ID_VALUE, 0);
+    SetDlgItemText(MemoryScannerWindow, ID_VALUE, 0);
 
     SendMessageA(DataSize, CB_RESETCONTENT, 0, 0);
     SendMessageA(SearchCondition, CB_RESETCONTENT, 0, 0);
@@ -898,10 +898,10 @@ DWORD WINAPI ProcessScan(void)
                     EnableWindow(DataSize, true);
                     EnableWindow(Value, true);
                     EnableWindow(SearchCondition, true);
-                    EnableWindow(MainWindow, false);
-                    EnableWindow(MainWindow, true);
+                    EnableWindow(MemoryScannerWindow, false);
+                    EnableWindow(MemoryScannerWindow, true);
 
-                    SetForegroundWindow(MainWindow);
+                    SetForegroundWindow(MemoryScannerWindow);
                     MessageBeep(MB_OK);
 
                     ScanRunning = false;
@@ -960,7 +960,7 @@ BOOL UpdateValue(void)
             float current_value;
 
             DestroyWindow(ChangeValueWindow);
-            SetForegroundWindow(MainWindow);
+            SetForegroundWindow(MemoryScannerWindow);
             SendMessageA(ChangeValueWindowNewValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
 
             current_value = PeekFloat(Scanner->process, addr, Scanner->data_size);
@@ -982,7 +982,7 @@ BOOL UpdateValue(void)
             double current_value;
 
             DestroyWindow(ChangeValueWindow);
-            SetForegroundWindow(MainWindow);
+            SetForegroundWindow(MemoryScannerWindow);
             SendMessageA(ChangeValueWindowNewValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
 
             current_value = PeekFloat(Scanner->process, addr, Scanner->data_size);
@@ -1004,7 +1004,7 @@ BOOL UpdateValue(void)
             int64 current_value;
 
             DestroyWindow(ChangeValueWindow);
-            SetForegroundWindow(MainWindow);
+            SetForegroundWindow(MemoryScannerWindow);
             SendMessageA(ChangeValueWindowNewValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
 
             current_value = PeekInteger(Scanner->process, addr, Scanner->data_size);

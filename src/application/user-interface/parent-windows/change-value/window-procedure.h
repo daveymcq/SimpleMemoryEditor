@@ -13,7 +13,7 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND window, UINT message, WPARAM wparam,
     {
         case WM_CREATE:
 
-            ShowWindow(MainWindow, SW_HIDE);
+            ShowWindow(MemoryScannerWindow, SW_HIDE);
             CenterWindow(window);
 
         break;
@@ -26,10 +26,10 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND window, UINT message, WPARAM wparam,
 
         case WM_DESTROY:
 
-            EnableWindow(MainWindow, true);
-            ShowWindow(MainWindow, SW_SHOW);
-            CenterWindow(MainWindow);
-            SetForegroundWindow(MainWindow);
+            EnableWindow(MemoryScannerWindow, true);
+            ShowWindow(MemoryScannerWindow, SW_SHOW);
+            CenterWindow(MemoryScannerWindow);
+            SetForegroundWindow(MemoryScannerWindow);
 
         break;
 

@@ -1,6 +1,6 @@
 /* Memory Editing Application
  Author: David McHugh Jr.
- Last Modified: 03/13/2021 */
+ Last Modified: 03/15/2021 */
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
@@ -26,8 +26,19 @@ int32 main(int32 argc, string argv[])
 {
     if(Initialize())
     {
-        return CreateMainWindow();
+        if(CreateMemoryScannerWindow())
+        {
+            MSG message;
+
+            while(GetMessage(&message, null, 0, 0) > 0)
+            {
+                TranslateMessage(&message);
+                DispatchMessage(&message);
+            }
+
+            return (int32)message.wParam;
+        }
     }
 
-    return MessageBoxA(null, "The application failed to start.", Title, MB_OK | MB_ICONERROR);
+    return (int32)MessageBoxA(null, "The application failed to start.", Title, MB_OK | MB_ICONERROR);
 }

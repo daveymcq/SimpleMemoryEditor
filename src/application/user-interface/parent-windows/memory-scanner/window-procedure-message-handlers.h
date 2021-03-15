@@ -1,7 +1,7 @@
 #ifndef _MEMORY_SCANNER_WINDOW_PROCEDURE_MESSAGE_HANDLERS_H
 #define _MEMORY_SCANNER_WINDOW_PROCEDURE_MESSAGE_HANDLERS_H
 
-/* Runs when left mouse button is clicked inside ListView on MainWindow if ScanRunning == false. */
+/* Runs when left mouse button is clicked inside ListView on MemoryScannerWindow if ScanRunning == false. */
 
 void ProcessListViewLeftClickEvent(void)
 {
@@ -24,7 +24,7 @@ void ProcessListViewLeftClickEvent(void)
     (SelectedAddressFrozen()) ? EnableWindow(ChangeValue, false) : EnableWindow(ChangeValue, (SelectedItem > -1));
 }
 
-/* Runs when right mouse button is clicked inside ListView on MainWindow. */
+/* Runs when right mouse button is clicked inside ListView on MemoryScannerWindow. */
 
 void ProcessListViewRightClickEvent(HWND window)
 {
@@ -77,7 +77,7 @@ void ProcessListViewRightClickEvent(HWND window)
     }
 }
 
-/* Runs when freeze/unfreeze option is toggled from ListView popup menu on MainWindow. */
+/* Runs when freeze/unfreeze option is toggled from ListView popup menu on MemoryScannerWindow. */
 
 void ProcessFreezeValueButtonEvent(void)
 {

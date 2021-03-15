@@ -33,6 +33,7 @@ BOOL Initialize(void)
     Height = 405;
     FirstScanNotRun = true;
     SelectedItem = -1;
+    Instance = GetModuleHandleA(null);
 
     CommonControls.dwICC = ICC_WIN95_CLASSES;
     CommonControls.dwSize = sizeof(CommonControls);
