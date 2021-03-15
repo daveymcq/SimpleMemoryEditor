@@ -11,6 +11,8 @@
 
 /* GUI code import */
 
+    #include "application/user-interface/parent-windows/memory-scanner/window-message-pump.h"
+    
     #include "application/user-interface/parent-windows/memory-scanner/window.h"
     #include "application/user-interface/parent-windows/select-process/window.h"
     #include "application/user-interface/parent-windows/change-value/window.h"

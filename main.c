@@ -31,15 +31,8 @@ int32 WINAPI WinMain(HINSTANCE instance_handle,
     {
         if(CreateMemoryScannerWindow())
         {
-            MSG message;
-
-            while(GetMessage(&message, null, 0, 0) > 0)
-            {
-                TranslateMessage(&message);
-                DispatchMessage(&message);
-            }
-
-            return (int32)message.wParam;
+            int32 exit_code = GetMemoryScannerWindowMessages();
+            return exit_code;
         }
     }
 
