@@ -2,7 +2,7 @@
 #define _INCLUDES_H
 
 #include "../../resources/icon.h"
-#include "../lib/qlib/QLIB/qlib.h"
+#include "../lib/NCRT/libc.h"
 
 /* GUI Code Includes */
 
@@ -23,10 +23,10 @@
     #define ID_FILE_EXIT (WM_USER + 1014)
     #define ID_HELP_ABOUT (WM_USER + 1015)
     #define ID_FREEZE_VALUE (WM_USER + 1016)
-    #define ID_UNFREEZE_VALUE (WM_USER + 1017)
+    #define ID_THAW_VALUE (WM_USER + 1017)
 
     #define PROCESS_LIMIT 128
-    #define FREEZE_LIMIT 5
+    #define FREEZE_LIMIT 1
 
     #ifndef LVS_EX_DOUBLEBUFFER
         #define LVS_EX_DOUBLEBUFFER 0x00010000
@@ -67,6 +67,9 @@
 
     static int8 Processes[PROCESS_LIMIT][256];
     static int8 Pids[PROCESS_LIMIT][256];
+
+    static int8 SelectedItemAddress[256];
+    static int8 SelectedItemValue[256]; 
 
     static LRESULT SelectedItem;
 

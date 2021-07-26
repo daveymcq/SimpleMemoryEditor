@@ -1,6 +1,6 @@
 /* Memory Editing Application
  Author: David McHugh Jr.
- Last Modified: 03/15/2021 */
+ Last Modified: 07/15/2021 */
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
@@ -22,19 +22,15 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 /* Entry point. */
 
-int32 WINAPI WinMain(HINSTANCE instance_handle, 
-                     HINSTANCE prev_instance_handle, 
-                     LPSTR command_line_args, 
-                     int32 show_option)
+int32 main(int32 argc, string argv[])
 {
-    if(Initialize(instance_handle))
+    if(Initialize(GetModuleHandle(null)))
     {
         if(CreateMemoryScannerWindow())
         {
-            int32 exit_code = GetMemoryScannerWindowMessages();
-            return exit_code;
+            while(GetMemoryScannerWindowMessages());
         }
     }
 
-    return (int32)MessageBoxA(null, "The application failed to start.", Title, MB_OK | MB_ICONERROR);
+    return 0;
 }

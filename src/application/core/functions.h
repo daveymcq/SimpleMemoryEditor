@@ -423,22 +423,21 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
     return mblock;
 }
 
-bool SelectedAddressFrozen(void)
+BOOL AddressFrozen(string address)
 {
-    int8 address[256];
-    uint32 index;
-
-    ListView_GetItemText(ListView, SelectedItem, 0, address, sizeof(address) - 1);
+    BOOL frozen = -1;
+    int32 index;
 
     for(index = 0; index < NumberOfAddressesFrozen; index++)
     {
         if(StringCompare(FrozenAddresses[index], address, false))
         {
-            return true;
+            frozen = index;
+            break;
         }
     }
     
-    return false;
+    return frozen;
 }
 
 /* A thread to monitor addresses for change. */
@@ -447,7 +446,7 @@ DWORD WINAPI FreezeAddresses(void)
 {
     while(Scanner)
     {
-        if(NumberOfAddressesFrozen)
+        if(NumberOfAddressesFrozen > 0)
         {
             INTFMT search_number_format;
             uint32 offset;

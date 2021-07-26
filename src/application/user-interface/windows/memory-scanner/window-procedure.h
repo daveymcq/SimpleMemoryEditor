@@ -19,7 +19,7 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
 
         case WM_CLOSE:
 
-            ProcessMainWindowCloseEvent(window);
+            HandleMainWindowCloseEvent(window);
 
         break;
 
@@ -31,14 +31,14 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
 
         case WM_COMMAND:
 
-            if((LOWORD(wparam) == ID_FREEZE_VALUE) && (SelectedItem != -1))
+            if(LOWORD(wparam) == ID_FREEZE_VALUE)
             {
-                ProcessFreezeValueButtonEvent();
+                HandleFreezeValueButtonEvent();
             }
 
-            else if((LOWORD(wparam) == ID_UNFREEZE_VALUE) && (SelectedItem != -1))
+            else if(LOWORD(wparam) == ID_THAW_VALUE)
             {
-                ProcessUnfreezeValueButtonEvent();
+                HandleThawValueButtonEvent();
             }
 
             else if(LOWORD(wparam) == ID_SCAN)
@@ -64,7 +64,7 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
 
             else if(LOWORD(wparam) == ID_CHANGE_VALUE)
             {
-                if((!SelectedAddressFrozen()) && (GetMatchCount(Scanner))) 
+                if((AddressFrozen(SelectedItemAddress) == -1) && (GetMatchCount(Scanner) > 0))
                 {
                     CreateChangeValueWindow();
                 }
@@ -86,12 +86,12 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
             {
                 if(((LPNMHDR)lparam)->code == NM_CLICK)
                 {
-                    ProcessListViewLeftClickEvent();
+                    HandleListViewLeftClickEvent();
                 }
 
                 else if((((LPNMHDR)lparam)->code == NM_RCLICK) && (((LPNMHDR)lparam)->idFrom == ID_LISTVIEW))
                 {
-                    ProcessListViewRightClickEvent(window);
+                    HandleListViewRightClickEvent(window);
                 }
             }
 
