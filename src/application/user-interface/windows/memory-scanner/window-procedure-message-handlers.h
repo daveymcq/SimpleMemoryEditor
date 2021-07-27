@@ -10,7 +10,7 @@ void HandleListViewLeftClickEvent(void)
     if(SelectedItem != -1)
     {
         ListView_GetItemText(ListView, SelectedItem, 0, SelectedItemAddress, sizeof(SelectedItemAddress));
-        ListView_GetItemText(ListView, SelectedItem, 1, SelectedItemValue, sizeof(SelectedItemValue));
+        ListView_GetItemText(ListView, SelectedItem, 1, SelectedItemValue, sizeof(SelectedItemValue)); 
 
         if(AddressFrozen(SelectedItemAddress) != -1)
         {
@@ -20,7 +20,7 @@ void HandleListViewLeftClickEvent(void)
         SendMessageA(Value, WM_SETTEXT, 0, (LPARAM)SelectedItemValue);
     }
 
-    (AddressFrozen(SelectedItemAddress)) ? EnableWindow(ChangeValue, false) : EnableWindow(ChangeValue, (SelectedItem > -1));
+    (AddressFrozen(SelectedItemAddress) != -1) ? EnableWindow(ChangeValue, false) : EnableWindow(ChangeValue, (SelectedItem > -1));
 }
 
 /* Runs when right mouse button is clicked inside ListView on MemoryScannerWindow. */
