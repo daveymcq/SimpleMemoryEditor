@@ -42,11 +42,12 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
     SelectedProcessOpen = false;
     NumberOfAddressesFrozen = 0;
     FirstScanNotRun = true;
+    IsAddressFrozen = false;
     SelectedItem = -1;
     mb = mblock;
 
-    MemoryZero(FrozenAddresses, sizeof(FrozenAddresses));
-    MemoryZero(FrozenValues, sizeof(FrozenValues));
+    MemoryZero(FrozenAddress, sizeof(FrozenAddress));
+    MemoryZero(FrozenValue, sizeof(FrozenValue));
 
     EnableWindow(Scan, !reset_pid);
     EnableWindow(ChangeValue, false);
@@ -423,21 +424,9 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
     return mblock;
 }
 
-BOOL AddressFrozen(string address)
+bool AddressFrozen(string address)
 {
-    BOOL frozen = -1;
-    int32 index;
-
-    for(index = 0; index < NumberOfAddressesFrozen; index++)
-    {
-        if(StringCompare(FrozenAddresses[index], address, false))
-        {
-            frozen = index;
-            break;
-        }
-    }
-    
-    return frozen;
+    return StringCompare(FrozenAddress, address, false);
 }
 
 /* A thread to monitor addresses for change. */
@@ -446,74 +435,68 @@ DWORD WINAPI FreezeAddresses(void)
 {
     while(Scanner)
     {
-        if(NumberOfAddressesFrozen > 0)
+        INTFMT search_number_format;
+        uint32 offset;
+        double value;
+        void *address;
+
+        address = (void *)(uintptr_t)StringToInteger(FrozenAddress, FMT_INT_HEXADECIMAL);
+        value = StringToDouble(FrozenValue);
+
+        if((IsNumeric(FrozenValue)) && ((FrozenValue[0] == '0') && (FrozenValue[1] == 'x')))
         {
-            INTFMT search_number_format;
-            uint32 offset;
-            double value;
-            void *address;
+            search_number_format = FMT_INT_HEXADECIMAL;
+        }
 
-            for(offset = 0; offset < NumberOfAddressesFrozen; offset++)
-            {
-                address = (void *)(uintptr_t)StringToInteger(FrozenAddresses[offset], FMT_INT_HEXADECIMAL);
-                value = StringToDouble(FrozenValues[offset]);
+        else if(IsNumeric(FrozenValue) && ((FrozenValue[0] != '0') && (FrozenValue[1] != 'x')))
+        {
+            search_number_format = FMT_INT_DECIMAL;
+        }
 
-                if((IsNumeric(FrozenValues[offset])) && ((FrozenValues[offset][0] == '0') && (FrozenValues[offset][1] == 'x')))
+        else
+        {
+            search_number_format = (INTFMT)0;
+        }
+
+        if(search_number_format)
+        {
+            value = StringToInteger(FrozenValue, search_number_format);
+        }
+
+        switch(Type)
+        {
+            case TYPE_FLOAT:
+
+                CurrentValue = PeekFloat(Scanner->process, address, Scanner->data_size);
+
+                if(value != CurrentValue)
                 {
-                    search_number_format = FMT_INT_HEXADECIMAL;
+                    PokeFloat(Scanner->process, address, value, Scanner->data_size);
                 }
 
-                else if(IsNumeric(FrozenValues[offset]) && ((FrozenValues[offset][0] != '0') && (FrozenValues[offset][1] != 'x')))
+            break;
+
+            case TYPE_DOUBLE:
+
+                CurrentValue = PeekDouble(Scanner->process, address, Scanner->data_size);
+
+                if(value != CurrentValue)
                 {
-                    search_number_format = FMT_INT_DECIMAL;
+                    PokeDouble(Scanner->process, address, value, Scanner->data_size);
                 }
 
-                else
+            break;
+
+            case TYPE_INTEGER:
+                
+                CurrentValue = PeekInteger(Scanner->process, address, Scanner->data_size);
+
+                if(value != CurrentValue)
                 {
-                    search_number_format = (INTFMT)0;
+                    PokeInteger(Scanner->process, address, value, Scanner->data_size);
                 }
 
-                if(search_number_format)
-                {
-                    value = StringToInteger(FrozenValues[offset], search_number_format);
-                }
-
-                switch(Type)
-                {
-                    case TYPE_FLOAT:
-
-                        CurrentValue = PeekFloat(Scanner->process, address, Scanner->data_size);
-
-                        if(value != CurrentValue)
-                        {
-                            PokeFloat(Scanner->process, address, value, Scanner->data_size);
-                        }
-
-                    break;
-
-                    case TYPE_DOUBLE:
-
-                        CurrentValue = PeekDouble(Scanner->process, address, Scanner->data_size);
-
-                        if(value != CurrentValue)
-                        {
-                            PokeDouble(Scanner->process, address, value, Scanner->data_size);
-                        }
-
-                    break;
-
-                    case TYPE_INTEGER:
-                        
-                        CurrentValue = PeekInteger(Scanner->process, address, Scanner->data_size);
-
-                        if(value != CurrentValue)
-                        {
-                            PokeInteger(Scanner->process, address, value, Scanner->data_size);
-                        }
-
-                    break;
-                }
-            }
+            break;
         }
     }
 

@@ -26,7 +26,6 @@
     #define ID_THAW_VALUE (WM_USER + 1017)
 
     #define PROCESS_LIMIT 128
-    #define FREEZE_LIMIT 1
 
     #ifndef LVS_EX_DOUBLEBUFFER
         #define LVS_EX_DOUBLEBUFFER 0x00010000
@@ -40,10 +39,6 @@
     static string DataSizes[] = { "1", "2", "4", "8", "4", "8" };
     static string Datatypes[] = { "Byte", "Short Integer", "Integer", "Long Integer", "Float", "Double" };
     static string SearchConditions[] = { "Equals", "Increased", "Decreased" };
-
-    static int8 FrozenAddresses[FREEZE_LIMIT][256];
-    static int8 FrozenValues[FREEZE_LIMIT][256];
-    static int8 SelectedPid[256];
 
     static uint32 Width;
     static uint32 Height;
@@ -70,6 +65,9 @@
 
     static int8 SelectedItemAddress[256];
     static int8 SelectedItemValue[256]; 
+    static int8 FrozenAddress[256];
+    static int8 FrozenValue[256];
+    static int8 SelectedPid[256];
 
     static LRESULT SelectedItem;
 
@@ -88,6 +86,7 @@
     static bool SelectedProcessOpen;
     static bool ScanRunning;
     static bool FirstScanNotRun;
+    static bool IsAddressFrozen;
 
     /* A linked list of memory region information obtained by VirtualQueryEx(). */
 
