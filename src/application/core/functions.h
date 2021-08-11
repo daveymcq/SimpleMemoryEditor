@@ -739,12 +739,12 @@ DWORD WINAPI ProcessScan(void)
         CopyString(data_size, (string)DataSizes[selection_id], sizeof(data_size) - 1);
     }
 
-    if((IsNumeric(val)) && ((val[0] == '0') && (val[1] == 'x')))
+    if((val[0] == '0') && (val[1] == 'x'))
     {
         search_number_format = FMT_INT_HEXADECIMAL;
     }
 
-    if((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (!StringCompare(pid, "*No Process Selected*", false)))
+    if((IsNumeric(val)) && ((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (!StringCompare(pid, "*No Process Selected*", false))))
     {
         Scanner = (Scanner) ? Scanner : CreateMemoryScanner((uint32)StringToInteger(pid, FMT_INT_DECIMAL), (uint16)StringToInteger(data_size, FMT_INT_DECIMAL)); 
 
