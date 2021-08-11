@@ -1,9 +1,6 @@
 #ifndef _INCLUDES_H
 #define _INCLUDES_H
 
-#include "../../resources/icon.h"
-#include "../lib/NCRT/libc.h"
-
 /* GUI Code Includes */
 
     #define ID_LISTVIEW (WM_USER + 1000)
@@ -54,7 +51,7 @@
 
 /* End GUI Code Includes */
 
-/* Memory Scanner/Editor Code Includes */
+/* Memory Scanner Code Includes */
 
     #ifndef WRITABLE_MEMORY
         #define WRITABLE_MEMORY (PAGE_READWRITE | PAGE_WRITECOPY | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)
@@ -124,6 +121,6 @@
     static TYPE Type;
     static MEMORY_BLOCK *Scanner;
 
-/* End Memory Scanner/Editor Code Includes */
+/* End Memory Scanner Code Includes */
 
 #endif

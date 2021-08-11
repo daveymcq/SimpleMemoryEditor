@@ -1,11 +1,14 @@
 #ifndef _INITIALIZE_H
 #define _INITIALIZE_H
 
+#include "../resources/icon.h"
+#include "lib/NCRT/libc.h"
+
 #include "application/includes.h"
 
 /* Core application code import */
 
-    #include "application/core/functions.h"
+    #include "application/logic/functions.h"
 
 /* End core application code import */
 
