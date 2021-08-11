@@ -13,6 +13,11 @@
 
     #include "application/user-interface/windows/memory-scanner/window-messages.h"
     
+    #include "application/user-interface/windows/memory-scanner/functions.h"
+    #include "application/user-interface/windows/select-process/functions.h"
+    #include "application/user-interface/windows/change-value/functions.h"
+    #include "application/user-interface/windows/functions.h"
+
     #include "application/user-interface/windows/memory-scanner/window.h"
     #include "application/user-interface/windows/select-process/window.h"
     #include "application/user-interface/windows/change-value/window.h"
