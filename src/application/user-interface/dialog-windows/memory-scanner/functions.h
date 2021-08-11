@@ -64,7 +64,7 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
     if(reset_pid)
     {
-        string msg = "*No Process Selected*";
+        string msg = (string)"*No Process Selected*";
         SendMessageA(Pid, WM_SETTEXT, 0, (LPARAM)msg);
 
         EnableWindow(ChoosePid, true);
@@ -214,7 +214,7 @@ DWORD WINAPI ProcessScan(void)
         search_number_format = FMT_INT_HEXADECIMAL;
     }
 
-    if((IsNumeric(val)) && ((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (!StringCompare(pid, "*No Process Selected*", false))))
+    if((IsNumeric(val)) && ((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (!StringCompare(pid, (string)"*No Process Selected*", false))))
     {
         Scanner = (Scanner) ? Scanner : CreateMemoryScanner((uint32)StringToInteger(pid, FMT_INT_DECIMAL), (uint16)StringToInteger(data_size, FMT_INT_DECIMAL)); 
 

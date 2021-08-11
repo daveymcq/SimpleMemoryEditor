@@ -49,7 +49,7 @@ void HandleListViewRightClickEvent(HWND window)
             if(IsAddressFrozen(SelectedItemAddress))
             {
                 EnableWindow(ChangeValue, false);
-                InsertMenu(popup_menu, 0, MF_STRING, ID_THAW_VALUE, "Thaw Value");
+                InsertMenu(popup_menu, 0, MF_STRING, ID_THAW_VALUE, (string)"Thaw Value");
             }
 
             else
@@ -57,7 +57,7 @@ void HandleListViewRightClickEvent(HWND window)
                 if(!AddressFrozen)
                 {
                     EnableWindow(ChangeValue, true);
-                    InsertMenu(popup_menu, 0, MF_STRING, ID_FREEZE_VALUE, "Freeze Value");
+                    InsertMenu(popup_menu, 0, MF_STRING, ID_FREEZE_VALUE, (string)"Freeze Value");
                 }
             }
 
@@ -81,7 +81,7 @@ void HandleFreezeValueButtonEvent(void)
                 CopyString(FrozenAddress, SelectedItemAddress, sizeof(FrozenAddress) - 1);
                 CopyString(FrozenValue, SelectedItemValue, sizeof(FrozenValue) - 1);
 
-                ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(SelectedItemValue, " (FROZEN)"));
+                ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(SelectedItemValue, (string)" (FROZEN)"));
 
                 AddressFrozen = true;
 

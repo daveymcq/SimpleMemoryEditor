@@ -13,8 +13,8 @@ HWND CreateMemoryScannerWindow(void)
     wc.hIcon = LoadIconA(Instance, MAKEINTRESOURCEA(AppIcon));
     wc.hIconSm = LoadIconA(Instance, MAKEINTRESOURCEA(AppIcon));
     wc.hInstance = Instance;
-    wc.lpfnWndProc = MainWindowProc;
-    wc.lpszClassName = "MemoryScannerWindow";
+    wc.lpfnWndProc = (WNDPROC)MainWindowProc;
+    wc.lpszClassName = (string)"MemoryScannerWindow";
     wc.lpszMenuName = null;
     wc.style = CS_HREDRAW | CS_VREDRAW;
 
@@ -45,12 +45,12 @@ HWND CreateMemoryScannerWindow(void)
 
             address_column.cx = 298;
             address_column.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
-            address_column.pszText = "Address";
+            address_column.pszText = (string)"Address";
             address_column.iSubItem = 0;
 
             value_column.cx = 298;
             value_column.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
-            value_column.pszText = "Value";
+            value_column.pszText = (string)"Value";
             value_column.iSubItem = 1;
 
             SearchConditionLabel = CreateWindowA("static", "Search Condition: ", WS_VISIBLE | WS_CHILD, 

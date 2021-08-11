@@ -32,10 +32,14 @@
     static LRESULT CALLBACK SelectProcessWindowProc(HWND, UINT, WPARAM, LPARAM);
     static LRESULT CALLBACK ChangeValueWindowProc(HWND, UINT, WPARAM, LPARAM);
 
-    static string Title = "Simple Memory Editor";
-    static string DataSizes[] = { "1", "2", "4", "8", "4", "8" };
-    static string Datatypes[] = { "Byte", "Short Integer", "Integer", "Long Integer", "Float", "Double" };
-    static string SearchConditions[] = { "Equals", "Increased", "Decreased" };
+    static string Title = (string)"Simple Memory Editor";
+    static string DataSizes[] = { (string)"1", (string)"2", (string)"4", 
+                                  (string)"8", (string)"4", (string)"8" };
+
+    static string Datatypes[] = { (string)"Byte", (string)"Short Integer", (string)"Integer", 
+                                  (string)"Long Integer", (string)"Float", (string)"Double" };
+
+    static string SearchConditions[] = { (string)"Equals", (string)"Increased", (string)"Decreased" };
 
     static uint32 Width;
     static uint32 Height;
