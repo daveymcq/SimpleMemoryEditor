@@ -83,7 +83,7 @@
     static bool SelectedProcessOpen;
     static bool ScanRunning;
     static bool FirstScanNotRun;
-    static bool IsAddressFrozen;
+    static bool AddressFrozen;
 
     /* A linked list of memory region information obtained by VirtualQueryEx(). */
 

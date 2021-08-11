@@ -32,13 +32,6 @@ bool DiscardAddress(MEMORY_BLOCK *mblock, uint64 offset)
     return false;
 }
 
-/* Check if the selected address is frozen by comparing it against FrozenAddress */
-
-bool AddressFrozen(string address)
-{
-    return StringCompare(FrozenAddress, address, false);
-}
-
 /* Finds the number of matches from the last scan. */
 
 uint64 GetMatchCount(MEMORY_BLOCK *mblock)
@@ -198,7 +191,6 @@ void FreeMemoryScanner(MEMORY_BLOCK *mblock)
     while(mb)
     {
         MEMORY_BLOCK *pmb = mb;
-        mb = mb->next;
 
         if(pmb->buffer) 
         {
@@ -211,6 +203,8 @@ void FreeMemoryScanner(MEMORY_BLOCK *mblock)
         }
 
         HeapFree(GetProcessHeap(), 0, pmb);
+
+        mb = mb->next;
     }
 }
 

@@ -1,7 +1,7 @@
 #ifndef _INITIALIZE_H
 #define _INITIALIZE_H
 
-#include "../resources/icon.h"
+#include "../resources/icon.h"  
 #include "lib/NCRT/libc.h"
 
 #include "application/includes.h"
@@ -12,14 +12,18 @@
 
 /* End core application code import */
 
+/****************************************************************************************************************** 
+  *****************************************************************************************************************/
+
 /* GUI code import */
 
     #include "application/user-interface/dialog-windows/memory-scanner/window-messages.h"
     
+    #include "application/user-interface/dialog-windows/functions.h"
+
     #include "application/user-interface/dialog-windows/memory-scanner/functions.h"
     #include "application/user-interface/dialog-windows/select-process/functions.h"
     #include "application/user-interface/dialog-windows/change-value/functions.h"
-    #include "application/user-interface/dialog-windows/functions.h"
 
     #include "application/user-interface/dialog-windows/memory-scanner/window.h"
     #include "application/user-interface/dialog-windows/select-process/window.h"
@@ -34,6 +38,9 @@
     #include "application/user-interface/dialog-windows/change-value/window-procedure.h"
 
 /* End GUI code import */
+
+/****************************************************************************************************************** 
+  *****************************************************************************************************************/
 
 /* Initialize global variables. */
 

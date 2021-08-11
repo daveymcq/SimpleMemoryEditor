@@ -64,7 +64,7 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
 
             else if(LOWORD(wparam) == ID_CHANGE_VALUE)
             {
-                if((!AddressFrozen(SelectedItemAddress)) && (GetMatchCount(Scanner)))
+                if((!IsAddressFrozen(SelectedItemAddress)) && (GetMatchCount(Scanner)))
                 {
                     CreateChangeValueWindow();
                 }

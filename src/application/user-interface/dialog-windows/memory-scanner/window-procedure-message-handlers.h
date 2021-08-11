@@ -12,7 +12,7 @@ void HandleListViewLeftClickEvent(void)
         ListView_GetItemText(ListView, SelectedItem, 0, SelectedItemAddress, sizeof(SelectedItemAddress));
         ListView_GetItemText(ListView, SelectedItem, 1, SelectedItemValue, sizeof(SelectedItemValue)); 
 
-        if(AddressFrozen(SelectedItemAddress))
+        if(IsAddressFrozen(SelectedItemAddress))
         {
             SelectedItemValue[FindFirstOccurrenceOfString(SelectedItemValue, (string)" (FROZEN)", false)] = null;
         }
@@ -20,7 +20,7 @@ void HandleListViewLeftClickEvent(void)
         SendMessageA(Value, WM_SETTEXT, 0, (LPARAM)SelectedItemValue);
     }
 
-    (AddressFrozen(SelectedItemAddress)) ? EnableWindow(ChangeValue, false) : EnableWindow(ChangeValue, (SelectedItem > -1));
+    (IsAddressFrozen(SelectedItemAddress)) ? EnableWindow(ChangeValue, false) : EnableWindow(ChangeValue, (SelectedItem > -1));
 }
 
 /* Runs when right mouse button is clicked inside ListView on MemoryScannerWindow. */
@@ -46,7 +46,7 @@ void HandleListViewRightClickEvent(HWND window)
 
             popup_menu = CreatePopupMenu();
 
-            if(AddressFrozen(SelectedItemAddress))
+            if(IsAddressFrozen(SelectedItemAddress))
             {
                 EnableWindow(ChangeValue, false);
                 InsertMenu(popup_menu, 0, MF_STRING, ID_THAW_VALUE, "Thaw Value");
@@ -54,7 +54,7 @@ void HandleListViewRightClickEvent(HWND window)
 
             else
             {
-                if(!IsAddressFrozen)
+                if(!AddressFrozen)
                 {
                     EnableWindow(ChangeValue, true);
                     InsertMenu(popup_menu, 0, MF_STRING, ID_FREEZE_VALUE, "Freeze Value");
@@ -74,7 +74,7 @@ void HandleFreezeValueButtonEvent(void)
 
     if(SelectedItem != -1)
     {
-        if(!AddressFrozen(SelectedItemAddress))
+        if(!IsAddressFrozen(SelectedItemAddress))
         {
             if(SuspendThread(FreezeThread) != -1)
             {
@@ -83,7 +83,7 @@ void HandleFreezeValueButtonEvent(void)
 
                 ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(SelectedItemValue, " (FROZEN)"));
 
-                IsAddressFrozen = true;
+                AddressFrozen = true;
 
                 ResumeThread(FreezeThread);
             }
@@ -99,7 +99,7 @@ void HandleThawValueButtonEvent(void)
 
     if(SelectedItem != -1)
     {
-        if(AddressFrozen(SelectedItemAddress))
+        if(IsAddressFrozen(SelectedItemAddress))
         {
             if(SuspendThread(FreezeThread) != -1)
             {
@@ -108,7 +108,7 @@ void HandleThawValueButtonEvent(void)
                 MemoryZero(FrozenAddress, sizeof(FrozenAddress));
                 MemoryZero(FrozenValue, sizeof(FrozenValue));
 
-                IsAddressFrozen = false;
+                AddressFrozen = false;
 
                 ResumeThread(FreezeThread);
             }
