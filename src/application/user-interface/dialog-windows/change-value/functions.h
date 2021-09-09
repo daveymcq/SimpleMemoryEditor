@@ -71,7 +71,7 @@ BOOL UpdateValue(void)
             SetForegroundWindow(MemoryScannerWindow);
             SendMessageA(ChangeValueWindowNewValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
 
-            current_value = PeekFloat(Scanner->process, addr, Scanner->data_size);
+            current_value = PeekDouble(Scanner->process, addr, Scanner->data_size);
 
             DoubleToString(current_value, value, sizeof(value) - 1);
             ListView_SetItemText(ListView, SelectedItem, 1, value);
