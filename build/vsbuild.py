@@ -13,7 +13,7 @@ def list_vs_installations():
 
 def get_vs_installations():
 
-    vs_installation_vcvarsall = []
+    vs_installations_vcvarsall = []
     vs_installations = subprocess.getoutput('call build\\vs\\vsdetect.bat').split(',')
 
     for vs in vs_installations:
@@ -25,10 +25,10 @@ def get_vs_installations():
                 if str(file) == 'vcvarsall.bat':
 
                     vcvarsall = (root + '\\' + str(file))
-                    vs_installation_vcvarsall.append(vcvarsall)
+                    vs_installations_vcvarsall.append(vcvarsall)
         
 
-    return vs_installation_vcvarsall
+    return vs_installations_vcvarsall
 
 def vs_compile(vcvarsall = None):
 
@@ -36,7 +36,6 @@ def vs_compile(vcvarsall = None):
 
         if vcvarsall == None:
 
-            cmd = 'call build\\vs\\vsdetect.bat'
             vs_installations = get_vs_installations()
 
             if len(vs_installations) == 0:
