@@ -2,15 +2,17 @@
 
 if [%1] == [] (
 
-    echo Error: Provide the directory that contains your Visual Studio installation's "vcvarsall.bat" as a command line argument.
+    echo 'ERROR'
   
 ) else (
+
+    pushd build
 
     echo .....................................................................................................
     echo Compiling for x86
     echo .....................................................................................................
     
-    call %1\vcvarsall.bat x86>NUL
+    call %1 x86>NUL
 
     mkdir "..\bin\x86" 2>NUL
     rc "..\src\resources\icon.rc"
@@ -23,7 +25,7 @@ if [%1] == [] (
     echo Compiling for x64
     echo .....................................................................................................
     
-    call %1\vcvarsall.bat x64>NUL
+    call %1 x64>NUL
 
     mkdir "..\bin\x64" 2>NUL
     rc "..\src\resources\icon.rc"
@@ -33,4 +35,6 @@ if [%1] == [] (
     del "*.obj" 2>NUL
     
     echo .....................................................................................................
+
+    popd
 )
