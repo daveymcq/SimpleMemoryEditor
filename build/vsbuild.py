@@ -18,7 +18,7 @@ def list_vs_installations():
             print(f'{index + 1}: "{vs}"')
     else:
 
-        print('\r\nVisual Studio is not installed on this machine.')
+        print('\r\nVisual Studio is not installed on this machine.\n')
 
 def get_vs_installations():
 
@@ -49,7 +49,7 @@ def vs_compile(vcvarsall = None):
 
             if len(vs_installations) == 0:
 
-                print('\r\nError: Visual Studio is not installed on this machine. Please install Visual Studio from https://visualstudio.microsoft.com')
+                print('\r\nError: Visual Studio is not installed on this machine. Please install Visual Studio from https://visualstudio.microsoft.com\n')
                 return False
 
             
@@ -78,10 +78,10 @@ def vs_compile(vcvarsall = None):
 
             else:
 
-                print('\r\nError: The path to your Visual Studio installation\'s "vcvarsall.bat" is invalid.')
+                print('\r\nError: The path to your Visual Studio installation\'s "vcvarsall.bat" is invalid.\n')
                 return False
     else:
 
-        print('\r\nError: You must be running Windows to compile using Visual Studio.')
+        print('\r\nError: You must be running Windows to compile using Visual Studio.\n')
         return False
 
