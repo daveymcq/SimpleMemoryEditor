@@ -69,7 +69,6 @@ def vs_compile(vcvarsall = None):
             if os.path.isfile(vcvarsall):
 
                 cmd = f'call build\\vs\\vsbuild.bat "{vcvarsall}"'
-
                 print(f'\r\nUsing "{vcvarsall}" \r\n')
 
                 if subprocess.getoutput(cmd) != 'ERROR':
