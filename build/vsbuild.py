@@ -7,9 +7,18 @@ import subprocess
 
 def list_vs_installations():
 
-    for index, vs in enumerate(get_vs_installations()):
+    vs_installations = get_vs_installations()
 
-        print(f'{index + 1}: "{vs}"')
+    if len(vs_installations) > 0:
+
+        print('\r')
+
+        for index, vs in enumerate(vs_installations):
+
+            print(f'{index + 1}: "{vs}"')
+    else:
+
+        print('\r\nVisual Studio is not installed on this machine.')
 
 def get_vs_installations():
 
@@ -40,14 +49,14 @@ def vs_compile(vcvarsall = None):
 
             if len(vs_installations) == 0:
 
-                print('\r\nError: Visual Studio is installed. Please install Visual Studio from https://visualstudio.microsoft.com \r\n')
+                print('\r\nError: Visual Studio is not installed on this machine. Please install Visual Studio from https://visualstudio.microsoft.com')
                 return False
 
             
             for vs in vs_installations:
 
                 cmd = f'call build\\vs\\vsbuild.bat "{vs}"'
-                print(f'\r\nUsing {vs} ...\r\n')
+                print(f'\r\nUsing "{vs}" \r\n')
 
                 if subprocess.getoutput(cmd) != 'ERROR':
 
@@ -57,21 +66,23 @@ def vs_compile(vcvarsall = None):
 
         else:
 
-            cmd = f'call build\\vs\\vsbuild.bat "{vcvarsall}"'
+            if os.path.isfile(vcvarsall):
 
-            print(f'\r\nUsing {vcvarsall} ...\r\n')
+                cmd = f'call build\\vs\\vsbuild.bat "{vcvarsall}"'
 
-            if subprocess.getoutput(cmd) != 'ERROR':
+                print(f'\r\nUsing "{vcvarsall}" \r\n')
 
-                print(subprocess.getoutput(cmd))
-                return True
+                if subprocess.getoutput(cmd) != 'ERROR':
+
+                    print(subprocess.getoutput(cmd))
+                    return True
 
             else:
 
-                print('\r\nError: The path to your Visual Studio installation\'s "vcvarsall.bat" is invalid. \r\n')
+                print('\r\nError: The path to your Visual Studio installation\'s "vcvarsall.bat" is invalid.')
                 return False
     else:
 
-        print('\r\nError: You must be running Windows to compile using Visual Studio. \r\n')
+        print('\r\nError: You must be running Windows to compile using Visual Studio.')
         return False
 
