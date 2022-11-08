@@ -23,6 +23,7 @@
     #define ID_THAW_VALUE (WM_USER + 1017)
 
     #define PROCESS_LIMIT 128
+    #define FREEZE_LIMIT 5
 
     #ifndef LVS_EX_DOUBLEBUFFER
         #define LVS_EX_DOUBLEBUFFER 0x00010000
@@ -63,11 +64,11 @@
 
     static int8 Processes[PROCESS_LIMIT][256];
     static int8 Pids[PROCESS_LIMIT][256];
+    static int8 FrozenAddresses[FREEZE_LIMIT][256];
+    static int8 FrozenValues[FREEZE_LIMIT][256];
 
     static int8 SelectedItemAddress[256];
     static int8 SelectedItemValue[256]; 
-    static int8 FrozenAddress[256];
-    static int8 FrozenValue[256];
     static int8 SelectedPid[256];
 
     static LRESULT SelectedItem;

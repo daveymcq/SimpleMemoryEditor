@@ -5,7 +5,14 @@
 
 bool IsAddressFrozen(string address)
 {
-    return StringCompare(FrozenAddress, address, false);
+    uint16 i;
+
+    for(i = 0; i < FREEZE_LIMIT; i++)
+    {
+       if(StringCompare(FrozenAddresses[i], address, false)) return true;
+    }
+
+    return false;
 }
 
 /* Add scan results to ListView control. */
@@ -40,8 +47,8 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
     SelectedItem = -1;
     mb = mblock;
 
-    MemoryZero(FrozenAddress, sizeof(FrozenAddress));
-    MemoryZero(FrozenValue, sizeof(FrozenValue));
+    MemoryZero(FrozenAddresses, sizeof(FrozenAddresses));
+    MemoryZero(FrozenValues, sizeof(FrozenValues));
 
     EnableWindow(Scan, !reset_pid);
     EnableWindow(ChangeValue, false);

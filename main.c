@@ -17,6 +17,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include <windows.h>
 #include <tlhelp32.h>
 #include <commctrl.h>
+#include <assert.h>
 
 #include "src/initialize.h"
 

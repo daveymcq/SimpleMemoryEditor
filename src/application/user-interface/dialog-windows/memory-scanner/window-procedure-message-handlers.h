@@ -6,15 +6,19 @@
 void HandleListViewLeftClickEvent(void)
 {
     SelectedItem = (int32)SendMessageA(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
+    ListView_GetItemText(ListView, SelectedItem, 0, SelectedItemAddress, sizeof(SelectedItemAddress));
+    ListView_GetItemText(ListView, SelectedItem, 1, SelectedItemValue, sizeof(SelectedItemValue)); 
 
     if(SelectedItem != -1)
     {
-        ListView_GetItemText(ListView, SelectedItem, 0, SelectedItemAddress, sizeof(SelectedItemAddress));
-        ListView_GetItemText(ListView, SelectedItem, 1, SelectedItemValue, sizeof(SelectedItemValue)); 
-
         if(IsAddressFrozen(SelectedItemAddress))
         {
-            SelectedItemValue[FindFirstOccurrenceOfString(SelectedItemValue, (string)" (FROZEN)", false)] = null;
+            int32 index = FindFirstOccurrenceOfString(SelectedItemValue, (string)" (FROZEN)", false);
+
+            if(index != -1)
+            {
+                SelectedItemValue[index] = null;
+            }
         }
 
         SendMessageA(Value, WM_SETTEXT, 0, (LPARAM)SelectedItemValue);
@@ -54,7 +58,7 @@ void HandleListViewRightClickEvent(HWND window)
 
             else
             {
-                if(!AddressFrozen)
+                if(NumberOfAddressesFrozen < FREEZE_LIMIT)
                 {
                     EnableWindow(ChangeValue, true);
                     InsertMenu(popup_menu, 0, MF_STRING, ID_FREEZE_VALUE, (string)"Freeze Value");
@@ -66,7 +70,7 @@ void HandleListViewRightClickEvent(HWND window)
     }
 }
 
-/* Runs when freeze/unfreeze option is toggled from ListView popup menu on MemoryScannerWindow. */
+/* Runs when freeze/thaw option is toggled from ListView popup menu on MemoryScannerWindow. */
 
 void HandleFreezeValueButtonEvent(void)
 {
@@ -78,12 +82,17 @@ void HandleFreezeValueButtonEvent(void)
         {
             if(SuspendThread(FreezeThread) != -1)
             {
-                CopyString(FrozenAddress, SelectedItemAddress, sizeof(FrozenAddress) - 1);
-                CopyString(FrozenValue, SelectedItemValue, sizeof(FrozenValue) - 1);
+                if(NumberOfAddressesFrozen < FREEZE_LIMIT)
+                {
+                    CopyString(FrozenAddresses[NumberOfAddressesFrozen], SelectedItemAddress, sizeof(FrozenAddresses[NumberOfAddressesFrozen]) - 1);
+                    CopyString(FrozenValues[NumberOfAddressesFrozen], SelectedItemValue, sizeof(FrozenValues[NumberOfAddressesFrozen]) - 1);
 
-                ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(SelectedItemValue, (string)" (FROZEN)"));
-
-                AddressFrozen = true;
+                    if((StringCompare(FrozenAddresses[NumberOfAddressesFrozen], SelectedItemAddress, false)) && (StringCompare(FrozenValues[NumberOfAddressesFrozen], SelectedItemValue, false)))
+                    {
+                        ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(SelectedItemValue, (string)" (FROZEN)"));
+                        NumberOfAddressesFrozen++;
+                    }
+                }
 
                 ResumeThread(FreezeThread);
             }
@@ -103,12 +112,27 @@ void HandleThawValueButtonEvent(void)
         {
             if(SuspendThread(FreezeThread) != -1)
             {
-                ListView_SetItemText(ListView, SelectedItem, 1, FrozenValue);
+                uint16 frozen_index;
+                bool address_frozen = false;
 
-                MemoryZero(FrozenAddress, sizeof(FrozenAddress));
-                MemoryZero(FrozenValue, sizeof(FrozenValue));
+                for(frozen_index = 0; frozen_index < FREEZE_LIMIT; frozen_index++)
+                {
+                    if(StringCompare(FrozenAddresses[frozen_index], SelectedItemAddress, false)) 
+                    {
+                        address_frozen = true;
+                        break;
+                    }
+                }
 
-                AddressFrozen = false;
+                if(address_frozen)
+                {
+                    ListView_SetItemText(ListView, SelectedItem, 1, FrozenValues[frozen_index]);
+
+                    MemoryZero(FrozenAddresses[frozen_index], sizeof(FrozenAddresses[frozen_index]));
+                    MemoryZero(FrozenValues[frozen_index], sizeof(FrozenValues[frozen_index]));
+
+                    NumberOfAddressesFrozen--;
+                }
 
                 ResumeThread(FreezeThread);
             }

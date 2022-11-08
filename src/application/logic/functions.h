@@ -252,68 +252,73 @@ DWORD WINAPI FreezeAddresses(void)
 {
     while(Scanner)
     {
-        INTFMT search_number_format;
-        uint32 offset;
-        double value;
-        void *address;
+        uint16 i;
 
-        address = (void *)(uintptr_t)StringToInteger(FrozenAddress, FMT_INT_HEXADECIMAL);
-        value = StringToDouble(FrozenValue);
-
-        if((IsNumeric(FrozenValue)) && ((FrozenValue[0] == '0') && (FrozenValue[1] == 'x')))
+        for(i = 0; i < NumberOfAddressesFrozen; i++)
         {
-            search_number_format = FMT_INT_HEXADECIMAL;
-        }
+            INTFMT search_number_format;
+            uint32 offset;
+            double value;
+            void *address;
 
-        else if(IsNumeric(FrozenValue) && ((FrozenValue[0] != '0') && (FrozenValue[1] != 'x')))
-        {
-            search_number_format = FMT_INT_DECIMAL;
-        }
+            address = (void *)(uintptr_t)StringToInteger(FrozenAddresses[i], FMT_INT_HEXADECIMAL);
+            value = StringToDouble(FrozenValues[i]);
 
-        else
-        {
-            search_number_format = (INTFMT)0;
-        }
+            if((IsNumeric(FrozenValues[i])) && ((FrozenValues[i][0] == '0') && (FrozenValues[i][1] == 'x')))
+            {
+                search_number_format = FMT_INT_HEXADECIMAL;
+            }
 
-        if(search_number_format)
-        {
-            value = StringToInteger(FrozenValue, search_number_format);
-        }
+            else if(IsNumeric(FrozenValues[i]) && ((FrozenValues[i][0] != '0') && (FrozenValues[i][1] != 'x')))
+            {
+                search_number_format = FMT_INT_DECIMAL;
+            }
 
-        switch(Type)
-        {
-            case TYPE_FLOAT:
+            else
+            {
+                search_number_format = (INTFMT)0;
+            }
 
-                CurrentValue = PeekFloat(Scanner->process, address, Scanner->data_size);
+            if(search_number_format)
+            {
+                value = StringToInteger(FrozenValues[i], search_number_format);
+            }
 
-                if(value != CurrentValue)
-                {
-                    PokeFloat(Scanner->process, address, value, Scanner->data_size);
-                }
+            switch(Type)
+            {
+                case TYPE_FLOAT:
 
-            break;
+                    CurrentValue = PeekFloat(Scanner->process, address, Scanner->data_size);
 
-            case TYPE_DOUBLE:
+                    if(value != CurrentValue)
+                    {
+                        PokeFloat(Scanner->process, address, value, Scanner->data_size);
+                    }
 
-                CurrentValue = PeekDouble(Scanner->process, address, Scanner->data_size);
+                break;
 
-                if(value != CurrentValue)
-                {
-                    PokeDouble(Scanner->process, address, value, Scanner->data_size);
-                }
+                case TYPE_DOUBLE:
 
-            break;
+                    CurrentValue = PeekDouble(Scanner->process, address, Scanner->data_size);
 
-            case TYPE_INTEGER:
-                
-                CurrentValue = PeekInteger(Scanner->process, address, Scanner->data_size);
+                    if(value != CurrentValue)
+                    {
+                        PokeDouble(Scanner->process, address, value, Scanner->data_size);
+                    }
 
-                if(value != CurrentValue)
-                {
-                    PokeInteger(Scanner->process, address, value, Scanner->data_size);
-                }
+                break;
 
-            break;
+                case TYPE_INTEGER:
+                    
+                    CurrentValue = PeekInteger(Scanner->process, address, Scanner->data_size);
+
+                    if(value != CurrentValue)
+                    {
+                        PokeInteger(Scanner->process, address, value, Scanner->data_size);
+                    }
+
+                break;
+            }
         }
     }
 
