@@ -48,6 +48,8 @@ boolean Initialize(HINSTANCE application_instance)
 {
     FirstScanNotRun = true;
     SelectedItem = -1;
+    ScreenDPI = 96;
+    
     Instance = (application_instance) ? application_instance : GetModuleHandleA(null);
 
     CommonControls.dwICC = ICC_WIN95_CLASSES;

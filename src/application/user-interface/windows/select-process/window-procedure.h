@@ -12,10 +12,6 @@ LRESULT CALLBACK SelectProcessWindowProc(HWND window, UINT message, WPARAM wpara
     switch(message)
     {
         case WM_CREATE:
-
-            ShowWindow(MemoryScannerWindow, SW_HIDE);
-            CenterWindow(window);
-
         break;
 
         case WM_CLOSE:
@@ -44,6 +40,17 @@ LRESULT CALLBACK SelectProcessWindowProc(HWND window, UINT message, WPARAM wpara
             {
                 ProcessListboxChangeEvent();
             }
+
+        break;
+
+        case WM_DPICHANGED:
+
+            UpdateLayoutForDpi(SelectPidWindow, CW_USEDEFAULT, CW_USEDEFAULT, 295, 400);
+            UpdateLayoutForDpi(ProcessSelection, 10, 10, 270, 300);
+            UpdateLayoutForDpi(ChooseProcess, 10, 310, 270, 50);
+    
+            ShowWindow(MemoryScannerWindow, SW_HIDE);
+            CenterWindow(SelectPidWindow);
 
         break;
 

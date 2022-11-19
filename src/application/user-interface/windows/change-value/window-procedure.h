@@ -12,10 +12,6 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND window, UINT message, WPARAM wparam,
     switch(message)
     {
         case WM_CREATE:
-
-            ShowWindow(MemoryScannerWindow, SW_HIDE);
-            CenterWindow(window);
-
         break;
 
         case WM_CLOSE:
@@ -39,6 +35,17 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND window, UINT message, WPARAM wparam,
             {
                 UpdateValue();
             }
+
+        break;
+
+        case WM_DPICHANGED:
+
+            UpdateLayoutForDpi(ChangeValueWindow, CW_USEDEFAULT, CW_USEDEFAULT, 300, 75);
+            UpdateLayoutForDpi(ChangeValueWindowNewValue, 10, 10, 180, 25);
+            UpdateLayoutForDpi(ChangeValueWindowButton, 200, 10, 85, 25);
+
+            ShowWindow(MemoryScannerWindow, SW_HIDE);
+            CenterWindow(ChangeValueWindow);
 
         break;
 

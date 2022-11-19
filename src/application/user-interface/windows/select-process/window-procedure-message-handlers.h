@@ -106,7 +106,6 @@ VOID ProcessSelectProcessButtonEvent(VOID)
 
         DestroyWindow(SelectPidWindow);
         EnableWindow(MemoryScannerWindow, true);
-        SetForegroundWindow(MemoryScannerWindow);
     }
 }
 

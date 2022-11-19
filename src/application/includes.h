@@ -25,6 +25,10 @@
     #define PROCESS_LIMIT 128
     #define FREEZE_LIMIT 5
 
+    #ifndef WM_DPICHANGED
+        #define WM_DPICHANGED 0x02E0
+    #endif
+
     #ifndef LVS_EX_DOUBLEBUFFER
         #define LVS_EX_DOUBLEBUFFER 0x00010000
     #endif
@@ -43,9 +47,9 @@
     static string SearchConditions[] = { (string)"Equals", (string)"Increased", (string)"Decreased" };
 
     static HWND ListView, Scan, Value, ChangeValue, Pid, ChoosePid, DataSize, DataSizeLabel,
-                PidLabel, ValueLabel, SearchConditionLabel, SearchCondition, NewScan, SelectPidWindow,
-                ProcessSelection, ChooseProcess, MemoryScannerWindow, ChangeValueWindow, ChangeValueWindowNewValue,
-                ChangeValueWindowButton;
+                ValueLabel, SearchConditionLabel, SearchCondition, NewScan, SelectPidWindow,
+                ProcessSelection, ChooseProcess, MemoryScannerWindow, ChangeValueWindow, 
+                ChangeValueWindowNewValue, ChangeValueWindowButton;
 
     static INITCOMMONCONTROLSEX CommonControls;
     static HINSTANCE Instance;
@@ -77,6 +81,7 @@
     static uint32 NumberOfProcesses;
     static uint32 ProcessCounter;
     static uint32 NumberOfAddressesFrozen;
+    static uint32 ScreenDPI;
 
     static int32 IndexOfSelectedProcess;
     static LRESULT SelectedItem;

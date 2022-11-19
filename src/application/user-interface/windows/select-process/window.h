@@ -23,8 +23,8 @@ HWND CreateSelectProcessWindow(void)
     if(RegisterClassExA(&wc))
     {
         SelectPidWindow = CreateWindowExA(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, 
-                                          Title, WS_SYSMENU | WS_OVERLAPPED | WS_VISIBLE, 100, 
-                                          100, 295, 400, null, null, Instance, null);
+                                          Title, WS_SYSMENU | WS_OVERLAPPED | WS_VISIBLE, CW_USEDEFAULT, 
+                                          CW_USEDEFAULT, 295, 400, null, null, Instance, null);
 
         if(SelectPidWindow)
         {
@@ -49,6 +49,13 @@ HWND CreateSelectProcessWindow(void)
 
             EnableWindow(ChooseProcess, false);
             EnableWindow(MemoryScannerWindow, false);
+
+            UpdateLayoutForDpi(SelectPidWindow, CW_USEDEFAULT, CW_USEDEFAULT, 295, 400);
+            UpdateLayoutForDpi(ProcessSelection, 10, 10, 270, 300);
+            UpdateLayoutForDpi(ChooseProcess, 10, 310, 270, 50);
+    
+            ShowWindow(MemoryScannerWindow, SW_HIDE);
+            CenterWindow(SelectPidWindow);
 
             return SelectPidWindow;
         }

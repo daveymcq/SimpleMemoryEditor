@@ -25,8 +25,9 @@ HWND CreateChangeValueWindow(VOID)
         if(RegisterClassExA(&wc))
         {
             ChangeValueWindow = CreateWindowExA(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, 
-                                                Title, WS_SYSMENU | WS_OVERLAPPED | WS_VISIBLE, 100, 
-                                                100, 300, 75, null, null, Instance, null);
+                                                Title, WS_SYSMENU | WS_OVERLAPPED | WS_VISIBLE, 
+                                                CW_USEDEFAULT, CW_USEDEFAULT, 300, 75, 
+                                                null, null, Instance, null);
 
             if(ChangeValueWindow)
             {
@@ -50,6 +51,13 @@ HWND CreateChangeValueWindow(VOID)
                 SendMessageA(ChangeValueWindowButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
                 
                 EnableWindow(MemoryScannerWindow, false);
+
+                UpdateLayoutForDpi(ChangeValueWindow, CW_USEDEFAULT, CW_USEDEFAULT, 300, 75);
+                UpdateLayoutForDpi(ChangeValueWindowNewValue, 10, 10, 180, 25);
+                UpdateLayoutForDpi(ChangeValueWindowButton, 200, 10, 85, 25);
+
+                ShowWindow(MemoryScannerWindow, SW_HIDE);
+                CenterWindow(ChangeValueWindow);
 
                 return ChangeValueWindow;
             }

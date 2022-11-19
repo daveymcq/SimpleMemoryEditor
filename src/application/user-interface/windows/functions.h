@@ -3,7 +3,7 @@
 
 /* Center a window using the default display. */
 
-void CenterWindow(HWND window)
+VOID CenterWindow(HWND window)
 {
     RECT window_rect;
     DWORD x, y, width, height;
@@ -18,5 +18,28 @@ void CenterWindow(HWND window)
 
     MoveWindow(window, x, y, width, height, true);
 }
+ 
+/* DPI scale the position and size of the controls */
+
+VOID UpdateLayoutForDpi(HWND window, DWORD x, DWORD y, DWORD width, DWORD height) 
+{ 
+    typedef UINT (WINAPI *FP_GETDPIFORWINDOW) (HWND);
+    FP_GETDPIFORWINDOW GetDpiForWindow = (FP_GETDPIFORWINDOW)GetProcAddress(GetModuleHandleA("user32"), "GetDpiForWindow");
+
+    if(GetDpiForWindow)
+    {
+        RECT window_rect;
+        GetWindowRect(window, &window_rect);
+
+        ScreenDPI = GetDpiForWindow(window); 
+
+        x = MulDiv(x, ScreenDPI, 96); 
+        y = MulDiv(y, ScreenDPI, 96); 
+        width = MulDiv(width, ScreenDPI, 96); 
+        height = MulDiv(height, ScreenDPI, 96); 
+
+        SetWindowPos(window, window, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE); 
+    }
+} 
 
 #endif
