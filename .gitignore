@@ -6,4 +6,4 @@ resources/*.res
 *.inf
 .DS_Store
 **/.DS_Store
-**/__pycache__
+build/__pycache__
