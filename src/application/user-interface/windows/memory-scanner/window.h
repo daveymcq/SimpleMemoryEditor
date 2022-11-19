@@ -1,7 +1,7 @@
 #ifndef _MEMORY_SCANNER_WINDOW_H
 #define _MEMORY_SCANNER_WINDOW_H
 
-HWND CreateMemoryScannerWindow(void )
+HWND CreateMemoryScannerWindow(VOID)
 {
     WNDCLASSEXA wc;
 
@@ -23,9 +23,8 @@ HWND CreateMemoryScannerWindow(void )
     if(RegisterClassExA(&wc))
     {
         MemoryScannerWindow = CreateWindowExA(WS_EX_STATICEDGE, wc.lpszClassName, Title,
-                                     WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE, 
-                                     100, 100, Width, Height, null,
-                                     null, Instance, null);
+                                              WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE, 
+                                              100, 100, 625, 405, null, null, Instance, null);
 
         if(MemoryScannerWindow)
         {

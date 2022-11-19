@@ -3,7 +3,7 @@
 
 /* Runs when a selection is made or changed in listbox containing process names on process selection dialog. */
 
-VOID ProcessListboxChangeEvent(void )
+VOID ProcessListboxChangeEvent(VOID)
 {
     IndexOfSelectedProcess = (int32)SendMessageA(ProcessSelection, LB_GETCURSEL, 0, 0);
 
@@ -27,7 +27,7 @@ VOID ProcessListboxChangeEvent(void )
 
 /* Runs when "Select Process" button is clicked. */
 
-VOID ProcessSelectProcessButtonEvent(void )
+VOID ProcessSelectProcessButtonEvent(VOID)
 {
     if(IndexOfSelectedProcess > -1)
     {

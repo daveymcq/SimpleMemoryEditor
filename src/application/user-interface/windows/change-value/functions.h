@@ -3,7 +3,7 @@
 
 /* Once an address is found, this function updates the value at that address. */
 
-boolean UpdateValue(void )
+boolean UpdateValue(VOID)
 {
     int8 address[256];
     int8 value[256];

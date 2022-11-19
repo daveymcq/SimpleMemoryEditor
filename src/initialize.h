@@ -46,8 +46,6 @@
 
 boolean Initialize(HINSTANCE application_instance)
 {
-    Width = 635;
-    Height = 415;
     FirstScanNotRun = true;
     SelectedItem = -1;
     Instance = (application_instance) ? application_instance : GetModuleHandleA(null);

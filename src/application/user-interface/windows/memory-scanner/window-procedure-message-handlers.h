@@ -151,19 +151,16 @@ VOID HandleMainWindowCloseEvent(HWND window)
 
     if(FreezeThread && TerminateThread(FreezeThread, 0))
     {
-        WaitForSingleObject(FreezeThread, INFINITE);
         CloseHandle(FreezeThread);
     }
 
     if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
     {
-        WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
         CloseHandle(MonitorSelectedProcessThread);
     }
 
     if(ScanThread && TerminateThread(ScanThread, 0))
     {
-        WaitForSingleObject(ScanThread, INFINITE);
         CloseHandle(ScanThread);
     }
 

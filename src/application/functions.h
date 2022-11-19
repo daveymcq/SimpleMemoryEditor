@@ -248,7 +248,7 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
 
 /* A thread to monitor addresses for change. */
 
-DWORD WINAPI FreezeAddresses(void )
+DWORD WINAPI FreezeAddresses(VOID)
 {
     while(Scanner)
     {

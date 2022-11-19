@@ -103,7 +103,7 @@ VOID ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
 
 /* Calls ResetScan() if the selected thread terminates. */
 
-DWORD WINAPI MonitorSelectedProcess(void )
+DWORD WINAPI MonitorSelectedProcess(VOID)
 {
     for(;;)
     {
@@ -192,7 +192,7 @@ VOID DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 disp
 
 /* The function function responsible for performing the scan. */
 
-DWORD WINAPI ProcessScan(void )
+DWORD WINAPI ProcessScan(VOID)
 {
     static int8 pid[256];
     static int8 data_size[256];

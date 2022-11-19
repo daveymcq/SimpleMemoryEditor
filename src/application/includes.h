@@ -42,9 +42,6 @@
 
     static string SearchConditions[] = { (string)"Equals", (string)"Increased", (string)"Decreased" };
 
-    static uint32 Width;
-    static uint32 Height;
-
     static HWND ListView, Scan, Value, ChangeValue, Pid, ChoosePid, DataSize, DataSizeLabel,
                 PidLabel, ValueLabel, SearchConditionLabel, SearchCondition, NewScan, SelectPidWindow,
                 ProcessSelection, ChooseProcess, MemoryScannerWindow, ChangeValueWindow, ChangeValueWindowNewValue,

@@ -1,7 +1,7 @@
 #ifndef _CHANGE_VALUE_WINDOW_H
 #define _CHANGE_VALUE_WINDOW_H
 
-HWND CreateChangeValueWindow(void )
+HWND CreateChangeValueWindow(VOID)
 {
     if(SelectedItem > -1)
     {
@@ -26,7 +26,7 @@ HWND CreateChangeValueWindow(void )
         {
             ChangeValueWindow = CreateWindowExA(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, 
                                                 Title, WS_SYSMENU | WS_OVERLAPPED | WS_VISIBLE, 100, 
-                                                100, 310, 85, null, null, Instance, null);
+                                                100, 300, 75, null, null, Instance, null);
 
             if(ChangeValueWindow)
             {

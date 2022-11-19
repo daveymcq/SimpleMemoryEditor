@@ -1,7 +1,7 @@
 #ifndef _SELECT_PROCESS_WINDOW_H
 #define _SELECT_PROCESS_WINDOW_H
 
-HWND CreateSelectProcessWindow(void )
+HWND CreateSelectProcessWindow(void)
 {
     WNDCLASSEXA wc;
 
@@ -24,7 +24,7 @@ HWND CreateSelectProcessWindow(void )
     {
         SelectPidWindow = CreateWindowExA(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, 
                                           Title, WS_SYSMENU | WS_OVERLAPPED | WS_VISIBLE, 100, 
-                                          100, 305, 410, null, null, Instance, null);
+                                          100, 295, 400, null, null, Instance, null);
 
         if(SelectPidWindow)
         {

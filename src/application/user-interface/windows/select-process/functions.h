@@ -3,7 +3,7 @@
 
 /* Finds all running processes on machine and finds their process id. */
 
-boolean GetProcessNameAndID(void )
+boolean GetProcessNameAndID(VOID)
 {
     HANDLE snapshot, process;
     PROCESSENTRY32 pe;
