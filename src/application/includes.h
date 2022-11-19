@@ -23,7 +23,7 @@
     #define ID_THAW_VALUE (WM_USER + 1017)
 
     #define PROCESS_LIMIT 128
-    #define FREEZE_LIMIT 5
+    #define FREEZE_LIMIT 20
 
     #ifndef WM_DPICHANGED
         #define WM_DPICHANGED 0x02E0

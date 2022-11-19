@@ -13,13 +13,12 @@
 /* End application logic import */
 
 /****************************************************************************************************************** 
-  *****************************************************************************************************************/
+ ******************************************************************************************************************/
 
 /* GUI code import */
 
-    #include "application/user-interface/windows/memory-scanner/window-messages.h"
-    
     #include "application/user-interface/windows/functions.h"
+    #include "application/user-interface/windows/memory-scanner/window-messages.h"
 
     #include "application/user-interface/windows/memory-scanner/functions.h"
     #include "application/user-interface/windows/select-process/functions.h"
@@ -40,7 +39,7 @@
 /* End GUI code import */
 
 /****************************************************************************************************************** 
-  *****************************************************************************************************************/
+ ******************************************************************************************************************/
 
 /* Initialize global variables. */
 
