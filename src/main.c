@@ -1,6 +1,6 @@
 /* Memory Editing Application
  Author: David McHugh Jr.
- Last Modified: 05/22/2022 */
+ Last Modified: 11/19/2022 */
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
