@@ -53,11 +53,11 @@ HWND CreateMemoryScannerWindow(VOID)
                                             (HMENU)ID_SEARCH_CONDITION, 
                                             Instance, null);
 
-            ValueLabel = CreateWindowA("static", "Value: ", WS_VISIBLE | WS_CHILD, 
+            ValueLabel = CreateWindowA("static", "Search Value: ", WS_VISIBLE | WS_CHILD, 
                                        310, 250, 100, 25, MemoryScannerWindow, 
                                        null, Instance, null);
 
-            Value = CreateWindowExA(WS_EX_CLIENTEDGE, "edit", null, WS_VISIBLE | WS_CHILD, 
+            Value = CreateWindowExA(WS_EX_STATICEDGE, "edit", null, WS_VISIBLE | WS_CHILD, 
                                     400, 247, 100, 20, MemoryScannerWindow, (HMENU)ID_VALUE, 
                                     Instance, null);
 
