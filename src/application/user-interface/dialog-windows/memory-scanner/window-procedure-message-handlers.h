@@ -3,7 +3,7 @@
 
 /* Runs when left mouse button is clicked inside ListView on MemoryScannerWindow if ScanRunning == false. */
 
-void HandleListViewLeftClickEvent(void)
+VOID HandleListViewLeftClickEvent(VOID)
 {
     SelectedItem = (int32)SendMessageA(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
     ListView_GetItemText(ListView, SelectedItem, 0, SelectedItemAddress, sizeof(SelectedItemAddress));
@@ -29,7 +29,7 @@ void HandleListViewLeftClickEvent(void)
 
 /* Runs when right mouse button is clicked inside ListView on MemoryScannerWindow. */
 
-void HandleListViewRightClickEvent(HWND window)
+VOID HandleListViewRightClickEvent(HWND window)
 {
     SelectedItem = (int32)SendMessageA(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
 
@@ -72,7 +72,7 @@ void HandleListViewRightClickEvent(HWND window)
 
 /* Runs when freeze/thaw option is toggled from ListView popup menu on MemoryScannerWindow. */
 
-void HandleFreezeValueButtonEvent(void)
+VOID HandleFreezeValueButtonEvent(VOID)
 {
     SelectedItem = (int32)SendMessageA(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
 
@@ -80,7 +80,7 @@ void HandleFreezeValueButtonEvent(void)
     {
         if(!IsAddressFrozen(SelectedItemAddress))
         {
-            if(SuspendThread(FreezeThread) != -1)
+            if(SuspendThread(FreezeThread) != (DWORD)-1)
             {
                 if(NumberOfAddressesFrozen < FREEZE_LIMIT)
                 {
@@ -102,7 +102,7 @@ void HandleFreezeValueButtonEvent(void)
     }
 }
 
-void HandleThawValueButtonEvent(void)
+VOID HandleThawValueButtonEvent(VOID)
 {
     SelectedItem = (int32)SendMessageA(ListView, LVM_GETNEXTITEM, -1, LVNI_SELECTED);
 
@@ -110,10 +110,10 @@ void HandleThawValueButtonEvent(void)
     {
         if(IsAddressFrozen(SelectedItemAddress))
         {
-            if(SuspendThread(FreezeThread) != -1)
+            if(SuspendThread(FreezeThread) != (DWORD)-1)
             {
                 uint16 frozen_index;
-                bool address_frozen = false;
+                boolean address_frozen = false;
 
                 for(frozen_index = 0; frozen_index < FREEZE_LIMIT; frozen_index++)
                 {
@@ -142,7 +142,7 @@ void HandleThawValueButtonEvent(void)
     }
 }
 
-void HandleMainWindowCloseEvent(HWND window)
+VOID HandleMainWindowCloseEvent(HWND window)
 {
     if(Scanner)
     {

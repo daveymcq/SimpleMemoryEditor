@@ -1,7 +1,7 @@
 #ifndef _MEMORY_SCANNER_WINDOW_H
 #define _MEMORY_SCANNER_WINDOW_H
 
-HWND CreateMemoryScannerWindow(void)
+HWND CreateMemoryScannerWindow(void )
 {
     WNDCLASSEXA wc;
 

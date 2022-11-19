@@ -3,7 +3,7 @@
 
 /* Check if the selected address is frozen by comparing it against FrozenAddress */
 
-bool IsAddressFrozen(string address)
+boolean IsAddressFrozen(string address)
 {
     uint16 i;
 
@@ -17,7 +17,7 @@ bool IsAddressFrozen(string address)
 
 /* Add scan results to ListView control. */
 
-void AddItemToListView(string address, string value)
+VOID AddItemToListView(string address, string value)
 {
     static LVITEMA item;
 
@@ -35,7 +35,7 @@ void AddItemToListView(string address, string value)
 
 /* Resets all previosly filtered addresses. */
 
-void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monitor)
+VOID ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_monitor)
 {
     uint16 index;
     MEMORY_BLOCK *mb;
@@ -103,7 +103,7 @@ void ResetScan(MEMORY_BLOCK *mblock, bool reset_pid, bool disable_process_monito
 
 /* Calls ResetScan() if the selected thread terminates. */
 
-DWORD WINAPI MonitorSelectedProcess(void)
+DWORD WINAPI MonitorSelectedProcess(void )
 {
     for(;;)
     {
@@ -123,7 +123,7 @@ DWORD WINAPI MonitorSelectedProcess(void)
 
 /* Add scan results to memory scanner window. */
 
-void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 display_limit)
+VOID DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 display_limit)
 {
     MEMORY_BLOCK *mb = mblock;
     uint32 limit = (GetMatchCount(mb) > display_limit) ? display_limit : (uint32)GetMatchCount(mb);
@@ -161,13 +161,13 @@ void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 disp
 
                 else if(Type == TYPE_FLOAT)
                 {
-                    float value = PeekFloat(mb->process, mb->address + offset, mb->data_size);
-                    DoubleToString((double)value, val, sizeof(val) - 1);
+                    real4 value = PeekFloat(mb->process, mb->address + offset, mb->data_size);
+                    DoubleToString((real8)value, val, sizeof(val) - 1);
                 }
 
                 else if(Type == TYPE_DOUBLE)
                 {
-                    double value = PeekDouble(mb->process, mb->address + offset, mb->data_size);
+                    real8 value = PeekDouble(mb->process, mb->address + offset, mb->data_size);
                     DoubleToString(value, val, sizeof(val) - 1);
                 }
 
@@ -192,7 +192,7 @@ void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 disp
 
 /* The function function responsible for performing the scan. */
 
-DWORD WINAPI ProcessScan(void)
+DWORD WINAPI ProcessScan(void )
 {
     static int8 pid[256];
     static int8 data_size[256];
@@ -282,7 +282,7 @@ DWORD WINAPI ProcessScan(void)
                         {
                             case SEARCH_EQUALS:
 
-                                UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_FLOAT, (float)StringToDouble(val));
+                                UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_FLOAT, (real4)StringToDouble(val));
                                 DisplayScanResults(Scanner, search_number_format, 100);
 
                             break;

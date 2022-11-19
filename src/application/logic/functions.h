@@ -4,13 +4,13 @@
 /* Checks if the bit in MEMORY_BLOCK.match_flag corresponding to an offset in 
    MEMORY_BLOCK.address was cleared in the previous scan. */
 
-bool AddressNotDiscarded(MEMORY_BLOCK *mblock, uint64 offset)
+boolean AddressNotDiscarded(MEMORY_BLOCK *mblock, uint64 offset)
 {
     MEMORY_BLOCK *mb = mblock;
 
     if(mb)
     {
-        bool not_discarded = (mb->match_flag[(offset) / 8] & (1 << ((offset) % 8))); 
+        boolean not_discarded = (mb->match_flag[(offset) / 8] & (1 << ((offset) % 8))); 
         return not_discarded;
     }
 
@@ -19,7 +19,7 @@ bool AddressNotDiscarded(MEMORY_BLOCK *mblock, uint64 offset)
 
 /* Clears the bit in MEMORY_BLOCK.match_flag corresponding to an offset in MEMORY_BLOCK.address. */
 
-bool DiscardAddress(MEMORY_BLOCK *mblock, uint64 offset)
+boolean DiscardAddress(MEMORY_BLOCK *mblock, uint64 offset)
 {
     MEMORY_BLOCK *mb = mblock;
 
@@ -50,11 +50,11 @@ uint64 GetMatchCount(MEMORY_BLOCK *mblock)
 
 /* A set of helper functions that reads/writes the memory at the address specified. */
 
-float PeekFloat(HANDLE process, void *address, uint16 data_size)
+real4 PeekFloat(HANDLE process, PVOID address, uint16 data_size)
 {
-    float value;
+    real4 value;
 
-    if(ReadProcessMemory(process, address, (float *)&value, data_size, 0))
+    if(ReadProcessMemory(process, address, (real4 *)&value, data_size, 0))
     {
         return value;
     }
@@ -62,11 +62,11 @@ float PeekFloat(HANDLE process, void *address, uint16 data_size)
     return 0.0f;
 }
 
-double PeekDouble(HANDLE process, void *address, uint16 data_size)
+real8 PeekDouble(HANDLE process, PVOID address, uint16 data_size)
 {
-    double value;
+    real8 value;
 
-    if(ReadProcessMemory(process, address, (double *)&value, data_size, 0))
+    if(ReadProcessMemory(process, address, (real8 *)&value, data_size, 0))
     {
         return value;
     }
@@ -74,7 +74,7 @@ double PeekDouble(HANDLE process, void *address, uint16 data_size)
     return 0.0;
 }
 
-int64 PeekInteger(HANDLE process, void *address, uint16 data_size)
+int64 PeekInteger(HANDLE process, PVOID address, uint16 data_size)
 {
     int64 value = 0;
 
@@ -115,7 +115,7 @@ int64 PeekInteger(HANDLE process, void *address, uint16 data_size)
     return value;
 }
 
-bool PokeFloat(HANDLE process, void *address, float value, uint16 data_size)
+boolean PokeFloat(HANDLE process, PVOID address, real4 value, uint16 data_size)
 {
     SIZE_T bytes_written;
 
@@ -127,7 +127,7 @@ bool PokeFloat(HANDLE process, void *address, float value, uint16 data_size)
     return false;
 }
 
-bool PokeDouble(HANDLE process, void *address, double value, uint16 data_size)
+boolean PokeDouble(HANDLE process, PVOID address, real8 value, uint16 data_size)
 {
     SIZE_T bytes_written;
 
@@ -139,7 +139,7 @@ bool PokeDouble(HANDLE process, void *address, double value, uint16 data_size)
     return false;
 }
 
-bool PokeInteger(HANDLE process, void *address, int64 value, uint16 data_size)
+boolean PokeInteger(HANDLE process, PVOID address, int64 value, uint16 data_size)
 {
     SIZE_T bytes_written;
 
@@ -179,7 +179,7 @@ MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, u
 
 /* Cleans up the memory allocated by CreateMemoryScanner(). */
 
-void FreeMemoryScanner(MEMORY_BLOCK *mblock)
+VOID FreeMemoryScanner(MEMORY_BLOCK *mblock)
 {
     MEMORY_BLOCK *mb = mblock;
 
@@ -248,7 +248,7 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
 
 /* A thread to monitor addresses for change. */
 
-DWORD WINAPI FreezeAddresses(void)
+DWORD WINAPI FreezeAddresses(void )
 {
     while(Scanner)
     {
@@ -257,11 +257,10 @@ DWORD WINAPI FreezeAddresses(void)
         for(i = 0; i < NumberOfAddressesFrozen; i++)
         {
             INTFMT search_number_format;
-            uint32 offset;
-            double value;
-            void *address;
+            real8 value;
+            PVOID address;
 
-            address = (void *)(uintptr_t)StringToInteger(FrozenAddresses[i], FMT_INT_HEXADECIMAL);
+            address = (PVOID) (uintptr_t)StringToInteger(FrozenAddresses[i], FMT_INT_HEXADECIMAL);
             value = StringToDouble(FrozenValues[i]);
 
             if((IsNumeric(FrozenValues[i])) && ((FrozenValues[i][0] == '0') && (FrozenValues[i][1] == 'x')))
@@ -327,7 +326,7 @@ DWORD WINAPI FreezeAddresses(void)
 
 /* Filters memory information aquired by CreateMemoryScanner() and subsequent calls to this function. */
 
-void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Type, double value)
+VOID UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Type, real8 value)
 {
     MEMORY_BLOCK *mb = mblock;
 
@@ -343,7 +342,6 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Ty
             static uint64 bytes_read;
 
             int32 selection_id;
-            uint64 bytes_copied;
 
             total_read = 0;
             mb->matches = 0;
@@ -355,8 +353,8 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Ty
             while(bytes_left)
             {
                 uint64 offset;
-                double tmpval, prevval;
-                bool match;
+                real8 tmpval, prevval;
+                boolean match;
 
                 bytes_to_read = (bytes_left > sizeof(buffer)) ? sizeof(buffer) : bytes_left;
 
@@ -404,19 +402,19 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Ty
 
                         else if(Type == TYPE_FLOAT)
                         {
-                            if(mb->data_size == sizeof(float))
+                            if(mb->data_size == sizeof(real4))
                             {
-                                tmpval = *((float *)&buffer[offset]);
-                                prevval = *((float *)&mb->buffer[total_read + offset]);
+                                tmpval = *((real4 *)&buffer[offset]);
+                                prevval = *((real4 *)&mb->buffer[total_read + offset]);
                             }
                         }
 
                         else if(Type == TYPE_DOUBLE)
                         {
-                            if(mb->data_size == sizeof(double))
+                            if(mb->data_size == sizeof(real8))
                             {
-                                tmpval = *((double *)&buffer[offset]);
-                                prevval = *((double *)&mb->buffer[total_read + offset]);
+                                tmpval = *((real8 *)&buffer[offset]);
+                                prevval = *((real8 *)&mb->buffer[total_read + offset]);
                             }
                         }
 

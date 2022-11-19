@@ -44,7 +44,7 @@
 
 /* Initialize global variables. */
 
-BOOL Initialize(HINSTANCE application_instance)
+boolean Initialize(HINSTANCE application_instance)
 {
     Width = 635;
     Height = 415;

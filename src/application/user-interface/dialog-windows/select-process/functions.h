@@ -3,7 +3,7 @@
 
 /* Finds all running processes on machine and finds their process id. */
 
-bool GetProcessNameAndID(void)
+boolean GetProcessNameAndID(void )
 {
     HANDLE snapshot, process;
     PROCESSENTRY32 pe;
@@ -31,16 +31,16 @@ bool GetProcessNameAndID(void)
 
             if(process)
             {
-                BOOL IsApplication64Bit;
+                boolean IsApplication64Bit;
 
-                typedef BOOL (WINAPI *FP_ISWOW64PROCESS) (HANDLE, PBOOL);
+                typedef boolean (WINAPI *FP_ISWOW64PROCESS) (HANDLE, PBOOL);
                 FP_ISWOW64PROCESS pIsWow64Process = (FP_ISWOW64PROCESS)GetProcAddress(GetModuleHandleA("kernel32"), "IsWow64Process");
 
                 CopyString(Processes[NumberOfProcesses], pe.szExeFile, sizeof(Processes[NumberOfProcesses]));
 
                 if(pIsWow64Process && pIsWow64Process(GetCurrentProcess(), &IsApplication64Bit))
                 {
-                    BOOL IsProcess64Bit;
+                    boolean IsProcess64Bit;
 
                     if(pIsWow64Process && pIsWow64Process(process, &IsProcess64Bit))
                     {

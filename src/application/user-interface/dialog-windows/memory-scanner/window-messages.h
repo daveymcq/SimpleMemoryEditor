@@ -1,9 +1,9 @@
 #ifndef _MEMORY_SCANNER_WINDOW_MESSAGES_H
 #define _MEMORY_SCANNER_WINDOW_MESSAGES_H
 
-BOOL GetMemoryScannerWindowMessages(void)
+boolean GetMemoryScannerWindowMessages(void )
 {
-    BOOL result;
+    boolean result;
     MSG message;
 
     if((result = GetMessage(&message, null, 0, 0)) > 0)

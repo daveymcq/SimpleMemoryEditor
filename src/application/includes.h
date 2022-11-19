@@ -66,29 +66,28 @@
     static int8 Pids[PROCESS_LIMIT][256];
     static int8 FrozenAddresses[FREEZE_LIMIT][256];
     static int8 FrozenValues[FREEZE_LIMIT][256];
-
     static int8 SelectedItemAddress[256];
     static int8 SelectedItemValue[256]; 
     static int8 SelectedPid[256];
-
-    static LRESULT SelectedItem;
 
     static HANDLE ScanThread;
     static HANDLE FreezeThread;
     static HANDLE MonitorSelectedProcessThread;
 
-    static double CurrentValue;
+    static real8 CurrentValue;
 
     static uint32 CurrentProcess;
     static uint32 NumberOfProcesses;
     static uint32 ProcessCounter;
     static uint32 NumberOfAddressesFrozen;
-    static int32 IndexOfSelectedProcess;
 
-    static bool SelectedProcessOpen;
-    static bool ScanRunning;
-    static bool FirstScanNotRun;
-    static bool AddressFrozen;
+    static int32 IndexOfSelectedProcess;
+    static LRESULT SelectedItem;
+
+    static boolean SelectedProcessOpen;
+    static boolean ScanRunning;
+    static boolean FirstScanNotRun;
+    static boolean AddressFrozen;
 
     /* A linked list of memory region information obtained by VirtualQueryEx(). */
 

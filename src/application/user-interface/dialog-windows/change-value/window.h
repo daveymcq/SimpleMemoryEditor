@@ -1,7 +1,7 @@
 #ifndef _CHANGE_VALUE_WINDOW_H
 #define _CHANGE_VALUE_WINDOW_H
 
-HWND CreateChangeValueWindow(void)
+HWND CreateChangeValueWindow(void )
 {
     if(SelectedItem > -1)
     {

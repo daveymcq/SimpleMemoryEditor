@@ -3,7 +3,7 @@
 
 /* Once an address is found, this function updates the value at that address. */
 
-BOOL UpdateValue(void)
+boolean UpdateValue(void )
 {
     int8 address[256];
     int8 value[256];
@@ -12,8 +12,8 @@ BOOL UpdateValue(void)
     LVITEM item;
     INTFMT search_number_format;
 
-    void *addr;
-    double val;
+    PVOID addr;
+    real8 val;
 
     item.mask = LVIF_TEXT;
     item.iItem = SelectedItem;
@@ -38,12 +38,12 @@ BOOL UpdateValue(void)
 
     if(Type == TYPE_FLOAT)
     {
-        addr = (void *)(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
+        addr = (PVOID )(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
         val = StringToDouble(value);
 
-        if(PokeFloat(Scanner->process, addr, (float)val, Scanner->data_size))
+        if(PokeFloat(Scanner->process, addr, (real4)val, Scanner->data_size))
         {
-            float current_value;
+            real4 current_value;
 
             DestroyWindow(ChangeValueWindow);
             SetForegroundWindow(MemoryScannerWindow);
@@ -51,7 +51,7 @@ BOOL UpdateValue(void)
 
             current_value = PeekFloat(Scanner->process, addr, Scanner->data_size);
 
-            DoubleToString((double)current_value, value, sizeof(value) - 1);
+            DoubleToString((real8)current_value, value, sizeof(value) - 1);
             ListView_SetItemText(ListView, SelectedItem, 1, value);
 
             return MessageBeep(MB_OK);
@@ -60,12 +60,12 @@ BOOL UpdateValue(void)
 
     else if(Type == TYPE_DOUBLE)
     {
-        addr = (void *)(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
+        addr = (PVOID)(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
         val = StringToDouble(value);
 
         if(PokeDouble(Scanner->process, addr, val, Scanner->data_size))
         {
-            double current_value;
+            real8 current_value;
 
             DestroyWindow(ChangeValueWindow);
             SetForegroundWindow(MemoryScannerWindow);
@@ -82,7 +82,7 @@ BOOL UpdateValue(void)
 
     else if(Type == TYPE_INTEGER)
     {
-        addr = (void *)(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
+        addr = (PVOID)(uintptr_t)StringToInteger(address, FMT_INT_HEXADECIMAL);
         val = StringToInteger(value, search_number_format);
 
         if(PokeInteger(Scanner->process, addr, (int64)val, Scanner->data_size))

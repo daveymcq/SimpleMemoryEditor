@@ -1,7 +1,7 @@
 #ifndef _SELECT_PROCESS_WINDOW_H
 #define _SELECT_PROCESS_WINDOW_H
 
-HWND CreateSelectProcessWindow(void)
+HWND CreateSelectProcessWindow(void )
 {
     WNDCLASSEXA wc;
 

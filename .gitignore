@@ -5,3 +5,5 @@ resources/*.res
 *.log
 *.inf
 .DS_Store
+**/.DS_Store
+build/__pycache__
