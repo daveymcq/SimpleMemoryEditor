@@ -8,7 +8,7 @@
 
 /*  application logic code import */
 
-    #include "application/logic/functions.h"
+    #include "application/functions.h"
 
 /* End application logic import */
 
