@@ -191,6 +191,7 @@ VOID FreeMemoryScanner(MEMORY_BLOCK *mblock)
     while(mb)
     {
         MEMORY_BLOCK *pmb = mb;
+        mb = mb->next;
 
         if(pmb->buffer) 
         {
@@ -203,8 +204,6 @@ VOID FreeMemoryScanner(MEMORY_BLOCK *mblock)
         }
 
         HeapFree(GetProcessHeap(), 0, pmb);
-
-        mb = mb->next;
     }
 }
 
