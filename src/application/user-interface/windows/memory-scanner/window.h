@@ -149,8 +149,8 @@ HWND CreateMemoryScannerWindow(VOID)
             SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
             SendMessageA(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 
-		CenterWindow(MemoryScannerWindow);
-		ShowWindow(MemoryScannerWindow, SW_SHOW);
+	      CenterWindow(MemoryScannerWindow);
+            ShowWindow(MemoryScannerWindow, SW_SHOW);
             UpdateWindow(MemoryScannerWindow);
 
             return MemoryScannerWindow;
