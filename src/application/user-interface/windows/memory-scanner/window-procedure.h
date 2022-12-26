@@ -15,6 +15,7 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
     switch(message)
     {
         case WM_CREATE:
+
         break;
 
         case WM_CLOSE:

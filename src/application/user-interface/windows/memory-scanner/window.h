@@ -23,7 +23,7 @@ HWND CreateMemoryScannerWindow(VOID)
     if(RegisterClassExA(&wc))
     {
         MemoryScannerWindow = CreateWindowExA(WS_EX_STATICEDGE, wc.lpszClassName, Title,
-                                              WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE, 
+                                              WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX, 
                                               CW_USEDEFAULT, CW_USEDEFAULT, 625, 405, null, null, Instance, null);
 
         if(MemoryScannerWindow)
@@ -57,7 +57,7 @@ HWND CreateMemoryScannerWindow(VOID)
                                        310, 250, 100, 25, MemoryScannerWindow, 
                                        null, Instance, null);
 
-            Value = CreateWindowExA(WS_EX_STATICEDGE, "edit", null, WS_VISIBLE | WS_CHILD, 
+            Value = CreateWindowExA(WS_EX_CLIENTEDGE, "edit", null, WS_VISIBLE | WS_CHILD, 
                                     400, 247, 100, 20, MemoryScannerWindow, (HMENU)ID_VALUE, 
                                     Instance, null);
 
@@ -148,8 +148,10 @@ HWND CreateMemoryScannerWindow(VOID)
             SendMessageA(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&value_column);
             SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
             SendMessageA(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-            
-            CenterWindow(MemoryScannerWindow);
+
+		CenterWindow(MemoryScannerWindow);
+		ShowWindow(MemoryScannerWindow, SW_SHOW);
+            UpdateWindow(MemoryScannerWindow);
 
             return MemoryScannerWindow;
         }
