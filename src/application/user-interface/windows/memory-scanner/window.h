@@ -57,9 +57,9 @@ HWND CreateMemoryScannerWindow(VOID)
                                        310, 250, 100, 25, MemoryScannerWindow, 
                                        null, Instance, null);
 
-            Value = CreateWindowExA(WS_EX_CLIENTEDGE, "edit", null, WS_VISIBLE | WS_CHILD, 
-                                    400, 247, 100, 25, MemoryScannerWindow, (HMENU)ID_VALUE, 
-                                    Instance, null);
+            Value = CreateWindowA("edit", null, WS_VISIBLE | WS_CHILD, 
+                                  400, 247, 100, 25, MemoryScannerWindow, (HMENU)ID_VALUE, 
+                                  Instance, null);
 
             ChangeValue = CreateWindowA("button", "Change Value", WS_VISIBLE | WS_CHILD, 
                                         510, 245, 100, 25, MemoryScannerWindow,
