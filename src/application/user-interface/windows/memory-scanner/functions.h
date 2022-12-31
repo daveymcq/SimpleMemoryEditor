@@ -113,7 +113,7 @@ VOID ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
 
 DWORD WINAPI MonitorSelectedProcess(VOID)
 {
-    for(;;)
+    while(Scanner)
     {
         DWORD code;
         GetExitCodeProcess(Scanner->process, &code);

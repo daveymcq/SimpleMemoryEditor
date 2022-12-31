@@ -45,14 +45,16 @@ boolean UpdateValue(VOID)
         {
             real4 current_value;
 
-            DestroyWindow(ChangeValueWindow);
-            SetForegroundWindow(MemoryScannerWindow);
             SendMessageA(ChangeValueWindowNewValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
 
             current_value = PeekFloat(Scanner->process, addr, Scanner->data_size);
 
             DoubleToString((real8)current_value, value, sizeof(value) - 1);
+
             ListView_SetItemText(ListView, SelectedItem, 1, value);
+
+            DestroyWindow(ChangeValueWindow);
+            SetForegroundWindow(MemoryScannerWindow);
 
             return MessageBeep(MB_OK);
         }
@@ -67,14 +69,16 @@ boolean UpdateValue(VOID)
         {
             real8 current_value;
 
-            DestroyWindow(ChangeValueWindow);
-            SetForegroundWindow(MemoryScannerWindow);
             SendMessageA(ChangeValueWindowNewValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
 
             current_value = PeekDouble(Scanner->process, addr, Scanner->data_size);
 
             DoubleToString(current_value, value, sizeof(value) - 1);
+
             ListView_SetItemText(ListView, SelectedItem, 1, value);
+
+            DestroyWindow(ChangeValueWindow);
+            SetForegroundWindow(MemoryScannerWindow);
 
             return MessageBeep(MB_OK);
         }
@@ -89,8 +93,6 @@ boolean UpdateValue(VOID)
         {
             int64 current_value;
 
-            DestroyWindow(ChangeValueWindow);
-            SetForegroundWindow(MemoryScannerWindow);
             SendMessageA(ChangeValueWindowNewValue, WM_GETTEXT, sizeof(value) - 1, (LPARAM)value);
 
             current_value = PeekInteger(Scanner->process, addr, Scanner->data_size);
@@ -109,6 +111,9 @@ boolean UpdateValue(VOID)
             }
 
             ListView_SetItemText(ListView, SelectedItem, 1, value);
+
+            DestroyWindow(ChangeValueWindow);
+            SetForegroundWindow(MemoryScannerWindow);
 
             return MessageBeep(MB_OK);
         }

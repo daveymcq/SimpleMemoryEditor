@@ -117,7 +117,7 @@ int64 PeekInteger(HANDLE process, PVOID address, uint16 data_size)
 
 boolean PokeFloat(HANDLE process, PVOID address, real4 value, uint16 data_size)
 {
-    SIZE_T bytes_written;
+    SIZE_T bytes_written = 0;
 
     if(WriteProcessMemory(process, address, &value, data_size, &bytes_written))
     {
@@ -129,7 +129,7 @@ boolean PokeFloat(HANDLE process, PVOID address, real4 value, uint16 data_size)
 
 boolean PokeDouble(HANDLE process, PVOID address, real8 value, uint16 data_size)
 {
-    SIZE_T bytes_written;
+    SIZE_T bytes_written = 0;
 
     if(WriteProcessMemory(process, address, &value, data_size, &bytes_written))
     {
@@ -141,7 +141,7 @@ boolean PokeDouble(HANDLE process, PVOID address, real8 value, uint16 data_size)
 
 boolean PokeInteger(HANDLE process, PVOID address, int64 value, uint16 data_size)
 {
-    SIZE_T bytes_written;
+    SIZE_T bytes_written = 0;
 
     if(WriteProcessMemory(process, address, &value, data_size, &bytes_written))
     {
@@ -216,7 +216,7 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
     HANDLE process;
     uint8 *address;
 
-    process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, pid);
+    process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, false, pid);
 
     if(process)
     {

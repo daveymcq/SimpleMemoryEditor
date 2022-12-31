@@ -27,7 +27,7 @@ boolean GetProcessNameAndID(VOID)
                 continue;
             }
 
-            process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, pe.th32ProcessID); 
+            process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, false, pe.th32ProcessID); 
 
             if(process)
             {
