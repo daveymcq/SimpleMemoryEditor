@@ -35,7 +35,7 @@ HWND CreateChangeValueWindow(VOID)
 
                 ListView_GetItemText(ListView, SelectedItem, 1, value, sizeof(value) - 1);
 
-                ChangeValueWindowNewValue = CreateWindowExA(WS_EX_CLIENTEDGE, "edit", value, WS_VISIBLE | WS_CHILD, 
+                ChangeValueWindowNewValue = CreateWindowA("edit", value, WS_VISIBLE | WS_CHILD | WS_BORDER, 
                                                             10, 10, 180, 25, ChangeValueWindow, 
                                                             (HMENU)ID_CHANGE_VALUE_WINDOW, 
                                                             null, null);

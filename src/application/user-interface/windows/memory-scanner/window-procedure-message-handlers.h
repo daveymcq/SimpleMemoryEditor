@@ -166,6 +166,8 @@ VOID HandleMainWindowCloseEvent(HWND window)
             WaitForSingleObject(FreezeThread, INFINITE);
             CloseHandle(FreezeThread);
         }
+
+        DestroyWindow(window);
     }
 }
 

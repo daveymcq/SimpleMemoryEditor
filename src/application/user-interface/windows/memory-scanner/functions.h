@@ -26,11 +26,15 @@ VOID AddItemToListView(string address, string value)
     item.pszText     = (string)address;
 
     SendMessageA(ListView, LVM_INSERTITEM, 0, (LPARAM)&item);
+    ShowScrollBar(ListView, SB_HORZ, false);
+    ShowScrollBar(ListView, SB_VERT, true);
 
     item.iSubItem    = 1;
     item.pszText     = (string)value;
 
     SendMessageA(ListView, LVM_SETITEM, 0, (LPARAM)&item);
+    ShowScrollBar(ListView, SB_HORZ, false);
+    ShowScrollBar(ListView, SB_VERT, true);
 }
 
 /* Resets all previosly filtered addresses. */
@@ -99,6 +103,10 @@ VOID ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
         WaitForSingleObject(FreezeThread, INFINITE);
         CloseHandle(FreezeThread);
     }
+
+    ShowScrollBar(ListView, SB_HORZ, false);
+    ShowScrollBar(ListView, SB_VERT, true);
+    EnableWindow(ListView, false);
 }
 
 /* Calls ResetScan() if the selected thread terminates. */
@@ -187,6 +195,8 @@ VOID DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 disp
         mb = mb->next;
     }
 
+    ShowScrollBar(ListView, SB_HORZ, false);
+    ShowScrollBar(ListView, SB_VERT, true);
     EnableWindow(ListView, true); 
 }
 

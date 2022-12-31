@@ -23,7 +23,7 @@ VOID CenterWindow(HWND window)
 
 VOID UpdateLayoutForDpi(HWND window, DWORD x, DWORD y, DWORD width, DWORD height) 
 { 
-    typedef UINT (WINAPI *FP_GETDPIFORWINDOW) (HWND);
+    typedef UINT (WINAPI *FP_GETDPIFORWINDOW)(HWND);
     FP_GETDPIFORWINDOW GetDpiForWindow = (FP_GETDPIFORWINDOW)GetProcAddress(GetModuleHandleA("user32"), "GetDpiForWindow");
 
     if(GetDpiForWindow)

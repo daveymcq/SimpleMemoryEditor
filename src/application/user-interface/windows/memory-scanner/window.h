@@ -16,7 +16,7 @@ HWND CreateMemoryScannerWindow(VOID)
     wc.lpfnWndProc = (WNDPROC)MainWindowProc;
     wc.lpszClassName = (string)"MemoryScannerWindow";
     wc.lpszMenuName = null;
-    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
     UnregisterClassA(wc.lpszClassName, Instance);
 
@@ -57,7 +57,7 @@ HWND CreateMemoryScannerWindow(VOID)
                                        310, 250, 100, 25, MemoryScannerWindow, 
                                        null, Instance, null);
 
-            Value = CreateWindowExA(WS_EX_STATICEDGE, "edit", null, WS_VISIBLE | WS_CHILD, 
+            Value = CreateWindowA("edit", null, WS_VISIBLE | WS_CHILD | WS_BORDER, 
                                   400, 247, 100, 20, MemoryScannerWindow, (HMENU)ID_VALUE, 
                                   Instance, null);
 
@@ -85,7 +85,7 @@ HWND CreateMemoryScannerWindow(VOID)
                                           310, 280, 100, 25, MemoryScannerWindow, null, 
                                           Instance, null);
 
-            DataSize = CreateWindowA("combobox", null, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 
+            DataSize = CreateWindowA("combobox", null, WS_VISIBLE | WS_CHILD | WS_BORDER | CBS_DROPDOWNLIST, 
                                      400, 275, 100, 200, MemoryScannerWindow, (HMENU)ID_VALUE, 
                                      Instance, null);
 
@@ -104,6 +104,7 @@ HWND CreateMemoryScannerWindow(VOID)
             EnableWindow(ChangeValue, false);
             EnableWindow(DataSize, false);
             EnableWindow(SearchCondition, false);
+            EnableWindow(ListView, false);
             EnableWindow(Value, false);
 
             SendMessageA(ListView, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
@@ -133,8 +134,8 @@ HWND CreateMemoryScannerWindow(VOID)
             UpdateLayoutForDpi(DataSize, 400, 275, 100, 200);
             UpdateLayoutForDpi(Scan, 10, 315, 600, 50);
 
-            address_column.cx = MulDiv(298, ScreenDPI, 96); 
-            value_column.cx = MulDiv(298, ScreenDPI, 96);
+            address_column.cx = MulDiv(288, ScreenDPI, 96); 
+            value_column.cx = MulDiv(288, ScreenDPI, 96);
 
             address_column.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
             address_column.pszText = (string)"Address";
@@ -147,11 +148,14 @@ HWND CreateMemoryScannerWindow(VOID)
             SendMessageA(ListView, LVM_INSERTCOLUMN, 0, (LPARAM)&address_column);
             SendMessageA(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&value_column);
             SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
-            SendMessageA(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+            SendMessageA(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_GRIDLINES);
 
             CenterWindow(MemoryScannerWindow);
             ShowWindow(MemoryScannerWindow, SW_SHOW);
             UpdateWindow(MemoryScannerWindow);
+
+            ShowScrollBar(ListView, SB_HORZ, false);
+            ShowScrollBar(ListView, SB_VERT, true);
 
             return MemoryScannerWindow;
         }

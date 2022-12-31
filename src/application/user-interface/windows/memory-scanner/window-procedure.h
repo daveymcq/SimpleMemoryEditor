@@ -14,10 +14,6 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
     
     switch(message)
     {
-        case WM_CREATE:
-
-        break;
-
         case WM_CLOSE:
 
             HandleMainWindowCloseEvent(window);
@@ -115,8 +111,8 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
             UpdateLayoutForDpi(DataSize, 400, 275, 100, 200);
             UpdateLayoutForDpi(Scan, 10, 315, 600, 50);
 
-            address_column.cx = MulDiv(298, ScreenDPI, 96); 
-            value_column.cx = MulDiv(298, ScreenDPI, 96);
+            address_column.cx = MulDiv(288, ScreenDPI, 96); 
+            value_column.cx = MulDiv(28, ScreenDPI, 96);
 
             address_column.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
             address_column.pszText = (string)"Address";
