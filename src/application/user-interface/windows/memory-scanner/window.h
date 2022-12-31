@@ -148,7 +148,7 @@ HWND CreateMemoryScannerWindow(VOID)
             SendMessageA(ListView, LVM_INSERTCOLUMN, 0, (LPARAM)&address_column);
             SendMessageA(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&value_column);
             SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
-            SendMessageA(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_GRIDLINES);
+            SendMessageA(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 
             CenterWindow(MemoryScannerWindow);
             ShowWindow(MemoryScannerWindow, SW_SHOW);
