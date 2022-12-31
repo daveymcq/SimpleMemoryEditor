@@ -146,28 +146,27 @@ VOID HandleMainWindowCloseEvent(HWND window)
 {
     if(Scanner)
     {
-        FreeMemoryScanner(Scanner);
-    }
+        if(ScanThread && TerminateThread(ScanThread, 0))
+        {
+            WaitForSingleObject(ScanThread, INFINITE);
+            FreeMemoryScanner(Scanner);
+            CloseHandle(ScanThread);
+        }
 
-    if(FreezeThread && TerminateThread(FreezeThread, 0))
-    {
-        WaitForSingleObject(FreezeThread, INFINITE);
-        CloseHandle(FreezeThread);
-    }
+        if(MonitorSelectedProcessThread)
+        {
+            Scanner = null;
+            WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
+            CloseHandle(MonitorSelectedProcessThread);
+        }
 
-    if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
-    {
-        WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
-        CloseHandle(MonitorSelectedProcessThread);
+        if(FreezeThread)
+        {
+            Scanner = null;
+            WaitForSingleObject(FreezeThread, INFINITE);
+            CloseHandle(FreezeThread);
+        }
     }
-
-    if(ScanThread && TerminateThread(ScanThread, 0))
-    {
-        WaitForSingleObject(ScanThread, INFINITE);
-        CloseHandle(ScanThread);
-    }
-
-    DestroyWindow(window);
 }
 
 #endif

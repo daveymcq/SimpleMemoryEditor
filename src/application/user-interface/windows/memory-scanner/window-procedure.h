@@ -21,6 +21,7 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
         case WM_CLOSE:
 
             HandleMainWindowCloseEvent(window);
+            DestroyWindow(window);
 
         break;
 
