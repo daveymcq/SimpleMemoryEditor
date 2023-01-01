@@ -134,8 +134,8 @@ HWND CreateMemoryScannerWindow(VOID)
             UpdateLayoutForDpi(DataSize, 400, 275, 100, 200);
             UpdateLayoutForDpi(Scan, 10, 315, 600, 50);
 
-            address_column.cx = MulDiv(288, ScreenDPI, 96); 
-            value_column.cx = MulDiv(288, ScreenDPI, 96);
+            address_column.cx = MulDiv(298, ScreenDPI, 96); 
+            value_column.cx = MulDiv(298, ScreenDPI, 96);
 
             address_column.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
             address_column.pszText = (string)"Address";
@@ -150,12 +150,9 @@ HWND CreateMemoryScannerWindow(VOID)
             SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
             SendMessageA(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 
-            CenterWindow(MemoryScannerWindow);
             ShowWindow(MemoryScannerWindow, SW_SHOW);
             UpdateWindow(MemoryScannerWindow);
-
-            ShowScrollBar(ListView, SB_HORZ, false);
-            ShowScrollBar(ListView, SB_VERT, true);
+            CenterWindow(MemoryScannerWindow);
 
             return MemoryScannerWindow;
         }

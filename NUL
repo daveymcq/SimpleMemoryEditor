@@ -2,24 +2,3 @@ System error 85 has occurred.
 
 The local device name is already in use.
 
-The system cannot find the path specified.
-'MessageBoxA' is not recognized as an internal or external command,
-operable program or batch file.
-'VirtualProtectEx' is not recognized as an internal or external command,
-operable program or batch file.
-'oldProtect)' is not recognized as an internal or external command,
-operable program or batch file.
-'DestroyWindow' is not recognized as an internal or external command,
-operable program or batch file.
-'{' is not recognized as an internal or external command,
-operable program or batch file.
-'Scanner' is not recognized as an internal or external command,
-operable program or batch file.
-'WaitForSingleObject' is not recognized as an internal or external command,
-operable program or batch file.
-'CloseHandle' is not recognized as an internal or external command,
-operable program or batch file.
-'}build.py' is not recognized as an internal or external command,
-operable program or batch file.
-'Scanner' is not recognized as an internal or external command,
-operable program or batch file.
