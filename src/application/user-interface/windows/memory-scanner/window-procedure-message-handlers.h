@@ -148,6 +148,12 @@ VOID HandleMainWindowCloseEvent(HWND window)
     {
         FreeMemoryScanner(Scanner);
 
+        if(ArrayList)
+        {
+            FreeArrayList(ArrayList);
+            ArrayList = null;
+        }
+
         if(ScanThread && TerminateThread(ScanThread, 0))
         {
             WaitForSingleObject(ScanThread, INFINITE);
@@ -168,7 +174,6 @@ VOID HandleMainWindowCloseEvent(HWND window)
     }
 
     DestroyWindow(window);
-    ExitThread(0);
 }
 
 #endif

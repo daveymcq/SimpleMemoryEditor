@@ -1,6 +1,98 @@
 #ifndef _LOGIC_FUNCTIONS_H
 #define _LOGIC_FUNCTIONS_H
 
+/* /////////////////// ArrayList implementation ////////////////////// */
+
+/* Create an ArrayList */
+
+ARRAY_LIST *CreateArrayList(SIZE_T initial_capacity) 
+{
+    ARRAY_LIST *list = (ARRAY_LIST *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*list));
+
+    if(list)
+    {
+        list->size = 0;
+        list->capacity = initial_capacity;
+        list->array = (MEMORY_BLOCK *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, initial_capacity * sizeof(*list->array));
+
+        if(!list->array)
+        {
+            HeapFree(GetProcessHeap(), 0, list);
+            list = null;
+        }
+    }
+
+    return list;
+}
+
+/* Increase the capacity of an ArrayList */
+
+ARRAY_LIST *ArrayListIncreaseCapacity(ARRAY_LIST *list) 
+{
+    list->capacity *= 2;
+    list->array = (MEMORY_BLOCK *)HeapReAlloc(GetProcessHeap(), 
+                                              HEAP_ZERO_MEMORY, list->array, 
+                                              list->capacity * sizeof(*list->array));
+
+    if(!list->array)
+    {
+        HeapFree(GetProcessHeap(), 0, list->array);
+        list->array = null;
+    }
+
+    return list;
+}
+
+/* Add Item to an ArrayList */
+
+void ArrayListAdd(ARRAY_LIST *list, MEMORY_BLOCK *mb) 
+{
+    if(list->size >= list->capacity) 
+    {
+        ArrayListIncreaseCapacity(list);
+    }
+
+    MemoryCopy(&list->array[list->size++], mb, sizeof(*list->array));
+}
+
+/* Get Item from an ArrayList */
+
+MEMORY_BLOCK *ArrayListGet(ARRAY_LIST *list, SIZE_T index) 
+{
+    if(index < list->size) 
+    {
+        return &list->array[index];
+    }
+
+    return null;
+}
+
+/* Free resourses used by an ArrayList */
+
+void FreeArrayList(ARRAY_LIST *list) 
+{
+    list->size = 0;
+    list->capacity = 0;
+    HeapFree(GetProcessHeap(), 0, list->array);
+    list->array = null;
+    HeapFree(GetProcessHeap(), 0, list);
+    list = null;
+}
+
+/* Check if the selected address is frozen by comparing it against FrozenAddress */
+
+boolean IsAddressFrozen(string address)
+{
+    uint16 i;
+
+    for(i = 0; i < FREEZE_LIMIT; i++)
+    {
+       if(StringCompare(FrozenAddresses[i], address, false)) return true;
+    }
+
+    return false;
+}
+
 /* Checks if the bit in MEMORY_BLOCK.match_flag corresponding to an offset in 
    MEMORY_BLOCK.address was cleared in the previous scan. */
 
@@ -34,15 +126,16 @@ boolean DiscardAddress(MEMORY_BLOCK *mblock, uint64 offset)
 
 /* Finds the number of matches from the last scan. */
 
-uint64 GetMatchCount(MEMORY_BLOCK *mblock)
+SIZE_T GetMatchCount(MEMORY_BLOCK *mblock)
 {
     MEMORY_BLOCK *mb = mblock;
-    uint64 matches = 0;
+    SIZE_T matches = 0;
+    SIZE_T i = 0;
 
     while(mb)
     {
         matches += mb->matches;
-        mb = mb->next;
+        mb = ArrayListGet(ArrayList, ++i); 
     }
 
     return matches;
@@ -151,6 +244,97 @@ boolean PokeInteger(HANDLE process, PVOID address, int64 value, uint16 data_size
     return false;
 }
 
+/* Resets all previosly filtered addresses. */
+
+VOID ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_monitor)
+{
+
+    MEMORY_BLOCK *mb = mblock;
+    uint16 index = 0;
+    SIZE_T i = 0;
+
+    SelectedProcessOpen = false;
+    NumberOfAddressesFrozen = 0;
+    FirstScanNotRun = true;
+    AddressFrozen = false;
+    SelectedItem = -1;
+
+    MemoryZero(FrozenAddresses, sizeof(FrozenAddresses));
+    MemoryZero(FrozenValues, sizeof(FrozenValues));
+
+    EnableWindow(Scan, !reset_pid);
+    EnableWindow(ChangeValue, false);
+    EnableWindow(NewScan, false);
+
+    SetDlgItemText(MemoryScannerWindow, ID_VALUE, 0);
+
+    SendMessageA(DataSize, CB_RESETCONTENT, 0, 0);
+    SendMessageA(SearchCondition, CB_RESETCONTENT, 0, 0);
+    SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
+
+    ListView_DeleteAllItems(ListView);
+
+    while(mb)
+    {
+        MemorySet(mb->match_flag, 0xff, mb->size / 8); 
+        mb->matches = mb->size;
+        mb = ArrayListGet(ArrayList, ++i); 
+    }
+
+    if(reset_pid)
+    {
+        string msg = (string)"*No Process Selected*";
+        SendMessageA(Pid, WM_SETTEXT, 0, (LPARAM)msg);
+
+        EnableWindow(ChoosePid, true);
+        EnableWindow(DataSize, false);
+        EnableWindow(SearchCondition, false);
+        EnableWindow(Value, false);
+    }
+
+    for(index = 0; index < ARRAYSIZE(Datatypes); index++)
+    {
+        SendMessageA(DataSize, CB_ADDSTRING, 0, (LPARAM)Datatypes[index]);
+    }
+
+    if(disable_process_monitor)
+    {
+        if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
+        {
+            WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
+            CloseHandle(MonitorSelectedProcessThread);
+        }
+    }
+
+    if(FreezeThread && TerminateThread(FreezeThread, 0))
+    {
+        WaitForSingleObject(FreezeThread, INFINITE);
+        CloseHandle(FreezeThread);
+    }
+
+    EnableWindow(ListView, false);
+}
+
+/* Calls ResetScan() if the selected thread terminates. */
+
+DWORD WINAPI MonitorSelectedProcess(VOID)
+{
+    while(Scanner)
+    {
+        DWORD code;
+        GetExitCodeProcess(Scanner->process, &code);
+        SelectedProcessOpen = (code == STILL_ACTIVE);
+
+        if(!SelectedProcessOpen)
+        {
+            ResetScan(Scanner, true, true);
+            break;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+
 /* Constructs and allocates the MEMORY_BLOCK linked list structure. */
 
 MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, uint16 data_size)
@@ -166,7 +350,6 @@ MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, u
         mb->match_flag          = (uint8 *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (mbi->RegionSize / 8));
         mb->matches             = (uint64)mbi->RegionSize;
         mb->data_size           = data_size; 
-        mb->next                = null;
 
         if(mb->match_flag) 
         {
@@ -181,29 +364,33 @@ MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, u
 
 VOID FreeMemoryScanner(MEMORY_BLOCK *mblock)
 {
+    SIZE_T i = 0;
     MEMORY_BLOCK *mb = mblock;
-
-    if(mb->process)
-    {
-        CloseHandle(mb->process);
-    }
 
     while(mb)
     {
         MEMORY_BLOCK *pmb = mb;
-        mb = mb->next;
+        mb = ArrayListGet(ArrayList, ++i);
 
-        if(pmb->buffer) 
+        if(pmb->process)
+        {
+            CloseHandle(pmb->process);
+            pmb->process = null;
+        }
+
+        if(pmb->buffer)
         {
             HeapFree(GetProcessHeap(), 0, pmb->buffer);
+            pmb->buffer = null;
         }
 
-        if(pmb->match_flag) 
+        if(pmb->match_flag)
         {
             HeapFree(GetProcessHeap(), 0, pmb->match_flag);
+            pmb->match_flag = null;
         }
 
-        HeapFree(GetProcessHeap(), 0, pmb);
+//      HeapFree(GetProcessHeap(), 0, pmb);
     }
 }
 
@@ -211,8 +398,8 @@ VOID FreeMemoryScanner(MEMORY_BLOCK *mblock)
 
 MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
 {
-    MEMORY_BLOCK *mblock;
     MEMORY_BASIC_INFORMATION mbi;
+    MEMORY_BLOCK *mblock;
     HANDLE process;
     uint8 *address;
 
@@ -220,10 +407,10 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
 
     if(process)
     {
-        CurrentProcess = pid;
         SelectedProcessOpen = true;
-        address = 0;
+        CurrentProcess = pid;
         mblock = null;
+        address = 0;
 
         while(VirtualQueryEx(process, address, &mbi, sizeof(mbi)))
         {
@@ -233,8 +420,8 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
 
                 if(mb)
                 {
-                    mb->next = mblock;
-                    mblock = mb;
+                    ArrayList = (ArrayList) ? ArrayList : CreateArrayList(sizeof(*mb));
+                    ArrayListAdd(ArrayList, mb);
                 }
             }
 
@@ -242,7 +429,7 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
         }
     }
 
-    return mblock;
+    return ArrayListGet(ArrayList, 0);
 }
 
 /* A thread to monitor addresses for change. */
@@ -327,6 +514,7 @@ DWORD WINAPI FreezeAddresses(VOID)
 
 VOID UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Type, real8 value)
 {
+    SIZE_T i = 0;
     MEMORY_BLOCK *mb = mblock;
 
     while(mb)
@@ -459,8 +647,203 @@ VOID UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Ty
             mb->size = total_read;
         }
 
-        mb = mb->next; 
+        mb = ArrayListGet(ArrayList, ++i); 
     }
+}
+
+/* The function function responsible for performing the scan. */
+
+DWORD WINAPI ProcessScan(VOID)
+{
+    static int8 pid[256];
+    static int8 data_size[256];
+    static int8 val[256];
+    static int8 condition[256];
+    static int8 status_message[256];
+
+    INTFMT search_number_format;
+    int32 selection_id;
+    uint64 matches;
+
+    search_number_format = FMT_INT_DECIMAL;
+    selection_id = (int32)SendMessageA(DataSize, CB_GETCURSEL, 0, 0);
+
+    CopyString(pid, SelectedPid, sizeof(pid) - 1); 
+
+    SendMessageA(Value, WM_GETTEXT, sizeof(val) - 1, (LPARAM)val);
+    SendMessageA(SearchCondition, WM_GETTEXT, sizeof(condition) - 1, (LPARAM)condition);
+
+    if(selection_id > -1) 
+    {
+        CopyString(data_size, (string)DataSizes[selection_id], sizeof(data_size) - 1);
+    }
+
+    if((val[0] == '0') && (val[1] == 'x'))
+    {
+        search_number_format = FMT_INT_HEXADECIMAL;
+    }
+
+    if((IsNumeric(val)) && ((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (!StringCompare(pid, (string)"*No Process Selected*", false))))
+    {
+        Scanner = (Scanner) ? Scanner : CreateMemoryScanner((uint32)StringToInteger(pid, FMT_INT_DECIMAL), (uint16)StringToInteger(data_size, FMT_INT_DECIMAL)); 
+
+        if(Scanner)
+        {
+            if(MonitorSelectedProcessThread)
+            {
+                int8 selected_search_condition;
+                NumberOfAddressesFrozen = 0;
+                ScanRunning = true;
+                selected_search_condition = (int8)SendMessageA(SearchCondition, CB_GETCURSEL, 0, 0);
+
+                if(selected_search_condition > -1)
+                {
+                    SelectedItem = -1;
+                    Type = (selection_id <= 3) ? TYPE_INTEGER : (selection_id == 5) ? TYPE_DOUBLE : TYPE_FLOAT;
+
+                    SendMessageA(ListView, LVM_DELETEALLITEMS, 0, 0);
+
+                    EnableWindow(ChangeValue, false);
+                    EnableWindow(Scan, false);
+                    EnableWindow(NewScan, false);
+                    EnableWindow(ChoosePid, false);
+                    EnableWindow(DataSize, false);
+                    EnableWindow(Value, false);
+                    EnableWindow(SearchCondition, false);
+
+                    if(Type == TYPE_INTEGER)
+                    {
+                        VOID DisplayScanResults(MEMORY_BLOCK *, INTFMT, uint32);
+
+                        switch(selected_search_condition)
+                        {
+                            case SEARCH_EQUALS:
+
+                                UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_INTEGER, StringToInteger(val, search_number_format)); 
+                                DisplayScanResults(Scanner, search_number_format, 100);
+
+                            break;
+
+                            case SEARCH_INCREASED:
+
+                                UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_INTEGER, 0);
+                                DisplayScanResults(Scanner, search_number_format, 100);
+
+                            break;
+
+                            case SEARCH_DECREASED:
+
+                                UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_INTEGER, 0);
+                                DisplayScanResults(Scanner, search_number_format, 100);
+
+                            break;
+                        }
+                    }
+
+                    else if(Type == TYPE_FLOAT)
+                    {
+                        switch(selected_search_condition)
+                        {
+                            case SEARCH_EQUALS:
+
+                                UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_FLOAT, (real4)StringToDouble(val));
+                                DisplayScanResults(Scanner, search_number_format, 100);
+
+                            break;
+
+                            case SEARCH_INCREASED:
+
+                                UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_FLOAT, 0);
+                                DisplayScanResults(Scanner, search_number_format, 100);
+
+                            break;
+
+                            case SEARCH_DECREASED:
+
+                                UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_FLOAT, 0);
+                                DisplayScanResults(Scanner, search_number_format, 100);
+
+                            break;
+                        }
+                    }
+
+                    else if(Type == TYPE_DOUBLE)
+                    {
+                        switch(selected_search_condition)
+                        {
+                            case SEARCH_EQUALS:
+
+                                UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_DOUBLE, StringToDouble(val));
+                                DisplayScanResults(Scanner, search_number_format, 100);
+
+                            break;
+
+                            case SEARCH_INCREASED:
+
+                                UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_DOUBLE, 0);
+                                DisplayScanResults(Scanner, search_number_format, 100);
+
+                            break;
+
+                            case SEARCH_DECREASED:
+
+                                UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_DOUBLE, 0);
+                                DisplayScanResults(Scanner, search_number_format, 100);
+
+                            break;
+                        }
+                    }
+
+                    matches = GetMatchCount(Scanner);
+
+                    if(matches)
+                    {
+                        if(FreezeThread && TerminateThread(FreezeThread, 0))
+                        {
+                            WaitForSingleObject(FreezeThread, INFINITE); 
+                            CloseHandle(FreezeThread);
+                        }
+
+                        FreezeThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)FreezeAddresses, null, null, null); 
+                    }
+
+                    if(FirstScanNotRun)
+                    {
+                        FirstScanNotRun = false;
+
+                        SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_INCREASED]);
+                        SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_DECREASED]);
+                    }
+
+                    EnableWindow(Scan, true);
+                    EnableWindow(NewScan, true);
+                    EnableWindow(ChoosePid, true);
+                    EnableWindow(DataSize, true);
+                    EnableWindow(Value, true);
+                    EnableWindow(SearchCondition, true);
+                    EnableWindow(MemoryScannerWindow, false);
+                    EnableWindow(MemoryScannerWindow, true);
+
+                    SetForegroundWindow(MemoryScannerWindow);
+                    MessageBeep(MB_OK);
+
+                    ScanRunning = false;
+
+                    StringConcat(IntegerToString(matches, 
+                                                 status_message, 
+                                                 sizeof(status_message), 
+                                                 FMT_INT_DECIMAL), " Matches found!");
+
+                    MessageBoxA(MemoryScannerWindow, 
+                                status_message, Title, MB_OK);
+
+                    return EXIT_SUCCESS;
+                }
+            }
+        }
+    }
+
+    return EXIT_FAILURE;
 }
 
 #endif

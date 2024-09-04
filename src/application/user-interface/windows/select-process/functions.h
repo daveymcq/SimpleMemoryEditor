@@ -31,33 +31,34 @@ boolean GetProcessNameAndID(VOID)
 
             if(process)
             {
-                boolean IsApplication64Bit;
+                boolean IsProcess32Bit;
+                boolean IsApplication32Bit;
 
                 typedef boolean (WINAPI *FP_ISWOW64PROCESS) (HANDLE, PBOOL);
                 FP_ISWOW64PROCESS pIsWow64Process = (FP_ISWOW64PROCESS)GetProcAddress(GetModuleHandleA("kernel32"), "IsWow64Process");
 
                 CopyString(Processes[NumberOfProcesses], pe.szExeFile, sizeof(Processes[NumberOfProcesses]));
 
-                if(pIsWow64Process && pIsWow64Process(GetCurrentProcess(), &IsApplication64Bit))
+                if(pIsWow64Process)
                 {
-                    boolean IsProcess64Bit;
-
-                    if(pIsWow64Process && pIsWow64Process(process, &IsProcess64Bit))
+                    if(pIsWow64Process(GetCurrentProcess(), &IsApplication32Bit))
                     {
-                        if(IsApplication64Bit == IsProcess64Bit)
+                        if(pIsWow64Process(process, &IsProcess32Bit))
                         {
-                            IntegerToString(pe.th32ProcessID, Pids[NumberOfProcesses], sizeof(Pids[NumberOfProcesses]) - 1, FMT_INT_DECIMAL);
-                            NumberOfProcesses++; 
+                            if(IsApplication32Bit)
+                            {
+                                if(!IsProcess32Bit)
+                                {
+                                    continue;
+                                }
+                            }
                         }
                     }
                 }
-
-                else
-                {
-                    IntegerToString(pe.th32ProcessID, Pids[NumberOfProcesses], sizeof(Pids[NumberOfProcesses]) - 1, FMT_INT_DECIMAL);
-                    NumberOfProcesses++; 
-                }
-
+                
+                IntegerToString(pe.th32ProcessID, Pids[NumberOfProcesses], sizeof(Pids[NumberOfProcesses]) - 1, FMT_INT_DECIMAL);
+                NumberOfProcesses++; 
+               
                 CloseHandle(process);
             }
 

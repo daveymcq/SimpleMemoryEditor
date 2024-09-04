@@ -74,6 +74,12 @@ VOID ProcessSelectProcessButtonEvent(VOID)
                     FreeMemoryScanner(Scanner);
                 }
 
+                if(ArrayList)
+                {
+                    FreeArrayList(ArrayList);
+                    ArrayList = CreateArrayList(sizeof(*Scanner));
+                }
+
                 Scanner = CreateMemoryScanner(CurrentProcess, (uint16)StringToInteger(data_size, FMT_INT_DECIMAL));
 
                 if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
@@ -105,8 +111,10 @@ VOID ProcessSelectProcessButtonEvent(VOID)
         }
 
         DestroyWindow(SelectPidWindow);
-        EnableWindow(MemoryScannerWindow, true);
     }
+
+    EnableWindow(MemoryScannerWindow, true);
+    SetForegroundWindow(MemoryScannerWindow);
 }
 
 #endif
