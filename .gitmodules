@@ -1,3 +1,0 @@
-[submodule "src/libraries/NCRT"]
-	path = src/libraries/NCRT
-	url = https://github.com/daveymcq/NoCRT.git

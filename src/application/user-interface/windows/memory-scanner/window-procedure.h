@@ -50,7 +50,7 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
                     }
                 }
 
-                ScanThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)ProcessScan, null, null, null);
+                ScanThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)CreateNewScan, null, null, null);
             }
 
             else if(LOWORD(wparam) == ID_SELECT_PROCESS)
@@ -61,7 +61,7 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
 
             else if(LOWORD(wparam) == ID_CHANGE_VALUE)
             {
-                if((!IsAddressFrozen(SelectedItemAddress)) && (GetMatchCount(Scanner)))
+                if((!IsAddressFrozen(SelectedItemAddress)) && (GetMatchCountFromLastScan(Scanner)))
                 {
                     CreateChangeValueWindow();
                 }

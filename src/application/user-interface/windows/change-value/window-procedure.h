@@ -33,7 +33,7 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND window, UINT message, WPARAM wparam,
 
             if(LOWORD(wparam) == ID_CHANGE_VALUE_WINDOW_BUTTON)
             {
-                UpdateValue();
+                ProcessUpdateValueEvent();
             }
 
         break;

@@ -74,6 +74,7 @@
     static int8 SelectedItemValue[256]; 
     static int8 SelectedPid[256];
 
+    static HANDLE Mutex;
     static HANDLE ScanThread;
     static HANDLE FreezeThread;
     static HANDLE MonitorSelectedProcessThread;
@@ -93,6 +94,7 @@
     static boolean ScanRunning;
     static boolean FirstScanNotRun;
     static boolean AddressFrozen;
+
 
     /* A linked list of memory region information obtained by VirtualQueryEx(). */
 
@@ -140,23 +142,15 @@
 
 /* End Memory Scanner Code Includes */
 
-/*  application logic code import */
-
-    #include "application/functions.h"
-
-/* End application logic import */
-
 /****************************************************************************************************************** 
  ******************************************************************************************************************/
 
 /* GUI code import */
 
-    #include "application/user-interface/windows/functions.h"
-    #include "application/user-interface/windows/memory-scanner/window-messages.h"
-
-    #include "application/user-interface/windows/memory-scanner/functions.h"
-    #include "application/user-interface/windows/select-process/functions.h"
-    #include "application/user-interface/windows/change-value/functions.h"
+    #include "application/io.h"
+    #include "application/ui.h"
+    #include "application/scanner.h"
+    #include "application/process.h"
 
     #include "application/user-interface/windows/memory-scanner/window.h"
     #include "application/user-interface/windows/select-process/window.h"
@@ -177,13 +171,13 @@
 
 /* Initialize global variables. */
 
-boolean Initialize(HINSTANCE application_instance)
+boolean Initialize(void)
 {
-    FirstScanNotRun = true;
-    SelectedItem = -1;
     ScreenDPI = 96;
-    
-    Instance = (application_instance) ? application_instance : GetModuleHandleA(null);
+    SelectedItem = -1;
+    FirstScanNotRun = true;
+    Instance =  GetModuleHandleA(null);
+    Mutex = CreateMutex(NULL, FALSE, NULL);
 
     CommonControls.dwICC = ICC_WIN95_CLASSES;
     CommonControls.dwSize = sizeof(CommonControls);
