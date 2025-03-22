@@ -171,7 +171,7 @@
 
 /* Initialize global variables. */
 
-boolean Initialize(void)
+boolean Initialize(VOID)
 {
     ScreenDPI = 96;
     SelectedItem = -1;
