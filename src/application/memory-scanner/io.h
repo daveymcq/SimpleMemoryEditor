@@ -188,5 +188,4 @@ boolean WriteInteger(HANDLE process, void *address, int64 value, uint16 data_siz
     return false;
 }
 
-
 #endif
