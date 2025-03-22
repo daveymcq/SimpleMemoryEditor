@@ -7,7 +7,7 @@
 
 /* Calls ResetScan() if the selected thread terminates. */
 
-DWORD WINAPI MonitorSelectedProcess(VOID)
+DWORD WINAPI MonitorSelectedProcess(void)
 {
     while(Scanner)
     {
@@ -27,7 +27,7 @@ DWORD WINAPI MonitorSelectedProcess(VOID)
 
 /* Finds all running processes on machine and finds their process id. */
 
-boolean GetProcessNameAndID(VOID)
+boolean GetProcessNameAndID(void)
 {
     HANDLE snapshot, process;
     PROCESSENTRY32 pe;

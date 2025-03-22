@@ -7,7 +7,7 @@
 
 /* Add scan results to ListView control. */
 
-VOID AddItemToListView(string address, string value)
+void AddItemToListView(string address, string value)
 {
     static LVITEMA item;
 
@@ -25,7 +25,7 @@ VOID AddItemToListView(string address, string value)
 
 /* Center a window using the default display. */
 
-VOID CenterWindow(HWND window)
+void CenterWindow(HWND window)
 {
     RECT window_rect;
     DWORD x, y, width, height;
@@ -43,7 +43,7 @@ VOID CenterWindow(HWND window)
  
 /* DPI scale the position and size of the controls */
 
-VOID UpdateLayoutForDpi(HWND window, DWORD x, DWORD y, DWORD width, DWORD height) 
+void UpdateLayoutForDpi(HWND window, DWORD x, DWORD y, DWORD width, DWORD height) 
 { 
     typedef UINT (WINAPI *FP_GETDPIFORWINDOW)(HWND);
     FP_GETDPIFORWINDOW GetDpiForWindow = (FP_GETDPIFORWINDOW)GetProcAddress(GetModuleHandleA("user32"), "GetDpiForWindow");

@@ -1,5 +1,5 @@
-#ifndef _SCANNER_H
-#define _SCANNER_H
+#ifndef _SCAN_H
+#define _SCAN_H
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //                                   Memory Scanner Logic                                        //
@@ -52,7 +52,7 @@ boolean DiscardAddress(MEMORY_BLOCK *mblock, uint64 offset)
 
 /* Resets all previosly filtered addresses. */
 
-VOID ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_monitor)
+void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_monitor)
 {
     MEMORY_BLOCK *mb = mblock;
     uint16 index = 0;
@@ -122,7 +122,7 @@ VOID ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
 
 /* A thread to monitor addresses for change. */
 
-DWORD WINAPI FreezeSelectedScannedAddresses(VOID)
+DWORD WINAPI FreezeSelectedScannedAddresses(void)
 {
     while(Scanner)
     {
@@ -134,7 +134,7 @@ DWORD WINAPI FreezeSelectedScannedAddresses(VOID)
         {
             INTFMT search_number_format;
             real8 value;
-            PVOID address;
+            void *address;
 
             address = (PVOID) (uintptr_t)StringToInteger(FrozenAddresses[i], FMT_INT_HEXADECIMAL);
             value = StringToDouble(FrozenValues[i]);
@@ -267,7 +267,7 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
 
 /* Filters memory information aquired by CreateMemoryScanner() and subsequent calls to this function. */
 
-VOID UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Type, real8 value)
+void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Type, real8 value)
 {
     SIZE_T i = 0;
     MEMORY_BLOCK *mb = mblock;
@@ -429,7 +429,7 @@ SIZE_T GetMatchCountFromLastScan(MEMORY_BLOCK *mblock)
 
 /* The function function responsible for performing the scan. */
 
-DWORD WINAPI CreateNewScan(VOID)
+DWORD WINAPI CreateNewScan(void)
 {
     static int8 pid[256];
     static int8 data_size[256];
@@ -489,7 +489,7 @@ DWORD WINAPI CreateNewScan(VOID)
 
                     if(Type == TYPE_INTEGER)
                     {
-                        VOID DisplayScanResults(MEMORY_BLOCK *, INTFMT, uint32);
+                        void DisplayScanResults(MEMORY_BLOCK *, INTFMT, uint32);
 
                         switch(selected_search_condition)
                         {
@@ -624,7 +624,7 @@ DWORD WINAPI CreateNewScan(VOID)
 
 /* Cleans up the memory allocated by CreateMemoryScanner(). */
 
-VOID FreeMemoryScanner(MEMORY_BLOCK *mblock)
+void FreeMemoryScanner(MEMORY_BLOCK *mblock)
 {
     SIZE_T i = 0;
     MEMORY_BLOCK *mb = mblock;
@@ -656,7 +656,7 @@ VOID FreeMemoryScanner(MEMORY_BLOCK *mblock)
 
 /* Add scan results to memory scanner window. */
 
-VOID DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 display_limit)
+void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 display_limit)
 {
     SIZE_T i = 0;
     MEMORY_BLOCK *mb = mblock;

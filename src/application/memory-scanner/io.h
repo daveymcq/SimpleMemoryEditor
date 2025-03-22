@@ -87,7 +87,7 @@ void FreeArrayList(ARRAY_LIST *list)
 
 /* A set of helper functions that reads/writes the memory at the address specified. */
 
-real4 ReadFloat(HANDLE process, PVOID address)
+real4 ReadFloat(HANDLE process, void *address)
 {
     real4 value;
 
@@ -99,7 +99,7 @@ real4 ReadFloat(HANDLE process, PVOID address)
     return 0.0f;
 }
 
-real8 ReadDouble(HANDLE process, PVOID address)
+real8 ReadDouble(HANDLE process, void *address)
 {
     real8 value;
 
@@ -111,7 +111,7 @@ real8 ReadDouble(HANDLE process, PVOID address)
     return 0.0;
 }
 
-int64 ReadInteger(HANDLE process, PVOID address, uint16 data_size)
+int64 ReadInteger(HANDLE process, void *address, uint16 data_size)
 {
     int64 value = 0;
 
@@ -152,7 +152,7 @@ int64 ReadInteger(HANDLE process, PVOID address, uint16 data_size)
     return value;
 }
 
-boolean WriteFloat(HANDLE process, PVOID address, real4 value)
+boolean WriteFloat(HANDLE process, void *address, real4 value)
 {
     SIZE_T bytes_written = 0;
 
@@ -164,7 +164,7 @@ boolean WriteFloat(HANDLE process, PVOID address, real4 value)
     return false;
 }
 
-boolean WriteDouble(HANDLE process, PVOID address, real8 value)
+boolean WriteDouble(HANDLE process, void *address, real8 value)
 {
     SIZE_T bytes_written = 0;
 
@@ -176,7 +176,7 @@ boolean WriteDouble(HANDLE process, PVOID address, real8 value)
     return false;
 }
 
-boolean WriteInteger(HANDLE process, PVOID address, int64 value, uint16 data_size)
+boolean WriteInteger(HANDLE process, void *address, int64 value, uint16 data_size)
 {
     SIZE_T bytes_written = 0;
 
