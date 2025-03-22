@@ -479,13 +479,13 @@ DWORD WINAPI CreateNewScan(void)
 
                     SendMessageA(ListView, LVM_DELETEALLITEMS, 0, 0);
 
+                    EnableWindow(SearchCondition, false);
                     EnableWindow(ChangeValue, false);
-                    EnableWindow(Scan, false);
-                    EnableWindow(NewScan, false);
                     EnableWindow(ChoosePid, false);
                     EnableWindow(DataSize, false);
+                    EnableWindow(NewScan, false);
                     EnableWindow(Value, false);
-                    EnableWindow(SearchCondition, false);
+                    EnableWindow(Scan, false);
 
                     if(Type == TYPE_INTEGER)
                     {
@@ -591,29 +591,25 @@ DWORD WINAPI CreateNewScan(void)
                         SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_DECREASED]);
                     }
 
-                    EnableWindow(Scan, true);
-                    EnableWindow(NewScan, true);
-                    EnableWindow(ChoosePid, true);
-                    EnableWindow(DataSize, true);
-                    EnableWindow(Value, true);
-                    EnableWindow(SearchCondition, true);
+                    SetForegroundWindow(MemoryScannerWindow);
                     EnableWindow(MemoryScannerWindow, false);
                     EnableWindow(MemoryScannerWindow, true);
-
-                    SetForegroundWindow(MemoryScannerWindow);
-                    MessageBeep(MB_OK);
-
+                    EnableWindow(SearchCondition, true);
+                    EnableWindow(ChoosePid, true);
+                    EnableWindow(DataSize, true);
+                    EnableWindow(NewScan, true);
+                    EnableWindow(Value, true);
+                    EnableWindow(Scan, true);
                     ScanRunning = false;
+                    MessageBeep(MB_OK);
 
                     StringConcat(IntegerToString(matches, 
                                                  status_message, 
                                                  sizeof(status_message), 
                                                  FMT_INT_DECIMAL), " Matches found!");
 
-                    MessageBoxA(MemoryScannerWindow, 
-                                status_message, Title, MB_OK);
-
-                    return EXIT_SUCCESS;
+                    return MessageBoxA(MemoryScannerWindow, 
+                                       status_message, Title, MB_OK);
                 }
             }
         }
