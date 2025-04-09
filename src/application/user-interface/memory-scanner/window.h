@@ -67,7 +67,7 @@ HWND CreateMemoryScannerWindow(void)
                                       (HMENU)ID_SELECT_PROCESS, 
                                       Instance, null);
 
-            DataSizeLabel = CreateWindowA("static", "Type: ", WS_VISIBLE | WS_CHILD, 
+            DataSizeLabel = CreateWindowA("static", "Size: ", WS_VISIBLE | WS_CHILD, 
                                           0, 0, 0, 0, MemoryScannerWindow, null, 
                                           Instance, null);
 
