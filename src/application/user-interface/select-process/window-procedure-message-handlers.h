@@ -30,6 +30,8 @@ void ProcessListboxChangeEvent(void)
 
 void ProcessSelectProcessButtonEvent(void)
 {
+    uint16 index;
+
     if(IndexOfSelectedProcess > -1)
     {
         int8 pid[256];
@@ -87,7 +89,7 @@ void ProcessSelectProcessButtonEvent(void)
 
             if(StringLength(selected_process))
             {          
-                SetWindowText(MemoryScannerWindow, Processes[IndexOfSelectedProcess]);
+                SetWindowText(ChoosePid, Processes[IndexOfSelectedProcess]);
             }
 
             else
@@ -116,6 +118,16 @@ void ProcessSelectProcessButtonEvent(void)
 
         DestroyWindow(SelectPidWindow);
     }
+    
+    SendMessageA(DataSize, CB_RESETCONTENT, 0, 0);
+
+    for(index = 0; index < ARRAYSIZE(DataTypes); index++)
+    {
+        SendMessageA(DataSize, CB_ADDSTRING, 0, (LPARAM)DataTypes[index]);
+    }
+
+    SendMessageA(SearchCondition, CB_SETCURSEL, (WPARAM)0, 0);
+    SendMessageA(DataSize, CB_SETCURSEL, (WPARAM)2, 0);
 
     SetForegroundWindow(MemoryScannerWindow);
     EnableWindow(MemoryScannerWindow, true);

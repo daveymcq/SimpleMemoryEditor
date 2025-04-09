@@ -28,25 +28,19 @@ HWND CreateMemoryScannerWindow(void)
                                               Instance, null);
         if(MemoryScannerWindow)
         {
+            uint16 data_types_list_index;
             NONCLIENTMETRICSA metrics;
-            uint8 data_types_list_index;
             LVCOLUMNA address_column;
             LVCOLUMNA value_column;
             
-            data_types_list_index = 0;
-
             metrics.cbSize = sizeof(metrics);
             SystemParametersInfoA(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0);
 
             Font = CreateFontIndirectA(&metrics.lfMessageFont);
 
             ListView = CreateWindowExA(WS_EX_CLIENTEDGE, WC_LISTVIEW, null, 
-                                       WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_SINGLESEL,
+                                       WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_SINGLESEL | LVS_NOSCROLL,
                                        0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_LISTVIEW, Instance, null);
-
-            SearchConditionLabel = CreateWindowA("static", "Condition: ", WS_VISIBLE | WS_CHILD, 
-                                                 0, 0, 0, 0, MemoryScannerWindow, null, 
-                                                 Instance, null);
 
             SearchCondition = CreateWindowA("combobox", null, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 
                                             0, 0, 0, 0, MemoryScannerWindow, 
@@ -67,10 +61,6 @@ HWND CreateMemoryScannerWindow(void)
                                       (HMENU)ID_SELECT_PROCESS, 
                                       Instance, null);
 
-            DataSizeLabel = CreateWindowA("static", "Size: ", WS_VISIBLE | WS_CHILD, 
-                                          0, 0, 0, 0, MemoryScannerWindow, null, 
-                                          Instance, null);
-
             DataSize = CreateWindowA("combobox", null, WS_VISIBLE | WS_CHILD | WS_BORDER | CBS_DROPDOWNLIST, 
                                      0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_VALUE, 
                                      Instance, null);
@@ -79,10 +69,11 @@ HWND CreateMemoryScannerWindow(void)
                                  0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_SCAN, 
                                  Instance, null);
 
-            while(data_types_list_index < (uint8)ARRAYSIZE(Datatypes))
-            {
-                SendMessageA(DataSize, CB_ADDSTRING, 0, (LPARAM)Datatypes[data_types_list_index]);
-                ++data_types_list_index;
+            SendMessageA(DataSize, CB_RESETCONTENT, 0, 0);
+
+            for(data_types_list_index = 0; data_types_list_index < ARRAYSIZE(DataTypes); data_types_list_index++)
+            {   
+                SendMessageA(DataSize, CB_ADDSTRING, 0, (LPARAM)DataTypes[data_types_list_index]);
             }
 
             EnableWindow(Scan, false);
@@ -96,44 +87,49 @@ HWND CreateMemoryScannerWindow(void)
             SendMessageA(ChoosePid, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(NewScan, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(Scan, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
-            SendMessageA(DataSizeLabel, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(DataSize, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(Value, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(SearchCondition, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
-            SendMessageA(SearchConditionLabel, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
 
             UpdateWindowForDpi(MemoryScannerWindow, CW_USEDEFAULT, CW_USEDEFAULT, 625, 405);
-            UpdateWindowForDpi(ChoosePid, 10, 244, 100, 25);
-            UpdateWindowForDpi(ListView, 10, 10, 598, 225);
-            UpdateWindowForDpi(SearchCondition, 75, 275, 135, 20);
-            UpdateWindowForDpi(SearchConditionLabel, 10, 276, 54, 25);
-            UpdateWindowForDpi(Value, 120, 245, 490, 23);
+            UpdateWindowForDpi(ChoosePid, 10, 244, 200, 25);
+            UpdateWindowForDpi(ListView, 10, 10, 600, 225);
+            UpdateWindowForDpi(SearchCondition, 10, 275, 200, 20);
+            UpdateWindowForDpi(Value, 220, 245, 390, 23);
             UpdateWindowForDpi(NewScan, 400, 274, 210, 25);
-            UpdateWindowForDpi(DataSizeLabel, 220, 276, 100, 25);
-            UpdateWindowForDpi(DataSize, 255, 275, 135, 20);
+            UpdateWindowForDpi(DataSize, 220, 275, 170, 20);
             UpdateWindowForDpi(Scan, 10, 305, 600, 60);
 
+            address_column.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_FMT;
             address_column.cx = MulDiv(298, ScreenDPI, 96); 
-            value_column.cx = MulDiv(298, ScreenDPI, 96);
-
-            address_column.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
             address_column.pszText = (string)"Address";
+            address_column.fmt = LVCFMT_FIXED_WIDTH;
             address_column.iSubItem = 0;
 
-            value_column.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
+            value_column.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_FMT;
+            value_column.cx = MulDiv(298, ScreenDPI, 96);
             value_column.pszText = (string)"Value";
+            value_column.fmt = LVCFMT_FIXED_WIDTH;
             value_column.iSubItem = 1;
 
-            SendMessageA(ListView, LVM_INSERTCOLUMN, 0, (LPARAM)&address_column);
-            SendMessageA(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&value_column);
-            SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
-            SendMessageA(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+            DisableListViewResizeThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)DisableListViewResize, null, null, null);
 
-            ShowWindow(MemoryScannerWindow, SW_SHOW);
-            UpdateWindow(MemoryScannerWindow);
-            CenterWindow(MemoryScannerWindow);
+            if(DisableListViewResizeThread)
+            {
+                UpdateWindow(MemoryScannerWindow);
+                CenterWindow(MemoryScannerWindow);
+                ShowWindow(MemoryScannerWindow, SW_SHOW);
 
-            return MemoryScannerWindow;
+                SendMessageA(ListView, LVM_INSERTCOLUMN, 0, (LPARAM)&address_column);
+                SendMessageA(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&value_column);
+                SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
+                SendMessageA(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_GRIDLINES);
+
+                SendMessageA(DataSize, CB_SETCURSEL, (WPARAM)2, 0);
+                SendMessageA(SearchCondition, CB_SETCURSEL, (WPARAM)0, 0);
+
+                return MemoryScannerWindow;
+            }
         }
     }
 

@@ -12,7 +12,7 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
     LVCOLUMNA address_column;
     LVCOLUMNA value_column;
     uint8 window_text[255];
-    
+
     switch(message)
     {
         case WM_CLOSE:

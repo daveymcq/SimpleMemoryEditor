@@ -42,7 +42,7 @@ HWND CreateSelectProcessWindow(void)
                                           (HMENU)ID_CHOOSE_PROCESS, 
                                           Instance, null);
 
-            for(process_counter_index = 0; process_counter_index < (uint16)ProcessCounter; process_counter_index++)
+            for(process_counter_index = 0; process_counter_index < ProcessCounter; process_counter_index++)
             {
                 SendMessageA(ProcessSelection, LB_ADDSTRING, 0, (LPARAM)Processes[process_counter_index]);
             }

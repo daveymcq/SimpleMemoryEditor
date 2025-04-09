@@ -153,6 +153,11 @@ void HandleMainWindowCloseEvent(HWND window)
         CloseHandle(MonitorSelectedProcessThread);
     }
 
+    if(DisableListViewResizeThread && TerminateThread(DisableListViewResizeThread, 0))
+    {
+        CloseHandle(DisableListViewResizeThread);
+    }
+
     if(Scanner)
     {
         FreeMemoryScanner(Scanner);

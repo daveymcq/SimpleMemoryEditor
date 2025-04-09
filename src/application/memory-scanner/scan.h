@@ -72,8 +72,6 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
 
     SetDlgItemText(MemoryScannerWindow, ID_VALUE, 0);
 
-    SendMessageA(DataSize, CB_RESETCONTENT, 0, 0);
-    SendMessageA(SearchCondition, CB_RESETCONTENT, 0, 0);
     SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
 
     ListView_DeleteAllItems(ListView);
@@ -85,17 +83,17 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
         mb = ArrayListGet(ArrayList, ++i); 
     }
 
+    SendMessageA(SearchCondition, CB_SETCURSEL, (WPARAM)0, 0);
+    SendMessageA(DataSize, CB_SETCURSEL, (WPARAM)2, 0);
+
     if(reset_pid)
     {
+        SendMessageA(SearchCondition, CB_RESETCONTENT, 0, 0);
+        SendMessageA(DataSize, CB_RESETCONTENT, 0, 0);
         EnableWindow(SearchCondition, false);
         EnableWindow(ChoosePid, true);
         EnableWindow(DataSize, false);
         EnableWindow(Value, false);
-    }
-
-    for(index = 0; index < ARRAYSIZE(Datatypes); index++)
-    {
-        SendMessageA(DataSize, CB_ADDSTRING, 0, (LPARAM)Datatypes[index]);
     }
 
     if(disable_process_monitor)
@@ -113,7 +111,6 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
         CloseHandle(FreezeThread);
     }
 
-    SetWindowText(MemoryScannerWindow, "Simple Memory Editor");
     EnableWindow(ListView, false);
 }
 
@@ -492,21 +489,21 @@ DWORD WINAPI CreateNewScan(void)
                             case SEARCH_EQUALS:
 
                                 UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_INTEGER, StringToInteger(val, search_number_format)); 
-                                DisplayScanResults(Scanner, search_number_format, 100);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
 
                             case SEARCH_INCREASED:
 
                                 UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_INTEGER, 0);
-                                DisplayScanResults(Scanner, search_number_format, 100);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
 
                             case SEARCH_DECREASED:
 
                                 UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_INTEGER, 0);
-                                DisplayScanResults(Scanner, search_number_format, 100);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
                         }
@@ -519,21 +516,21 @@ DWORD WINAPI CreateNewScan(void)
                             case SEARCH_EQUALS:
 
                                 UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_FLOAT, (real4)StringToDouble(val));
-                                DisplayScanResults(Scanner, search_number_format, 100);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
 
                             case SEARCH_INCREASED:
 
                                 UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_FLOAT, 0);
-                                DisplayScanResults(Scanner, search_number_format, 100);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
 
                             case SEARCH_DECREASED:
 
                                 UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_FLOAT, 0);
-                                DisplayScanResults(Scanner, search_number_format, 100);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
                         }
@@ -546,21 +543,21 @@ DWORD WINAPI CreateNewScan(void)
                             case SEARCH_EQUALS:
 
                                 UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_DOUBLE, StringToDouble(val));
-                                DisplayScanResults(Scanner, search_number_format, 100);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
 
                             case SEARCH_INCREASED:
 
                                 UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_DOUBLE, 0);
-                                DisplayScanResults(Scanner, search_number_format, 100);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
 
                             case SEARCH_DECREASED:
 
                                 UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_DOUBLE, 0);
-                                DisplayScanResults(Scanner, search_number_format, 100);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
                         }

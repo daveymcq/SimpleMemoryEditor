@@ -25,7 +25,7 @@
 #define ID_FREEZE_VALUE (WM_USER + 1016)
 #define ID_THAW_VALUE (WM_USER + 1017)
 
-#define FREEZE_LIMIT 20
+#define FREEZE_LIMIT 10
 #define PROCESS_LIMIT 128
 
 #ifndef WM_DPICHANGED
@@ -36,19 +36,22 @@
     #define LVS_EX_DOUBLEBUFFER 0x00010000
 #endif
 
+#ifndef LVCFMT_FIXED_WIDTH
+    #define LVCFMT_FIXED_WIDTH 0x100
+#endif
+
 static LRESULT CALLBACK MainWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK ChangeValueWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK SelectProcessWindowProc(HWND, UINT, WPARAM, LPARAM);
 
-static HWND ListView, Scan, Value, ChoosePid, 
-            DataSize, DataSizeLabel, SearchConditionLabel, 
+static HWND ListView, Scan, Value, ChoosePid, DataSize, 
             SearchCondition, NewScan, SelectPidWindow, ProcessSelection, ChooseProcess, 
             MemoryScannerWindow, ChangeValueWindow, ChangeValueWindowNewValue, ChangeValueWindowButton;
 
 static string Title = (string)"Simple Memory Editor";
 static string SearchConditions[] = { (string)"Equals", (string)"Increased", (string)"Decreased" };
 static string DataSizes[] = { (string)"1", (string)"2", (string)"4", (string)"8", (string)"4", (string)"8" };
-static string Datatypes[] = { (string)"Byte", (string)"Short Integer", (string)"Integer", (string)"Long Integer", (string)"Float", (string)"Double" };
+static string DataTypes[] = { (string)"Byte", (string)"Short Integer", (string)"Integer", (string)"Long Integer", (string)"Float", (string)"Double" };
 
 static HFONT Font;
 static HINSTANCE Instance;
@@ -81,6 +84,7 @@ static int8 FrozenAddresses[FREEZE_LIMIT][256];
 static HANDLE Mutex;
 static HANDLE ScanThread;
 static HANDLE FreezeThread;
+static HANDLE DisableListViewResizeThread;
 static HANDLE MonitorSelectedProcessThread;
 
 static uint32 ScreenDPI;

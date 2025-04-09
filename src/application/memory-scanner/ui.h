@@ -23,6 +23,21 @@ void AddItemToListView(string address, string value)
     SendMessageA(ListView, LVM_SETITEM, 0, (LPARAM)&item);
 }
 
+/* Keep ListView control columns fixed. */
+
+DWORD WINAPI DisableListViewResize(void)
+{
+    while(ListView)
+    {
+        uint8 column;
+
+        for(column = 0; column < 2; column++)
+        {
+            ListView_SetColumnWidth(ListView, column, MulDiv(298, ScreenDPI, 96));
+        }
+    }
+}
+
 /* Center a window using the default display. */
 
 void CenterWindow(HWND window)
