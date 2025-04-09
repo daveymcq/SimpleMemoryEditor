@@ -153,14 +153,14 @@ void HandleMainWindowCloseEvent(HWND window)
         CloseHandle(MonitorSelectedProcessThread);
     }
 
-    if(ArrayList)
-    {
-        FreeArrayList(ArrayList);
-    }
-
     if(Scanner)
     {
         FreeMemoryScanner(Scanner);
+    }
+
+    if(ArrayList)
+    {
+        FreeArrayList(ArrayList);
     }
 
     DestroyWindow(window);

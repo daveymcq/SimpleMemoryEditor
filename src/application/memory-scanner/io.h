@@ -7,7 +7,7 @@
 
 /* Create an ArrayList */
 
-ARRAY_LIST *CreateArrayList(SIZE_T initial_capacity) 
+ARRAY_LIST *CreateArrayList(uint64 initial_capacity) 
 {
     ARRAY_LIST *list = (ARRAY_LIST *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*list));
 
@@ -59,7 +59,7 @@ void ArrayListAdd(ARRAY_LIST *list, MEMORY_BLOCK *mb)
 
 /* Get Item from an ArrayList */
 
-MEMORY_BLOCK *ArrayListGet(ARRAY_LIST *list, SIZE_T index) 
+MEMORY_BLOCK *ArrayListGet(ARRAY_LIST *list, uint64 index) 
 {
     if(index < list->size) 
     {

@@ -111,8 +111,8 @@ typedef struct _MEMORY_BLOCK
 typedef struct _ARRAY_LIST
 {
     MEMORY_BLOCK *array;
-    SIZE_T capacity;
-    SIZE_T size;
+    uint64 capacity;
+    uint64 size;
 
 } ARRAY_LIST;
 

@@ -618,31 +618,29 @@ DWORD WINAPI CreateNewScan(void)
 
 void FreeMemoryScanner(MEMORY_BLOCK *mblock)
 {
-    SIZE_T i = 0;
-    MEMORY_BLOCK *mb = mblock;
+    MEMORY_BLOCK *mb = (mblock) ? mblock : ArrayListGet(ArrayList, 0);
 
     while(mb)
     {
-        MEMORY_BLOCK *pmb = mb;
-        mb = ArrayListGet(ArrayList, ++i);
-
-        if(pmb->process)
+        if(mb->process)
         {
-            CloseHandle(pmb->process);
-            pmb->process = null;
+            CloseHandle(mb->process);
+            mb->process = null;
         }
 
-        if(pmb->buffer)
+        if(mb->buffer)
         {
-            HeapFree(GetProcessHeap(), 0, pmb->buffer);
-            pmb->buffer = null;
+            HeapFree(GetProcessHeap(), 0, mb->buffer);
+            mb->buffer = null;
         }
 
-        if(pmb->match_flag)
+        if(mb->match_flag)
         {
-            HeapFree(GetProcessHeap(), 0, pmb->match_flag);
-            pmb->match_flag = null;
+            HeapFree(GetProcessHeap(), 0, mb->match_flag);
+            mb->match_flag = null;
         }
+
+        mb = ArrayListGet(ArrayList, mb->size + 1);
     }
 }
 
