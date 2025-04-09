@@ -21,11 +21,11 @@ LRESULT CALLBACK SelectProcessWindowProc(HWND window, UINT message, WPARAM wpara
         break;
 
         case WM_DESTROY:
-
-            EnableWindow(MemoryScannerWindow, true);
+            
             ShowWindow(MemoryScannerWindow, SW_SHOW);
-            CenterWindow(MemoryScannerWindow);
             SetForegroundWindow(MemoryScannerWindow);
+            EnableWindow(MemoryScannerWindow, true);
+            CenterWindow(MemoryScannerWindow);
 
         break;
 
@@ -40,17 +40,6 @@ LRESULT CALLBACK SelectProcessWindowProc(HWND window, UINT message, WPARAM wpara
             {
                 ProcessListboxChangeEvent();
             }
-
-        break;
-
-        case WM_DPICHANGED:
-
-            UpdateLayoutForDpi(SelectPidWindow, CW_USEDEFAULT, CW_USEDEFAULT, 295, 400);
-            UpdateLayoutForDpi(ProcessSelection, 10, 10, 270, 300);
-            UpdateLayoutForDpi(ChooseProcess, 10, 310, 270, 50);
-    
-            ShowWindow(MemoryScannerWindow, SW_HIDE);
-            CenterWindow(SelectPidWindow);
 
         break;
 

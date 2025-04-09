@@ -40,8 +40,8 @@ static LRESULT CALLBACK MainWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK ChangeValueWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK SelectProcessWindowProc(HWND, UINT, WPARAM, LPARAM);
 
-static HWND ListView, Scan, Value, ChangeValue, Pid, 
-            ChoosePid, DataSize, DataSizeLabel, ValueLabel, SearchConditionLabel, 
+static HWND ListView, Scan, Value, ChoosePid, 
+            DataSize, DataSizeLabel, SearchConditionLabel, 
             SearchCondition, NewScan, SelectPidWindow, ProcessSelection, ChooseProcess, 
             MemoryScannerWindow, ChangeValueWindow, ChangeValueWindowNewValue, ChangeValueWindowButton;
 

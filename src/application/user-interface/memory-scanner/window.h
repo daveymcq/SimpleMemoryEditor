@@ -24,8 +24,8 @@ HWND CreateMemoryScannerWindow(void)
     {
         MemoryScannerWindow = CreateWindowExA(WS_EX_STATICEDGE, wc.lpszClassName, Title,
                                               WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX, 
-                                              CW_USEDEFAULT, CW_USEDEFAULT, 625, 405, null, null, Instance, null);
-
+                                              0, 0, 0, 0, null, null, 
+                                              Instance, null);
         if(MemoryScannerWindow)
         {
             NONCLIENTMETRICSA metrics;
@@ -42,55 +42,41 @@ HWND CreateMemoryScannerWindow(void)
 
             ListView = CreateWindowExA(WS_EX_CLIENTEDGE, WC_LISTVIEW, null, 
                                        WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_SINGLESEL,
-                                       10, 10, 598, 225, MemoryScannerWindow, (HMENU)ID_LISTVIEW, Instance, null);
+                                       0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_LISTVIEW, Instance, null);
 
-            SearchConditionLabel = CreateWindowA("static", "Search Condition: ", WS_VISIBLE | WS_CHILD, 
-                                                 10, 245, 100, 25, MemoryScannerWindow, null, 
+            SearchConditionLabel = CreateWindowA("static", "Condition: ", WS_VISIBLE | WS_CHILD, 
+                                                 0, 0, 0, 0, MemoryScannerWindow, null, 
                                                  Instance, null);
 
             SearchCondition = CreateWindowA("combobox", null, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 
-                                            150, 245, 125, 200, MemoryScannerWindow, 
+                                            0, 0, 0, 0, MemoryScannerWindow, 
                                             (HMENU)ID_SEARCH_CONDITION, 
                                             Instance, null);
 
-            ValueLabel = CreateWindowA("static", "Search Value: ", WS_VISIBLE | WS_CHILD, 
-                                       310, 250, 100, 25, MemoryScannerWindow, 
-                                       null, Instance, null);
-
             Value = CreateWindowA("edit", null, WS_VISIBLE | WS_CHILD | WS_BORDER, 
-                                  400, 247, 100, 20, MemoryScannerWindow, (HMENU)ID_VALUE, 
+                                  0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_VALUE, 
                                   Instance, null);
 
-            ChangeValue = CreateWindowA("button", "Change Value", WS_VISIBLE | WS_CHILD, 
-                                        510, 245, 100, 25, MemoryScannerWindow,
-                                        (HMENU)ID_CHANGE_VALUE, 
-                                        Instance, null);
-
             NewScan = CreateWindowA("button", "Reset Scan", WS_VISIBLE | WS_CHILD, 
-                                    510, 275, 100, 25, MemoryScannerWindow, 
+                                    0, 0, 0, 0, MemoryScannerWindow, 
                                     (HMENU)ID_NEW_SCAN, 
                                     Instance, null);
 
-            Pid = CreateWindowA("static", "*No Process Selected*", WS_VISIBLE | WS_CHILD, 
-                                10, 280, 150, 25, MemoryScannerWindow, 
-                                (HMENU)ID_PROCESS_ID, 
-                                Instance, null);
-
             ChoosePid = CreateWindowA("button", "Select Process", WS_VISIBLE | WS_CHILD, 
-                                      175, 275, 100, 25, MemoryScannerWindow, 
+                                      0, 0, 0, 0, MemoryScannerWindow, 
                                       (HMENU)ID_SELECT_PROCESS, 
                                       Instance, null);
 
             DataSizeLabel = CreateWindowA("static", "Type: ", WS_VISIBLE | WS_CHILD, 
-                                          310, 280, 100, 25, MemoryScannerWindow, null, 
+                                          0, 0, 0, 0, MemoryScannerWindow, null, 
                                           Instance, null);
 
             DataSize = CreateWindowA("combobox", null, WS_VISIBLE | WS_CHILD | WS_BORDER | CBS_DROPDOWNLIST, 
-                                     400, 275, 100, 200, MemoryScannerWindow, (HMENU)ID_VALUE, 
+                                     0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_VALUE, 
                                      Instance, null);
 
             Scan = CreateWindowA("button", "Scan Memory", WS_VISIBLE | WS_CHILD, 
-                                 10, 315, 600, 50, MemoryScannerWindow, (HMENU)ID_SCAN, 
+                                 0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_SCAN, 
                                  Instance, null);
 
             while(data_types_list_index < (uint8)ARRAYSIZE(Datatypes))
@@ -100,39 +86,32 @@ HWND CreateMemoryScannerWindow(void)
             }
 
             EnableWindow(Scan, false);
+            EnableWindow(Value, false);
             EnableWindow(NewScan, false);
-            EnableWindow(ChangeValue, false);
+            EnableWindow(ListView, false);
             EnableWindow(DataSize, false);
             EnableWindow(SearchCondition, false);
-            EnableWindow(ListView, false);
-            EnableWindow(Value, false);
 
             SendMessageA(ListView, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
-            SendMessageA(ChangeValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(ChoosePid, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(NewScan, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(Scan, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(DataSizeLabel, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
-            SendMessageA(ValueLabel, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(DataSize, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
-            SendMessageA(Pid, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(Value, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(SearchCondition, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(SearchConditionLabel, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
 
-            UpdateLayoutForDpi(MemoryScannerWindow, CW_USEDEFAULT, CW_USEDEFAULT, 625, 405);
-            UpdateLayoutForDpi(ListView, 10, 10, 598, 225);
-            UpdateLayoutForDpi(SearchCondition, 150, 245, 125, 200);
-            UpdateLayoutForDpi(SearchConditionLabel, 10, 245, 100, 25);
-            UpdateLayoutForDpi(ValueLabel, 310, 250, 100, 25);
-            UpdateLayoutForDpi(Value, 400, 247, 100, 20);
-            UpdateLayoutForDpi(ChangeValue, 510, 245, 100, 25);
-            UpdateLayoutForDpi(NewScan, 510, 275, 100, 25);
-            UpdateLayoutForDpi(Pid, 10, 280, 150, 25);
-            UpdateLayoutForDpi(ChoosePid, 175, 275, 100, 25);
-            UpdateLayoutForDpi(DataSizeLabel, 310, 280, 100, 25);
-            UpdateLayoutForDpi(DataSize, 400, 275, 100, 200);
-            UpdateLayoutForDpi(Scan, 10, 315, 600, 50);
+            UpdateWindowForDpi(MemoryScannerWindow, CW_USEDEFAULT, CW_USEDEFAULT, 625, 405);
+            UpdateWindowForDpi(ChoosePid, 10, 244, 100, 25);
+            UpdateWindowForDpi(ListView, 10, 10, 598, 225);
+            UpdateWindowForDpi(SearchCondition, 75, 275, 135, 20);
+            UpdateWindowForDpi(SearchConditionLabel, 10, 276, 54, 25);
+            UpdateWindowForDpi(Value, 120, 245, 490, 23);
+            UpdateWindowForDpi(NewScan, 400, 274, 210, 25);
+            UpdateWindowForDpi(DataSizeLabel, 220, 276, 100, 25);
+            UpdateWindowForDpi(DataSize, 255, 275, 135, 20);
+            UpdateWindowForDpi(Scan, 10, 305, 600, 60);
 
             address_column.cx = MulDiv(298, ScreenDPI, 96); 
             value_column.cx = MulDiv(298, ScreenDPI, 96);

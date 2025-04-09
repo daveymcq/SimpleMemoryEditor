@@ -9,9 +9,10 @@ void ProcessListboxChangeEvent(void)
 
     if(IndexOfSelectedProcess > -1)
     {
-        int8 selected_process[256] = { 0 };
+        int8 selected_process[256];
 
-        CopyString(selected_process, Pids[IndexOfSelectedProcess], sizeof(selected_process) - 1);
+        ZeroMemory(&selected_process, sizeof(selected_process));
+        CopyString(selected_process, Processes[IndexOfSelectedProcess], sizeof(selected_process) - 1);
 
         if(StringLength(selected_process))
         {
@@ -31,25 +32,17 @@ void ProcessSelectProcessButtonEvent(void)
 {
     if(IndexOfSelectedProcess > -1)
     {
-        int8 selected_process[256];
         int8 pid[256];
-
         HANDLE process;
         uint32 process_id;
+        int8 selected_process[256];
 
-        CopyString(selected_process, Pids[IndexOfSelectedProcess], sizeof(selected_process) - 1);
-
-        if(StringLength(selected_process))
-        {
-            CopyString(pid, Pids[IndexOfSelectedProcess], sizeof(pid) - 1);
-            CopyString(SelectedPid, pid, sizeof(SelectedPid) - 1);
-            SendMessage(Pid, WM_SETTEXT, 0, (LPARAM)Processes[IndexOfSelectedProcess]);
-        }
-
-        else
-        {
-            ResetScan(Scanner, true, true);
-        }
+        ZeroMemory(&pid, sizeof(pid));
+        ZeroMemory(&selected_process, sizeof(selected_process));
+        
+        CopyString(pid, Pids[IndexOfSelectedProcess], sizeof(pid) - 1);
+        CopyString(SelectedPid, Pids[IndexOfSelectedProcess], sizeof(SelectedPid) - 1);
+        CopyString(selected_process, Processes[IndexOfSelectedProcess], sizeof(selected_process) - 1);
 
         process_id = (uint32)StringToInteger(pid, FMT_INT_DECIMAL);
         process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE, false, process_id);
@@ -61,6 +54,7 @@ void ProcessSelectProcessButtonEvent(void)
 
             if(selection_id > -1) 
             {
+                ZeroMemory(data_size, sizeof(data_size));
                 CopyString(data_size, (string)DataSizes[selection_id], sizeof(data_size) - 1);
             }
 
@@ -90,13 +84,23 @@ void ProcessSelectProcessButtonEvent(void)
 
                 MonitorSelectedProcessThread = CreateThread(null, null, (LPTHREAD_START_ROUTINE)MonitorSelectedProcess, null, null, null);
             }
-        
-            CloseHandle(process);
-            EnableWindow(Scan, true);
-            EnableWindow(DataSize, true);
+
+            if(StringLength(selected_process))
+            {          
+                SetWindowText(MemoryScannerWindow, Processes[IndexOfSelectedProcess]);
+            }
+
+            else
+            {
+                ResetScan(Scanner, true, true);
+            }
+
             EnableWindow(SearchCondition, true);
-            EnableWindow(Value, true);
+            EnableWindow(DataSize, true);
             EnableWindow(NewScan, false);
+            EnableWindow(Value, true);
+            EnableWindow(Scan, true);
+            CloseHandle(process);
         }
 
         else
@@ -113,8 +117,8 @@ void ProcessSelectProcessButtonEvent(void)
         DestroyWindow(SelectPidWindow);
     }
 
-    EnableWindow(MemoryScannerWindow, true);
     SetForegroundWindow(MemoryScannerWindow);
+    EnableWindow(MemoryScannerWindow, true);
 }
 
 #endif

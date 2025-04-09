@@ -23,8 +23,6 @@ void HandleListViewLeftClickEvent(void)
 
         SendMessageA(Value, WM_SETTEXT, 0, (LPARAM)SelectedItemValue);
     }
-
-    (IsAddressFrozen(SelectedItemAddress)) ? EnableWindow(ChangeValue, false) : EnableWindow(ChangeValue, (SelectedItem > -1));
 }
 
 /* Runs when right mouse button is clicked inside ListView on MemoryScannerWindow. */
@@ -52,16 +50,16 @@ void HandleListViewRightClickEvent(HWND window)
 
             if(IsAddressFrozen(SelectedItemAddress))
             {
-                EnableWindow(ChangeValue, false);
-                InsertMenu(popup_menu, 0, MF_STRING, ID_THAW_VALUE, (string)"Thaw Value");
+                InsertMenu(popup_menu, 0, MF_STRING, ID_CHANGE_VALUE, (string)"Edit");
+                InsertMenu(popup_menu, 0, MF_STRING, ID_THAW_VALUE, (string)"Thaw");
             }
 
             else
             {
                 if(NumberOfAddressesFrozen < FREEZE_LIMIT)
                 {
-                    EnableWindow(ChangeValue, true);
-                    InsertMenu(popup_menu, 0, MF_STRING, ID_FREEZE_VALUE, (string)"Freeze Value");
+                    InsertMenu(popup_menu, 0, MF_STRING, ID_CHANGE_VALUE, (string)"Edit");
+                    InsertMenu(popup_menu, 0, MF_STRING, ID_FREEZE_VALUE, (string)"Freeze");
                 }
             }
 
@@ -95,9 +93,7 @@ void HandleFreezeValueButtonEvent(void)
                 }
 
                 ResumeThread(FreezeThread);
-            }
-
-            EnableWindow(ChangeValue, false);
+            }   
         }
     }
 }
@@ -136,41 +132,35 @@ void HandleThawValueButtonEvent(void)
 
                 ResumeThread(FreezeThread);
             }
-
-            EnableWindow(ChangeValue, true);
         }
     }
 }
 
 void HandleMainWindowCloseEvent(HWND window)
 {
-    if(Scanner)
+    if(ScanThread && TerminateThread(ScanThread, 0))
     {
-        FreeMemoryScanner(Scanner);
+        CloseHandle(ScanThread);
+    }
 
-        if(ArrayList)
-        {
-            FreeArrayList(ArrayList);
-            ArrayList = null;
-        }
-
-        if(ScanThread && TerminateThread(ScanThread, 0))
-        {
-            WaitForSingleObject(ScanThread, INFINITE);
-            CloseHandle(ScanThread);
-        }
-
-        if(FreezeThread && TerminateThread(FreezeThread, 0))
-        {
-            WaitForSingleObject(FreezeThread, INFINITE);
-            CloseHandle(FreezeThread);
-        }
+    if(FreezeThread && TerminateThread(FreezeThread, 0))
+    {
+        CloseHandle(FreezeThread);
     }
 
     if(MonitorSelectedProcessThread && TerminateThread(MonitorSelectedProcessThread, 0))
     {
-        WaitForSingleObject(MonitorSelectedProcessThread, INFINITE);
         CloseHandle(MonitorSelectedProcessThread);
+    }
+
+    if(ArrayList)
+    {
+        FreeArrayList(ArrayList);
+    }
+
+    if(Scanner)
+    {
+        FreeMemoryScanner(Scanner);
     }
 
     DestroyWindow(window);

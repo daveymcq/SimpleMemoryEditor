@@ -40,9 +40,9 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND window, UINT message, WPARAM wparam,
 
         case WM_DPICHANGED:
 
-            UpdateLayoutForDpi(ChangeValueWindow, CW_USEDEFAULT, CW_USEDEFAULT, 300, 75);
-            UpdateLayoutForDpi(ChangeValueWindowNewValue, 10, 10, 180, 25);
-            UpdateLayoutForDpi(ChangeValueWindowButton, 200, 10, 85, 25);
+            UpdateWindowForDpi(ChangeValueWindow, CW_USEDEFAULT, CW_USEDEFAULT, 300, 75);
+            UpdateWindowForDpi(ChangeValueWindowNewValue, 10, 10, 180, 25);
+            UpdateWindowForDpi(ChangeValueWindowButton, 200, 10, 85, 25);
 
             ShowWindow(MemoryScannerWindow, SW_HIDE);
             CenterWindow(ChangeValueWindow);

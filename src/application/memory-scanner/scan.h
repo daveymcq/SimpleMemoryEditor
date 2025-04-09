@@ -68,7 +68,6 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
     MemoryZero(FrozenValues, sizeof(FrozenValues));
 
     EnableWindow(Scan, !reset_pid);
-    EnableWindow(ChangeValue, false);
     EnableWindow(NewScan, false);
 
     SetDlgItemText(MemoryScannerWindow, ID_VALUE, 0);
@@ -88,12 +87,9 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
 
     if(reset_pid)
     {
-        string msg = (string)"*No Process Selected*";
-        SendMessageA(Pid, WM_SETTEXT, 0, (LPARAM)msg);
-
+        EnableWindow(SearchCondition, false);
         EnableWindow(ChoosePid, true);
         EnableWindow(DataSize, false);
-        EnableWindow(SearchCondition, false);
         EnableWindow(Value, false);
     }
 
@@ -117,6 +113,7 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
         CloseHandle(FreezeThread);
     }
 
+    SetWindowText(MemoryScannerWindow, "Simple Memory Editor");
     EnableWindow(ListView, false);
 }
 
@@ -432,14 +429,14 @@ SIZE_T GetMatchCountFromLastScan(MEMORY_BLOCK *mblock)
 DWORD WINAPI CreateNewScan(void)
 {
     static int8 pid[256];
-    static int8 data_size[256];
     static int8 val[256];
+    static int8 data_size[256];
     static int8 condition[256];
     static int8 status_message[256];
 
-    INTFMT search_number_format;
-    int32 selection_id;
     uint64 matches;
+    int32 selection_id;
+    INTFMT search_number_format;
 
     search_number_format = FMT_INT_DECIMAL;
     selection_id = (int32)SendMessageA(DataSize, CB_GETCURSEL, 0, 0);
@@ -459,7 +456,7 @@ DWORD WINAPI CreateNewScan(void)
         search_number_format = FMT_INT_HEXADECIMAL;
     }
 
-    if((IsNumeric(val)) && ((StringLength(pid) && StringLength(data_size) && StringLength(val)) && (!StringCompare(pid, (string)"*No Process Selected*", false))))
+    if((IsNumeric(val)) && ((StringLength(pid) && StringLength(data_size) && StringLength(val) && StringLength(data_size))))
     {
         Scanner = (Scanner) ? Scanner : CreateMemoryScanner((uint32)StringToInteger(pid, FMT_INT_DECIMAL), (uint16)StringToInteger(data_size, FMT_INT_DECIMAL)); 
 
@@ -480,7 +477,6 @@ DWORD WINAPI CreateNewScan(void)
                     SendMessageA(ListView, LVM_DELETEALLITEMS, 0, 0);
 
                     EnableWindow(SearchCondition, false);
-                    EnableWindow(ChangeValue, false);
                     EnableWindow(ChoosePid, false);
                     EnableWindow(DataSize, false);
                     EnableWindow(NewScan, false);

@@ -11,6 +11,7 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
 {
     LVCOLUMNA address_column;
     LVCOLUMNA value_column;
+    uint8 window_text[255];
     
     switch(message)
     {
@@ -91,42 +92,6 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
                     HandleListViewRightClickEvent(window);
                 }
             }
-
-        break;
-
-        case WM_DPICHANGED:
-
-            UpdateLayoutForDpi(MemoryScannerWindow, CW_USEDEFAULT, CW_USEDEFAULT, 625, 405);
-            UpdateLayoutForDpi(ListView, 10, 10, 598, 225);
-            UpdateLayoutForDpi(SearchCondition, 150, 245, 125, 200);
-            UpdateLayoutForDpi(SearchConditionLabel, 10, 245, 100, 25);
-            UpdateLayoutForDpi(ValueLabel, 310, 250, 100, 25);
-            UpdateLayoutForDpi(Value, 400, 247, 100, 20);
-            UpdateLayoutForDpi(ChangeValue, 510, 245, 100, 25);
-            UpdateLayoutForDpi(NewScan, 510, 275, 100, 25);
-            UpdateLayoutForDpi(Pid, 10, 280, 150, 25);
-            UpdateLayoutForDpi(ChoosePid, 175, 275, 100, 25);
-            UpdateLayoutForDpi(DataSizeLabel, 310, 280, 100, 25);
-            UpdateLayoutForDpi(DataSize, 400, 275, 100, 200);
-            UpdateLayoutForDpi(Scan, 10, 315, 600, 50);
-
-            address_column.cx = MulDiv(298, ScreenDPI, 96); 
-            value_column.cx = MulDiv(298, ScreenDPI, 96);
-
-            address_column.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
-            address_column.pszText = (string)"Address";
-            address_column.iSubItem = 0;
-
-            value_column.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
-            value_column.pszText = (string)"Value";
-            value_column.iSubItem = 1;
-
-            SendMessageA(ListView, LVM_INSERTCOLUMN, 0, (LPARAM)&address_column);
-            SendMessageA(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&value_column);
-            SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
-            SendMessageA(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-            
-            CenterWindow(MemoryScannerWindow);
 
         break;
 

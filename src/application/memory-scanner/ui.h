@@ -40,10 +40,10 @@ void CenterWindow(HWND window)
 
     MoveWindow(window, x, y, width, height, true);
 }
- 
+
 /* DPI scale the position and size of the controls */
 
-void UpdateLayoutForDpi(HWND window, DWORD x, DWORD y, DWORD width, DWORD height) 
+boolean UpdateWindowForDpi(HWND window, uint32 x, uint32 y, uint32 width, uint32 height) 
 { 
     typedef UINT (WINAPI *FP_GETDPIFORWINDOW)(HWND);
     FP_GETDPIFORWINDOW GetDpiForWindow = (FP_GETDPIFORWINDOW)GetProcAddress(GetModuleHandleA("user32"), "GetDpiForWindow");
@@ -60,8 +60,10 @@ void UpdateLayoutForDpi(HWND window, DWORD x, DWORD y, DWORD width, DWORD height
         width = MulDiv(width, ScreenDPI, 96); 
         height = MulDiv(height, ScreenDPI, 96); 
 
-        SetWindowPos(window, window, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE); 
+        return SetWindowPos(window, HWND_TOP, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE | SWP_ASYNCWINDOWPOS); 
     }
+
+    return true;
 } 
 
 #endif

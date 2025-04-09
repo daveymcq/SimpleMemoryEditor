@@ -18,7 +18,7 @@ HWND CreateChangeValueWindow(void)
         wc.hbrBackground    = GetSysColorBrush(COLOR_3DFACE);
         wc.hIcon            = LoadIconA(Instance, MAKEINTRESOURCEA(AppIcon));
         wc.hIconSm          = LoadIconA(Instance, MAKEINTRESOURCEA(AppIcon));
-        wc.style            = CS_HREDRAW | CS_VREDRAW;
+        wc.style            = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 
         UnregisterClassA(wc.lpszClassName, Instance);
 
@@ -26,8 +26,8 @@ HWND CreateChangeValueWindow(void)
         {
             ChangeValueWindow = CreateWindowExA(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, 
                                                 Title, WS_SYSMENU | WS_OVERLAPPED | WS_VISIBLE, 
-                                                CW_USEDEFAULT, CW_USEDEFAULT, 300, 75, 
-                                                null, null, Instance, null);
+                                                0, 0, 0, 0, null, null, 
+                                                Instance, null);
 
             if(ChangeValueWindow)
             {
@@ -36,26 +36,22 @@ HWND CreateChangeValueWindow(void)
                 ListView_GetItemText(ListView, SelectedItem, 1, value, sizeof(value) - 1);
 
                 ChangeValueWindowNewValue = CreateWindowA("edit", value, WS_VISIBLE | WS_CHILD | WS_BORDER, 
-                                                            10, 10, 180, 25, ChangeValueWindow, 
-                                                            (HMENU)ID_CHANGE_VALUE_WINDOW, 
-                                                            null, null);
+                                                           10, 10, 180, 25, ChangeValueWindow, 
+                                                           (HMENU)ID_CHANGE_VALUE_WINDOW, 
+                                                           null, null);
 
-                ChangeValueWindowButton = CreateWindowA("button", "Set Value", WS_VISIBLE | WS_CHILD, 
-                                                        200, 10, 85, 25, ChangeValueWindow, 
+                ChangeValueWindowButton = CreateWindowA("button", "Save", WS_VISIBLE | WS_CHILD, 0, 0, 0, 0, ChangeValueWindow, 
                                                         (HMENU)ID_CHANGE_VALUE_WINDOW_BUTTON, 
                                                         null, null);
 
                 SendMessageA(ChangeValueWindowNewValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
                 SendMessageA(ChangeValueWindowButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
-                SendMessageA(ChangeValueWindowNewValue, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
-                SendMessageA(ChangeValueWindowButton, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
-                
+
+                UpdateWindowForDpi(ChangeValueWindow, CW_USEDEFAULT, CW_USEDEFAULT, 300, 75);
+                UpdateWindowForDpi(ChangeValueWindowNewValue, 10, 10, 180, 25);
+                UpdateWindowForDpi(ChangeValueWindowButton, 200, 10, 85, 25);
+
                 EnableWindow(MemoryScannerWindow, false);
-
-                UpdateLayoutForDpi(ChangeValueWindow, CW_USEDEFAULT, CW_USEDEFAULT, 300, 75);
-                UpdateLayoutForDpi(ChangeValueWindowNewValue, 10, 10, 180, 25);
-                UpdateLayoutForDpi(ChangeValueWindowButton, 200, 10, 85, 25);
-
                 ShowWindow(MemoryScannerWindow, SW_HIDE);
                 CenterWindow(ChangeValueWindow);
 
@@ -66,6 +62,5 @@ HWND CreateChangeValueWindow(void)
 
     return null;
 }
-
 
 #endif
