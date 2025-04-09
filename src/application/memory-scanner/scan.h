@@ -71,7 +71,7 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
     EnableWindow(NewScan, false);
 
     SetDlgItemText(MemoryScannerWindow, ID_VALUE, 0);
-
+    SendMessageA(SearchCondition, CB_RESETCONTENT, 0, 0);
     SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
 
     ListView_DeleteAllItems(ListView);
@@ -602,7 +602,8 @@ DWORD WINAPI CreateNewScan(void)
                                                  FMT_INT_DECIMAL), " Matches found!");
 
                     return MessageBoxA(MemoryScannerWindow, 
-                                       status_message, Title, MB_OK);
+                                        status_message, 
+                                        Title, MB_OK);
                 }
             }
         }
