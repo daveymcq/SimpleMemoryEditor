@@ -66,6 +66,8 @@ static INITCOMMONCONTROLSEX CommonControls;
 #endif
 
 static real8 CurrentValue;
+
+static int32 SelectedItem;
 static int32 IndexOfSelectedProcess;
 
 static int8 SelectedPid[256];
@@ -82,7 +84,6 @@ static HANDLE FreezeThread;
 static HANDLE MonitorSelectedProcessThread;
 
 static uint32 ScreenDPI;
-static uint32 SelectedItem;
 static uint32 CurrentProcess;
 static uint32 ProcessCounter;
 static uint32 NumberOfProcesses;
