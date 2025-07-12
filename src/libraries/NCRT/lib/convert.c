@@ -2,106 +2,47 @@
 /* Converts up to an unsigned 64 bit integer to a string.
  Supports hexadecimal, decimal, and binary conversions. */
 
-string UnsignedIntegerToString(uint64 integer, string out_result, uint32 out_result_length, INTFMT base)
+string UnsignedIntegerToString(volatile uint64 integer, string out_result, uint32 out_result_length, INTFMT base)
 {
+    uint32 j, i = 0;
     static int8 result[65];
+    const int8 digits[] = "0123456789ABCDEF";
 
-    uint64 value;
-    string presult;
-    uint8 place_values;
-    uint8 exponent;
-    int8 data;
+    if(base < 2 || base > 16)
+        return null;
 
-    presult = result;
-    exponent = 1;
-    place_values = 0;
-
-    switch(base)
+    if(integer == 0) 
     {
-        case FMT_INT_BINARY:
-
-            do
-            {
-                value = (uint64)(integer / Power(base, exponent));
-                exponent++;
-                place_values++;
-
-            } while((value > 0) && (place_values < 64));
-
-            while(place_values)
-            {
-                value = (uint16)(((integer % Power(base, place_values)) - (integer % Power(base, place_values - 1))) / Power(base, place_values - 1));
-
-                data = (value | 0x30);
-
-                *presult = data;
-                presult++;
-                place_values--;
-            }
-
-        break;
-
-        case FMT_INT_DECIMAL:
-
-            do
-            {
-                value = (uint64)(integer / Power(base, exponent));
-                exponent++;
-                place_values++;
-
-            } while((value > 0) && (place_values < 20));
-
-            while(place_values)
-            {
-                value = (uint16)(((integer % Power(base, place_values)) - (integer % Power(base, place_values - 1))) / Power(base, place_values - 1));
-
-                data = (value | 0x30);
-
-                *presult = data;
-                presult++;
-                place_values--;
-            }
-
-        break;
-
-        case FMT_INT_HEXADECIMAL:
-
-            do
-            {
-                value = (uint64)(integer / Power(base, exponent));
-                exponent++;
-                place_values++;
-
-            } while((value > 0) && (place_values < 16));
-
-            while(place_values)
-            {
-                value = (uint16)(((integer % Power(base, place_values)) - (integer % Power(base, place_values - 1))) / Power(base, place_values - 1));
-
-                data = (value | 0x30);
-
-                if(value > 9)
-                {
-                    data += 7;
-                }
-
-                *presult = data;
-                presult++;
-                place_values--;
-            }
-
-        break;
+        result[i++] = '0';
+    } 
+    else 
+    {
+        while(integer && i < sizeof(result) - 1) 
+        {
+            volatile uint64 remainder = integer % base;         
+            result[i++] = digits[remainder];
+            integer = integer / base;    
+        }
     }
 
-    *presult = null;
+    result[i] = '\0';
 
-    if(out_result)
+    for(j = 0; j < i / 2; ++j) 
     {
-        MemoryCopy(out_result, result, out_result_length);
-        return (string)out_result;
+        int8 tmp = result[j];
+        result[j] = result[i - 1 - j];
+        result[i - 1 - j] = tmp;
     }
 
-    return (string)result;
+    if(out_result) 
+    {
+        uint32 max_copy = (i < out_result_length - 1) ? i : out_result_length - 1;
+        MemoryCopy(out_result, result, max_copy);
+        out_result[max_copy] = '\0';
+        return out_result;
+    }
+
+    return result;
 }
 
 /* Converts a signed 64 bit integer to a string.
@@ -146,35 +87,43 @@ string IntegerToString(int64 integer, string out_result, uint32 out_result_lengt
 
 string DoubleToString(real8 number, string out_result, uint32 out_result_length)
 {
-    static int8 result[83];
-
-    string presult = result;
     boolean negative = (number < 0);
-    int64 whole = (int64)number;
-    real8 fraction = (number - whole);
-    INTFMT format = FMT_INT_DECIMAL;
+    static int8 result[83];
+    int8 *presult = result;
+    uint64 whole = 0;
+    real8 w = number;
+    uint32 i;
 
-    IntegerToString(whole, presult, 20, format);
+    if(negative) 
+    {
+        *presult++ = '-';
+        number = -number;
+    }
 
+    while(w >= 1.0) 
+    {
+        whole++;
+        w -= 1.0;
+    }
+
+    UnsignedIntegerToString(whole, presult, 20, FMT_INT_DECIMAL);
     presult += StringLength(presult);
     *presult++ = '.';
-    fraction *= Power(10, 15);
 
-    if(negative)
-    {
-        fraction = -fraction;
-    }
+    number = number - (real8)whole;
+    number *= 1000000.0;
 
-    IntegerToString((int64)fraction, presult, 60, format);
+    UnsignedIntegerToString((uint64)number, presult, 60, FMT_INT_DECIMAL);
 
-    if(out_result)
+    if(out_result) 
     {
         MemoryCopy(out_result, result, out_result_length);
-        return (string)out_result;
+        return out_result;
     }
 
-    return (string)result;
+    return result;
 }
+
 
 /* Convert string to an unsigned 64 bit integer.
    Supports hexadecimal, decimal, and binary conversions. */

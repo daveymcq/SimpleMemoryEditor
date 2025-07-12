@@ -4,7 +4,7 @@
 /* Converts an unsigned 64 bit integer to a string.
  Supports hexadecimal, decimal, and binary conversions. */
 
-string UnsignedIntegerToString(uint64, string, uint32, INTFMT);
+string UnsignedIntegerToString(volatile uint64, string, uint32, INTFMT);
 
 /* Converts a signed 64 bit integer to a string.
    Supports hexadecimal, decimal, and binary conversions. */

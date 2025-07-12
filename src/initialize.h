@@ -89,13 +89,13 @@ static real8 CurrentValue;
 static int32 SelectedItem;
 static int32 IndexOfSelectedProcess;
 
-static int8 SelectedPid[256];
-static int8 SelectedItemValue[256]; 
-static int8 Pids[PROCESS_LIMIT][256];
-static int8 SelectedItemAddress[256];
-static int8 Processes[PROCESS_LIMIT][256];
-static int8 FrozenValues[FREEZE_LIMIT][256];
-static int8 FrozenAddresses[FREEZE_LIMIT][256];
+static int8 SelectedPid[32];
+static int8 SelectedItemValue[32]; 
+static int8 Pids[PROCESS_LIMIT][32];
+static int8 SelectedItemAddress[32];
+static int8 Processes[PROCESS_LIMIT][32];
+static int8 FrozenValues[FREEZE_LIMIT][32];
+static int8 FrozenAddresses[FREEZE_LIMIT][32];
 
 static HANDLE Mutex;
 static HANDLE ScanThread;
@@ -111,6 +111,7 @@ static uint32 NumberOfAddressesFrozen;
 
 static boolean ScanRunning;
 static boolean AddressFrozen;
+static boolean IsProcess32Bit;
 static boolean FirstScanNotRun;
 static boolean SelectedProcessOpen;
 

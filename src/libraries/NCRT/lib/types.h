@@ -175,6 +175,8 @@ typedef union _BYTE
         int64 __cdecl _allshr(int64 a, uint8 b) { return a >> b; }
         uint64 __cdecl _aullrem(uint64 a, uint64 b) { return a % b; }
         uint64 __cdecl _aulldiv(uint64 a, uint64 b) { return a / b; }
+        uint64 __cdecl __aullrem(uint64 a, uint64 b) { return a % b; }
+        uint64 __cdecl __aulldiv(uint64 a, uint64 b) { return a / b; }
     #elif defined(_M_X64)
         int32 _fltused = 0;
     #endif

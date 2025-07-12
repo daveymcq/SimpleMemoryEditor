@@ -29,9 +29,10 @@ DWORD WINAPI MonitorSelectedProcess(void)
 
 boolean GetProcessNameAndID(void)
 {
-    HANDLE snapshot, process;
     PROCESSENTRY32 pe;
+    HANDLE snapshot, process;
 
+    NumberOfProcesses = 0;
     snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
     if(snapshot != INVALID_HANDLE_VALUE)
@@ -71,26 +72,28 @@ boolean GetProcessNameAndID(void)
                         {
                             if(IsApplication32Bit)
                             {
-                                if(!IsProcess32Bit)
+                                if(!IsProcess32Bit) 
                                 {
+                                    CloseHandle(process);
                                     continue;
                                 }
                             }
                         }
                     }
                 }
+
+                if(NumberOfProcesses < PROCESS_LIMIT) 
+                {
+                    IntegerToString(pe.th32ProcessID, Pids[NumberOfProcesses], sizeof(Pids[NumberOfProcesses]) - 1, FMT_INT_DECIMAL);
+                    NumberOfProcesses++; 
+                }
                 
-                IntegerToString(pe.th32ProcessID, Pids[NumberOfProcesses], sizeof(Pids[NumberOfProcesses]) - 1, FMT_INT_DECIMAL);
-                NumberOfProcesses++; 
-               
                 CloseHandle(process);
             }
 
         } while(Process32Next(snapshot, &pe));
 
         ProcessCounter = NumberOfProcesses;
-        NumberOfProcesses = 0;
-
         CloseHandle(snapshot);
 
         return true;
