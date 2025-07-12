@@ -25,7 +25,7 @@ void AddItemToListView(string address, string value)
 
 /* Keep ListView control columns fixed. */
 
-DWORD WINAPI DisableListViewResize(void)
+void WINAPI DisableListViewResize(void)
 {
     while(ListView)
     {
@@ -33,7 +33,7 @@ DWORD WINAPI DisableListViewResize(void)
 
         for(column = 0; column < 2; column++)
         {
-            ListView_SetColumnWidth(ListView, column, MulDiv(298, ScreenDPI, 96));
+            SendMessage(ListView, LVM_SETCOLUMNWIDTH, (WPARAM)column, (LPARAM)MulDiv(298, ScreenDPI, 96));
         }
     }
 }
@@ -65,20 +65,14 @@ boolean UpdateWindowForDpi(HWND window, uint32 x, uint32 y, uint32 width, uint32
 
     if(GetDpiForWindow)
     {
-        RECT window_rect;
-        GetWindowRect(window, &window_rect);
-
-        ScreenDPI = GetDpiForWindow(window); 
-
         x = MulDiv(x, ScreenDPI, 96); 
         y = MulDiv(y, ScreenDPI, 96); 
+        ScreenDPI = GetDpiForWindow(window); 
         width = MulDiv(width, ScreenDPI, 96); 
         height = MulDiv(height, ScreenDPI, 96); 
-
-        return SetWindowPos(window, HWND_TOP, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE | SWP_ASYNCWINDOWPOS); 
     }
 
-    return true;
+    return SetWindowPos(window, HWND_TOP, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE | SWP_ASYNCWINDOWPOS);
 } 
 
 #endif

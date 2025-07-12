@@ -1,6 +1,17 @@
 #ifndef _INITIALIZE_H
 #define _INITIALIZE_H
 
+#pragma comment(linker,"\"/manifestdependency:type='win32' \
+name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
+processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
+#define WIN32_LEAN_AND_MEAN
+#define _WIN32_WINNT _WIN32_WINNT_WINXP
+
+#include <windows.h>
+#include <tlhelp32.h>
+#include <commctrl.h>
+
 #include "resources/icon.h"  
 #include "libraries/NCRT/ncrt.h"
 
@@ -32,6 +43,10 @@
     #define WM_DPICHANGED 0x02E0
 #endif
 
+#ifndef LVM_SETCOLUMNWIDTH
+    #define LVM_SETCOLUMNWIDTH 0x101E
+#endif
+
 #ifndef LVS_EX_DOUBLEBUFFER
     #define LVS_EX_DOUBLEBUFFER 0x00010000
 #endif
@@ -39,6 +54,8 @@
 #ifndef LVCFMT_FIXED_WIDTH
     #define LVCFMT_FIXED_WIDTH 0x100
 #endif
+
+
 
 static LRESULT CALLBACK MainWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK ChangeValueWindowProc(HWND, UINT, WPARAM, LPARAM);
@@ -148,6 +165,11 @@ static MEMORY_BLOCK *Scanner;
  ******************************************************************************************************************/
 
 /* GUI code import */
+
+#include "libraries/NCRT/lib/math.h"
+#include "libraries/NCRT/lib/memory.h"
+#include "libraries/NCRT/lib/strings.h"
+#include "libraries/NCRT/lib/convert.h"
 
 #include "application/memory-scanner/io.h"
 #include "application/memory-scanner/ui.h"
