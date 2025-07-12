@@ -31,7 +31,7 @@ if [%1] == [] (
     rc "..\src\resources\icon.rc"
     cl "..\src\main.c" "..\src\resources\icon.res" /Zl /O1 /MT /link /opt:ref /opt:icf /merge:.rdata=.text /entry:mainCRTStartup /subsystem:windows,5.02 /out:"..\bin\x64\Simple Memory Editor (64-bit).exe" libcmt.lib comctl32.lib gdi32.lib user32.lib kernel32.lib 
     del "..\src\resources\*.res" 2>NUL
-    del "..\bin\x86\*.manifest" 2>NUL
+    del "..\bin\x64\*.manifest" 2>NUL
     del "*.obj" 2>NUL
     
     echo .....................................................................................................
