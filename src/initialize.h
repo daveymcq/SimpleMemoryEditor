@@ -55,8 +55,6 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
     #define LVCFMT_FIXED_WIDTH 0x100
 #endif
 
-
-
 static LRESULT CALLBACK MainWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK ChangeValueWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK SelectProcessWindowProc(HWND, UINT, WPARAM, LPARAM);
