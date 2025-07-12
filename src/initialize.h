@@ -5,6 +5,7 @@
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
+#define NOCRT_CRT_STUBS
 #define WIN32_LEAN_AND_MEAN
 #define _WIN32_WINNT _WIN32_WINNT_WINXP
 
@@ -60,8 +61,8 @@ static LRESULT CALLBACK ChangeValueWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK SelectProcessWindowProc(HWND, UINT, WPARAM, LPARAM);
 
 static HWND ListView, Scan, Value, ChoosePid, DataSize, 
-            SearchCondition, NewScan, SelectPidWindow, ProcessSelection, ChooseProcess, 
-            MemoryScannerWindow, ChangeValueWindow, ChangeValueWindowNewValue, ChangeValueWindowButton;
+SearchCondition, NewScan, SelectPidWindow, ProcessSelection, ChooseProcess, 
+MemoryScannerWindow, ChangeValueWindow, ChangeValueWindowNewValue, ChangeValueWindowButton;
 
 static string Title = (string)"Simple Memory Editor";
 static string SearchConditions[] = { (string)"Equals", (string)"Increased", (string)"Decreased" };

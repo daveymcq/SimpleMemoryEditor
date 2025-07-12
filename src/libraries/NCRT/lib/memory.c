@@ -31,6 +31,12 @@ void *MemorySet(void *address, int8 value, uint64 length)
     return address;
 }
 
+#pragma function(memset)
+void *memset(void *address, int32 value, size_t length)
+{
+    return MemorySet(address, value, length);
+}
+
 /* Rewrite of libc memcpy(). */
 
 void *MemoryCopy(void *dest, void *src, uint64 length)
