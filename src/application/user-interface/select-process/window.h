@@ -24,7 +24,7 @@ HWND CreateSelectProcessWindow(void)
     {
         SelectPidWindow = CreateWindowExA(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, Title, 
                                           WS_SYSMENU | WS_OVERLAPPED | WS_VISIBLE, 
-                                          0, 0, 0, 0, null, null, 
+                                          10, 10, 10, 10, null, null, 
                                           Instance, null);
 
         if(SelectPidWindow)
@@ -33,12 +33,12 @@ HWND CreateSelectProcessWindow(void)
 
             ProcessSelection = CreateWindowExA(WS_EX_CLIENTEDGE, WC_LISTBOX, null, WS_VSCROLL | LBS_NOTIFY | 
                                                LBS_DISABLENOSCROLL | WS_VISIBLE | WS_CHILD, 
-                                               0, 0, 0, 0, SelectPidWindow, 
+                                               10, 10, 10, 10, SelectPidWindow, 
                                                (HMENU)ID_PROCESSES, 
                                                Instance, null);
 
             ChooseProcess = CreateWindowA("button", "Select Process", WS_CHILD | WS_VISIBLE, 
-                                          0, 0, 0, 0, SelectPidWindow, 
+                                          10, 10, 10, 10, SelectPidWindow, 
                                           (HMENU)ID_CHOOSE_PROCESS, 
                                           Instance, null);
 

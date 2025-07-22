@@ -26,7 +26,7 @@ HWND CreateChangeValueWindow(void)
         {
             ChangeValueWindow = CreateWindowExA(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, wc.lpszClassName, 
                                                 Title, WS_SYSMENU | WS_OVERLAPPED | WS_VISIBLE, 
-                                                0, 0, 0, 0, null, null, 
+                                                10, 10, 10, 10, null, null, 
                                                 Instance, null);
 
             if(ChangeValueWindow)

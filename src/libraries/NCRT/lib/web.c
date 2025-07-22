@@ -1,6 +1,6 @@
-/* Encode url */
+/* Encode URL */
 
-string urlencode(string url)
+string urlencode(string URL)
 {
     static int8 encoded_url[2048];
 
@@ -9,7 +9,7 @@ string urlencode(string url)
 
     index = 0;
 
-    if(StringLength(url) >= sizeof(encoded_url))
+    if(StringLength(URL) >= sizeof(encoded_url))
     {
         encoded_url[index] = null;
         return (string)encoded_url;
@@ -17,20 +17,20 @@ string urlencode(string url)
 
     MemoryZero(encoded_url, sizeof(encoded_url));
     
-    for(i = 0; i < StringLength(url); i++) 
+    for(i = 0; i < StringLength(URL); i++) 
     {
-        if(('a' <= url[i] && url[i] <= 'z')
-            || ('A' <= url[i] && url[i] <= 'Z')
-            || ('0' <= url[i] && url[i] <= '9')) 
+        if(('a' <= URL[i] && URL[i] <= 'z')
+            || ('A' <= URL[i] && URL[i] <= 'Z')
+            || ('0' <= URL[i] && URL[i] <= '9')) 
         {
-            encoded_url[index++] = url[i];
+            encoded_url[index++] = URL[i];
         } 
 
         else 
         {
             encoded_url[index++] = '%';
-            encoded_url[index++] = hex_lookup_table[url[i] >> 0x4];
-            encoded_url[index++] = hex_lookup_table[url[i] & 0xF];
+            encoded_url[index++] = hex_lookup_table[URL[i] >> 0x4];
+            encoded_url[index++] = hex_lookup_table[URL[i] & 0xF];
         }
     }
 
@@ -38,16 +38,16 @@ string urlencode(string url)
     return (string)encoded_url;
 }
 
-/* Decode url */
+/* Decode URL */
 
-string urldecode(string url)
+string urldecode(string URL)
 {
     static int8 encoded_url[2048];
 
-    string purl = url;
+    string pURL = URL;
     uint32 index = 0;
 
-    if(StringLength(url) >= sizeof(encoded_url))
+    if(StringLength(URL) >= sizeof(encoded_url))
     {
         encoded_url[index] = null;
         return (string)encoded_url;
@@ -55,24 +55,24 @@ string urldecode(string url)
 
     MemoryZero(encoded_url, sizeof(encoded_url));
 
-    while(*purl)
+    while(*pURL)
     {
-       if(*purl == '%')
+       if(*pURL == '%')
        {
            uint8 code[3];
 
-           code[0] = *(purl + 1);
-           code[1] = *(purl + 2);
+           code[0] = *(pURL + 1);
+           code[1] = *(pURL + 2);
            code[2] = null;
 
            encoded_url[index++] = (uint8)StringToInteger((string)code, FMT_INT_HEXADECIMAL);
 
-           purl += 3;
+           pURL += 3;
 
            continue;
        }
        
-       encoded_url[index++] = *purl++;
+       encoded_url[index++] = *pURL++;
     }
 
     encoded_url[index] = null;

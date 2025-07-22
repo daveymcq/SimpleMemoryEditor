@@ -1,7 +1,7 @@
 
 /* Zero out a memory location. */
 
-uint64 MemoryZero(void *address, uint64 length)
+uint64 MemoryZero(PVOID address, uint64 length)
 {
     uint32 bytes_zeroed = 0;
     int8 *paddress = (int8 *)address;
@@ -17,7 +17,7 @@ uint64 MemoryZero(void *address, uint64 length)
 
 /* Rewrite of libc memset(). */
 
-void *MemorySet(void *address, int8 value, uint64 length)
+PVOID MemorySet(PVOID address, int8 value, uint64 length)
 {
     uint32 bytes_set = 0;
     int8 *paddress = (int8 *)address;
@@ -33,7 +33,7 @@ void *MemorySet(void *address, int8 value, uint64 length)
 
 /* Rewrite of libc memcpy(). */
 
-void *MemoryCopy(void *dest, void *src, uint64 length)
+PVOID MemoryCopy(PVOID dest, PVOID src, uint64 length)
 {
     uint32 bytes_copied = 0;
     int8 *pdest = (int8 *)dest;
@@ -82,7 +82,7 @@ BYTE BitsToByte(BIT *bits)
     return result;
 }
 
-boolean CheckBit(void *address, uint8 bit)
+boolean CheckBit(PVOID address, uint8 bit)
 {
     uint8 *paddress = (uint8 *)address;
 
@@ -94,7 +94,7 @@ boolean CheckBit(void *address, uint8 bit)
     return false;
 }
 
-boolean SetBit(void *address, uint8 bit)
+boolean SetBit(PVOID address, uint8 bit)
 {
     uint8 *paddress = (uint8 *)address;
 
@@ -107,7 +107,7 @@ boolean SetBit(void *address, uint8 bit)
     return false;
 }
 
-boolean ClearBit(void *address, uint8 bit)
+boolean ClearBit(PVOID address, uint8 bit)
 {
     uint8 *paddress = (uint8 *)address;
 
@@ -120,7 +120,7 @@ boolean ClearBit(void *address, uint8 bit)
     return false;
 }
 
-boolean ToggleBit(void *address, uint8 bit)
+boolean ToggleBit(PVOID address, uint8 bit)
 {
     uint8 *paddress = (uint8 *)address;
 

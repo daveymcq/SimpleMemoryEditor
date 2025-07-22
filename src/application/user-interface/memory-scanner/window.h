@@ -40,33 +40,33 @@ HWND CreateMemoryScannerWindow(void)
 
             ListView = CreateWindowExA(WS_EX_CLIENTEDGE, WC_LISTVIEW, null, 
                                        WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_SINGLESEL | LVS_NOSCROLL,
-                                       0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_LISTVIEW, Instance, null);
+                                       CW_USEDEFAULT, CW_USEDEFAULT, 625, 405, MemoryScannerWindow, (HMENU)ID_LISTVIEW, Instance, null);
 
             SearchCondition = CreateWindowA("combobox", null, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 
-                                            0, 0, 0, 0, MemoryScannerWindow, 
+                                            10, 275, 200, 20, MemoryScannerWindow, 
                                             (HMENU)ID_SEARCH_CONDITION, 
                                             Instance, null);
 
             Value = CreateWindowA("edit", null, WS_VISIBLE | WS_CHILD | WS_BORDER, 
-                                  0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_VALUE, 
+                                  220, 245, 390, 23, MemoryScannerWindow, (HMENU)ID_VALUE, 
                                   Instance, null);
 
             NewScan = CreateWindowA("button", "Reset Scan", WS_VISIBLE | WS_CHILD, 
-                                    0, 0, 0, 0, MemoryScannerWindow, 
+                                    400, 274, 210, 25, MemoryScannerWindow, 
                                     (HMENU)ID_NEW_SCAN, 
                                     Instance, null);
 
             ChoosePid = CreateWindowA("button", "Select Process", WS_VISIBLE | WS_CHILD, 
-                                      0, 0, 0, 0, MemoryScannerWindow, 
+                                      10, 244, 200, 25, MemoryScannerWindow, 
                                       (HMENU)ID_SELECT_PROCESS, 
                                       Instance, null);
 
             DataSize = CreateWindowA("combobox", null, WS_VISIBLE | WS_CHILD | WS_BORDER | CBS_DROPDOWNLIST, 
-                                     0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_VALUE, 
+                                     220, 275, 170, 20, MemoryScannerWindow, (HMENU)ID_VALUE, 
                                      Instance, null);
 
             Scan = CreateWindowA("button", "Scan Memory", WS_VISIBLE | WS_CHILD, 
-                                 0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_SCAN, 
+                                 10, 305, 600, 60, MemoryScannerWindow, (HMENU)ID_SCAN, 
                                  Instance, null);
 
             SendMessageA(DataSize, CB_RESETCONTENT, 0, 0);
