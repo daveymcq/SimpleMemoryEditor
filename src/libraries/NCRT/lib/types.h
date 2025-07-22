@@ -163,6 +163,7 @@ typedef union _BYTE
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #ifdef NOCRT_CRT_STUBS
     #if defined(_M_IX86)
         int32 _fltused = 0;
@@ -183,6 +184,8 @@ typedef union _BYTE
         int32 _fltused = 0;
     #endif
 #endif
+=======
+>>>>>>> parent of 45d2056 (Fix broken backwards compatibility)
 =======
 >>>>>>> parent of 45d2056 (Fix broken backwards compatibility)
 =======
