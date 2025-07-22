@@ -6,7 +6,7 @@
 
 /* Entry point. */
 
-void WINAPI Main(int32 argc, string argv[])
+void main(int32 argc, string argv[])
 {
     if(Initialize())
     {
