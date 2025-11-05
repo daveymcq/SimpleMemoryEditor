@@ -11,8 +11,6 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
 {
     LVCOLUMNA address_column;
     LVCOLUMNA value_column;
-    uint8 window_text[255];
-    RECT window_rect;
     PAINTSTRUCT ps;
     HDC hdc;
 
@@ -29,17 +27,13 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
             PostQuitMessage(0);
 
         break;
-
+        
+        case WM_SIZE:
+        case WM_PAINT:
         case WM_CREATE:
 
-            GetWindowRect(window, &window_rect);
-            InvalidateRect(window, &window_rect, true);
-            
-        break;
-
-        case WM_PAINT:
-
             hdc = BeginPaint(window, &ps);
+            UpdateWindow(window);
             EndPaint(window, &ps);
 
         break;

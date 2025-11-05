@@ -15,7 +15,7 @@ def list_vs_installations():
 
         for index, vs in enumerate(vs_installations):
 
-            print(f'{index + 1}: "{vs}"')
+            print("{}: {}".format(index + 1, vs))
     else:
 
         print('\r\nVisual Studio is not installed on this machine.\n')
@@ -55,8 +55,8 @@ def vs_compile(vcvarsall = None):
             
             for vs in vs_installations:
 
-                cmd = f'call build\\vs\\build.bat "{vs}"'
-                print(f'\r\nUsing "{vs}" \r\n')
+                cmd = "call build\\vs\\build.bat \"{}\"".format(vs)
+                print("\r\nUsing \"{}\" \r\n".format(vs))
 
                 if subprocess.getoutput(cmd) != 'ERROR':
 
@@ -67,9 +67,9 @@ def vs_compile(vcvarsall = None):
         else:
 
             if os.path.isfile(vcvarsall):
-
-                cmd = f'call build\\vs\\build.bat "{vcvarsall}"'
-                print(f'\r\nUsing "{vcvarsall}" \r\n')
+                
+                cmd = "call build\\vs\\build.bat \"{}\"".format(vcvarsall)
+                print("\r\nUsing \"{}\" \r\n".format(vcvarsall))
 
                 if subprocess.getoutput(cmd) != 'ERROR':
 

@@ -110,8 +110,6 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
         WaitForSingleObject(FreezeThread, INFINITE);
         CloseHandle(FreezeThread);
     }
-
-    EnableWindow(ListView, false);
 }
 
 /* A thread to monitor addresses for change. */

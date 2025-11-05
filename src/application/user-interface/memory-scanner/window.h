@@ -32,7 +32,7 @@ HWND CreateMemoryScannerWindow(void)
             NONCLIENTMETRICSA metrics;
             LVCOLUMNA address_column;
             LVCOLUMNA value_column;
-            
+             
             metrics.cbSize = sizeof(metrics);
             SystemParametersInfoA(SPI_GETNONCLIENTMETRICS, sizeof(metrics), &metrics, 0);
 
@@ -40,33 +40,33 @@ HWND CreateMemoryScannerWindow(void)
 
             ListView = CreateWindowExA(WS_EX_CLIENTEDGE, WC_LISTVIEW, null, 
                                        WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_SINGLESEL | LVS_NOSCROLL,
-                                       CW_USEDEFAULT, CW_USEDEFAULT, 625, 405, MemoryScannerWindow, (HMENU)ID_LISTVIEW, Instance, null);
+                                       CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, MemoryScannerWindow, (HMENU)ID_LISTVIEW, Instance, null);
 
             SearchCondition = CreateWindowA("combobox", null, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST, 
-                                            10, 275, 200, 20, MemoryScannerWindow, 
+                                            0, 0, 0, 0, MemoryScannerWindow, 
                                             (HMENU)ID_SEARCH_CONDITION, 
                                             Instance, null);
 
             Value = CreateWindowA("edit", null, WS_VISIBLE | WS_CHILD | WS_BORDER, 
-                                  220, 245, 390, 23, MemoryScannerWindow, (HMENU)ID_VALUE, 
+                                  0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_VALUE, 
                                   Instance, null);
 
             NewScan = CreateWindowA("button", "Reset Scan", WS_VISIBLE | WS_CHILD, 
-                                    400, 274, 210, 25, MemoryScannerWindow, 
+                                    0, 0, 0, 0, MemoryScannerWindow, 
                                     (HMENU)ID_NEW_SCAN, 
                                     Instance, null);
 
             ChoosePid = CreateWindowA("button", "Select Process", WS_VISIBLE | WS_CHILD, 
-                                      10, 244, 200, 25, MemoryScannerWindow, 
+                                      0, 0, 0, 0, MemoryScannerWindow, 
                                       (HMENU)ID_SELECT_PROCESS, 
                                       Instance, null);
 
             DataSize = CreateWindowA("combobox", null, WS_VISIBLE | WS_CHILD | WS_BORDER | CBS_DROPDOWNLIST, 
-                                     220, 275, 170, 20, MemoryScannerWindow, (HMENU)ID_VALUE, 
+                                     0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_VALUE, 
                                      Instance, null);
 
             Scan = CreateWindowA("button", "Scan Memory", WS_VISIBLE | WS_CHILD, 
-                                 10, 305, 600, 60, MemoryScannerWindow, (HMENU)ID_SCAN, 
+                                 0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_SCAN, 
                                  Instance, null);
 
             SendMessageA(DataSize, CB_RESETCONTENT, 0, 0);
@@ -75,13 +75,6 @@ HWND CreateMemoryScannerWindow(void)
             {   
                 SendMessageA(DataSize, CB_ADDSTRING, 0, (LPARAM)DataTypes[data_types_list_index]);
             }
-
-            EnableWindow(Scan, false);
-            EnableWindow(Value, false);
-            EnableWindow(NewScan, false);
-            EnableWindow(ListView, false);
-            EnableWindow(DataSize, false);
-            EnableWindow(SearchCondition, false);
 
             SendMessageA(ListView, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(ChoosePid, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
@@ -95,7 +88,7 @@ HWND CreateMemoryScannerWindow(void)
             UpdateWindowForDpi(ChoosePid, 10, 244, 200, 25);
             UpdateWindowForDpi(ListView, 10, 10, 600, 225);
             UpdateWindowForDpi(SearchCondition, 10, 275, 200, 20);
-            UpdateWindowForDpi(Value, 220, 245, 390, 23);
+            UpdateWindowForDpi(Value, 220, 245, 390, 22);
             UpdateWindowForDpi(NewScan, 400, 274, 210, 25);
             UpdateWindowForDpi(DataSize, 220, 275, 170, 20);
             UpdateWindowForDpi(Scan, 10, 305, 600, 60);
@@ -116,10 +109,6 @@ HWND CreateMemoryScannerWindow(void)
 
             if(DisableListViewResizeThread)
             {
-                UpdateWindow(MemoryScannerWindow);
-                CenterWindow(MemoryScannerWindow);
-                ShowWindow(MemoryScannerWindow, SW_SHOW);
-
                 SendMessageA(ListView, LVM_INSERTCOLUMN, 0, (LPARAM)&address_column);
                 SendMessageA(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&value_column);
                 SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
@@ -127,7 +116,18 @@ HWND CreateMemoryScannerWindow(void)
 
                 SendMessageA(DataSize, CB_SETCURSEL, (WPARAM)2, 0);
                 SendMessageA(SearchCondition, CB_SETCURSEL, (WPARAM)0, 0);
-
+                
+                EnableWindow(Scan, false);
+                EnableWindow(Value, false);
+                EnableWindow(NewScan, false);
+                EnableWindow(DataSize, false);
+                EnableWindow(SearchCondition, false);
+                
+                ShowWindow(MemoryScannerWindow, SW_SHOW);
+                SetForegroundWindow(MemoryScannerWindow);
+                CenterWindow(MemoryScannerWindow);
+                UpdateWindow(MemoryScannerWindow);
+                
                 return MemoryScannerWindow;
             }
         }

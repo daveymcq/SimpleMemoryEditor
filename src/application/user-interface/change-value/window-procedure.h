@@ -25,6 +25,7 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND window, UINT message, WPARAM wparam,
             EnableWindow(MemoryScannerWindow, true);
             ShowWindow(MemoryScannerWindow, SW_SHOW);
             CenterWindow(MemoryScannerWindow);
+            UpdateWindow(MemoryScannerWindow);
             SetForegroundWindow(MemoryScannerWindow);
 
         break;

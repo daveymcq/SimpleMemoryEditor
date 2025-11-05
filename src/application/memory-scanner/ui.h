@@ -34,6 +34,8 @@ void WINAPI DisableListViewResize(void)
         for(column = 0; column < 2; column++)
         {
             SendMessage(ListView, LVM_SETCOLUMNWIDTH, (WPARAM)column, (LPARAM)MulDiv(298, ScreenDPI, 96));
+            UpdateWindow(ListView);
+            UpdateWindow(Value);
         }
     }
 }
@@ -54,6 +56,7 @@ void CenterWindow(HWND window)
     y =  ((GetSystemMetrics(SM_CYSCREEN) - height) / 2);
 
     MoveWindow(window, x, y, width, height, true);
+    UpdateWindow(window);
 }
 
 /* DPI scale the position and size of the controls */
@@ -71,7 +74,7 @@ boolean UpdateWindowForDpi(HWND window, uint32 x, uint32 y, uint32 width, uint32
         width = MulDiv(width, ScreenDPI, 96); 
         height = MulDiv(height, ScreenDPI, 96); 
     }
-
+    
     return SetWindowPos(window, HWND_TOP, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE | SWP_ASYNCWINDOWPOS);
 } 
 
