@@ -296,6 +296,42 @@ uint64 GetBlockCount(MEMORY_BLOCK *mblock)
     return count;
 }
 
+/* Cleans up the memory allocated by CreateMemoryScanner(). */
+
+void FreeMemoryScanner(MEMORY_BLOCK *mblock)
+{
+    MEMORY_BLOCK *mb = (mblock) ? mblock : ArrayListGet(ArrayList, 0);
+
+    while(null != mb)
+    {
+        if(mb->process)
+        {
+            CloseHandle(mb->process);
+            mb->process = null;
+        }
+
+        if(mb->buffer)
+        {
+            HeapFree(GetProcessHeap(), 0, mb->buffer);
+            mb->buffer = null;
+        }
+
+        if(mb->values)
+        {
+            HeapFree(GetProcessHeap(), 0, mb->values);
+            mb->values = null;
+        }
+
+        if(mb->match_flag)
+        {
+            HeapFree(GetProcessHeap(), 0, mb->match_flag);
+            mb->match_flag = null;
+        }
+
+        mb = ArrayListGet(ArrayList, mb->size + 1);
+    }
+}
+
 /* Filters memory information aquired by CreateMemoryScanner() and subsequent calls to this function. */
 
 void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Type, real8 value)
@@ -455,6 +491,83 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Ty
         mb = ArrayListGet(ArrayList, ++i); 
         ReleaseMutex(Mutex);
     }
+}
+
+/* Add scan results to memory scanner window. */
+
+void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 display_limit)
+{
+    SIZE_T i = 0;
+    uint32 limit = 0;
+    real8 total_scanned = 0;
+    MEMORY_BLOCK *mb = mblock;
+
+    EnableWindow(ListView, false); 
+    WaitForSingleObject(Mutex, INFINITE);
+
+    while(null != mb)
+    {
+        uint64 offset;
+        uint64 total_bytes = GetBlockCount(mb);
+
+        for(offset = 0; offset < mb->size; offset += mb->data_size)
+        {
+            if(AddressNotDiscarded(mb, offset))
+            {
+                int8 val[256];
+                int8 address[256];
+
+                EnableWindow(ListView, false);
+                IntegerToString((uint64)(uintptr_t)mb->address + offset, address, sizeof(address) - 1, FMT_INT_HEXADECIMAL);
+
+                if(Type == TYPE_INTEGER)
+                {
+                    int64 value = mb->values[offset];
+
+                    if(display_format == FMT_INT_DECIMAL)
+                    {
+                        IntegerToString(value, val, sizeof(val) - 1, display_format);
+                    }
+
+                    else if(display_format == FMT_INT_HEXADECIMAL)
+                    {
+                        val[0] = '0';
+                        val[1] = 'x';
+
+                        IntegerToString(value, val + 2, sizeof(val) - 3, display_format);
+                    }
+                }
+
+                else if(Type == TYPE_FLOAT)
+                {
+                    real4 value = (real4)mb->values[offset];
+                    DoubleToString(value, val, sizeof(val) - 1);
+                }
+
+                else if(Type == TYPE_DOUBLE)
+                {
+                    real8 value = mb->values[offset];
+                    DoubleToString(value, val, sizeof(val) - 1);
+                }
+
+                if(limit <= display_limit)
+                {
+                    AddItemToListView(address, val);
+                    ++limit;
+                }
+            }
+
+            total_scanned += mb->data_size;   
+        }
+
+        Progress = ((real8)total_scanned / (real8)total_bytes) * 100.0;
+        SendMessageA(ProgressBar, PBM_SETPOS, (WPARAM)Progress, 0);
+        mb = ArrayListGet(ArrayList, ++i); 
+    }
+
+    SendMessageA(ProgressBar, PBM_SETPOS, 100, 0);
+    EnableWindow(ListView, true); 
+    ReleaseMutex(Mutex);
 }
 
 /* The function function responsible for performing the scan. */
@@ -647,119 +760,6 @@ DWORD WINAPI CreateNewScan(void)
     }
 
     return EXIT_FAILURE;
-}
-
-/* Cleans up the memory allocated by CreateMemoryScanner(). */
-
-void FreeMemoryScanner(MEMORY_BLOCK *mblock)
-{
-    MEMORY_BLOCK *mb = (mblock) ? mblock : ArrayListGet(ArrayList, 0);
-
-    while(null != mb)
-    {
-        if(mb->process)
-        {
-            CloseHandle(mb->process);
-            mb->process = null;
-        }
-
-        if(mb->buffer)
-        {
-            HeapFree(GetProcessHeap(), 0, mb->buffer);
-            mb->buffer = null;
-        }
-
-        if(mb->values)
-        {
-            HeapFree(GetProcessHeap(), 0, mb->values);
-            mb->values = null;
-        }
-
-        if(mb->match_flag)
-        {
-            HeapFree(GetProcessHeap(), 0, mb->match_flag);
-            mb->match_flag = null;
-        }
-
-        mb = ArrayListGet(ArrayList, mb->size + 1);
-    }
-}
-
-/* Add scan results to memory scanner window. */
-
-void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 display_limit)
-{
-    SIZE_T i = 0;
-    uint32 limit = 0;
-    real8 total_scanned = 0;
-    MEMORY_BLOCK *mb = mblock;
-
-    EnableWindow(ListView, false); 
-    WaitForSingleObject(Mutex, INFINITE);
-
-    while(null != mb)
-    {
-        uint64 offset;
-        uint64 total_bytes = GetBlockCount(mb);
-
-        for(offset = 0; offset < mb->size; offset += mb->data_size)
-        {
-            if(AddressNotDiscarded(mb, offset))
-            {
-                int8 val[256];
-                int8 address[256];
-
-                EnableWindow(ListView, false);
-                IntegerToString((uint64)(uintptr_t)mb->address + offset, address, sizeof(address) - 1, FMT_INT_HEXADECIMAL);
-
-                if(Type == TYPE_INTEGER)
-                {
-                    int64 value = mb->values[offset];
-
-                    if(display_format == FMT_INT_DECIMAL)
-                    {
-                        IntegerToString(value, val, sizeof(val) - 1, display_format);
-                    }
-
-                    else if(display_format == FMT_INT_HEXADECIMAL)
-                    {
-                        val[0] = '0';
-                        val[1] = 'x';
-
-                        IntegerToString(value, val + 2, sizeof(val) - 3, display_format);
-                    }
-                }
-
-                else if(Type == TYPE_FLOAT)
-                {
-                    real4 value = (real4)mb->values[offset];
-                    DoubleToString(value, val, sizeof(val) - 1);
-                }
-
-                else if(Type == TYPE_DOUBLE)
-                {
-                    real8 value = mb->values[offset];
-                    DoubleToString(value, val, sizeof(val) - 1);
-                }
-
-                if(limit <= display_limit)
-                {
-                    AddItemToListView(address, val);
-                    ++limit;
-                }
-            }
-
-            total_scanned += mb->data_size;   
-        }
-
-        Progress = ((real8)total_scanned / (real8)total_bytes) * 100.0;
-        SendMessageA(ProgressBar, PBM_SETPOS, (WPARAM)Progress, 0);
-        mb = ArrayListGet(ArrayList, ++i); 
-    }
-
-    SendMessageA(ProgressBar, PBM_SETPOS, 100, 0);
-    EnableWindow(ListView, true); 
-    ReleaseMutex(Mutex);
 }
 
 #endif
