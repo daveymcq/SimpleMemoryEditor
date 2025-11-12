@@ -69,7 +69,17 @@ HWND CreateMemoryScannerWindow(void)
                                  0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_SCAN, 
                                  Instance, null);
 
+            ProgressBar = CreateWindowA(PROGRESS_CLASS, null, WS_CHILD | WS_VISIBLE | PBS_SMOOTH,
+                                        0, 0, 0, 0, MemoryScannerWindow, 
+                                        (HMENU)ID_PROGRESS_BAR, 
+                                        Instance, null);
+
+            SetWindowLongPtr(ProgressBar, GWL_STYLE, GetWindowLongPtr(ProgressBar, GWL_STYLE) | PBS_SMOOTH);
+            SendMessageA(ProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0, 100));
+            SendMessage(ProgressBar, PBM_SETMARQUEE, true, 0);
             SendMessageA(DataSize, CB_RESETCONTENT, 0, 0);
+            SetTimer(MemoryScannerWindow, 1, 100, null); 
+            SendMessageA(ProgressBar, PBM_SETPOS, 0, 0);
 
             for(data_types_list_index = 0; data_types_list_index < ARRAYSIZE(DataTypes); data_types_list_index++)
             {   
@@ -84,7 +94,8 @@ HWND CreateMemoryScannerWindow(void)
             SendMessageA(Value, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(SearchCondition, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
 
-            UpdateWindowForDpi(MemoryScannerWindow, CW_USEDEFAULT, CW_USEDEFAULT, 625, 405);
+            UpdateWindowForDpi(MemoryScannerWindow, CW_USEDEFAULT, CW_USEDEFAULT, 625, 435);
+            UpdateWindowForDpi(ProgressBar, 10, 370, 600, 25);
             UpdateWindowForDpi(ChoosePid, 10, 244, 200, 25);
             UpdateWindowForDpi(ListView, 10, 10, 600, 225);
             UpdateWindowForDpi(SearchCondition, 10, 275, 200, 20);
@@ -121,6 +132,7 @@ HWND CreateMemoryScannerWindow(void)
                 EnableWindow(Value, false);
                 EnableWindow(NewScan, false);
                 EnableWindow(DataSize, false);
+                EnableWindow(ProgressBar, false);
                 EnableWindow(SearchCondition, false);
                 
                 ShowWindow(MemoryScannerWindow, SW_SHOW);

@@ -13,7 +13,10 @@ boolean IsAddressFrozen(string address)
 
     for(i = 0; i < FREEZE_LIMIT; i++)
     {
-       if(StringCompare(FrozenAddresses[i], address, false)) return true;
+        if(StringCompare(FrozenAddresses[i], address, false)) 
+        {
+            return true;
+        }
     }
 
     return false;
@@ -26,7 +29,7 @@ boolean AddressNotDiscarded(MEMORY_BLOCK *mblock, uint64 offset)
 {
     MEMORY_BLOCK *mb = mblock;
 
-    if(mb)
+    if(null != mb)
     {
         boolean not_discarded = (mb->match_flag[(offset) / 8] & (1 << ((offset) % 8))); 
         return not_discarded;
@@ -41,7 +44,7 @@ boolean DiscardAddress(MEMORY_BLOCK *mblock, uint64 offset)
 {
     MEMORY_BLOCK *mb = mblock;
 
-    if(mb)
+    if(null != mb)
     {
         mb->match_flag[(offset) / 8] &= ~(1 << ((offset) % 8));
         return true;
@@ -54,21 +57,21 @@ boolean DiscardAddress(MEMORY_BLOCK *mblock, uint64 offset)
 
 void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_monitor)
 {
-    MEMORY_BLOCK *mb = mblock;
-    uint16 index = 0;
     SIZE_T i = 0;
-
-    SelectedProcessOpen = false;
-    NumberOfAddressesFrozen = 0;
-    FirstScanNotRun = true;
-    AddressFrozen = false;
     SelectedItem = -1;
+    AddressFrozen = false;
+    FirstScanNotRun = true;
+    MEMORY_BLOCK *mb = mblock;
+    NumberOfAddressesFrozen = 0;
+    SelectedProcessOpen = false;
 
-    MemoryZero(FrozenAddresses, sizeof(FrozenAddresses));
-    MemoryZero(FrozenValues, sizeof(FrozenValues));
-
-    EnableWindow(Scan, !reset_pid);
     EnableWindow(NewScan, false);
+    EnableWindow(Scan, !reset_pid);
+
+    SendMessageA(ProgressBar, PBM_SETPOS, 0, 0);
+
+    MemoryZero(FrozenValues, sizeof(FrozenValues));
+    MemoryZero(FrozenAddresses, sizeof(FrozenAddresses));
 
     SetDlgItemText(MemoryScannerWindow, ID_VALUE, 0);
     SendMessageA(SearchCondition, CB_RESETCONTENT, 0, 0);
@@ -76,7 +79,7 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
 
     ListView_DeleteAllItems(ListView);
 
-    while(mb)
+    while(null != mb)
     {
         MemorySet(mb->match_flag, 0xff, mb->size / 8); 
         mb->matches = mb->size;
@@ -116,7 +119,7 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
 
 DWORD WINAPI FreezeSelectedScannedAddresses(void)
 {
-    while(Scanner)
+    while(null != Scanner)
     {
         uint16 i;
 
@@ -176,7 +179,7 @@ DWORD WINAPI FreezeSelectedScannedAddresses(void)
                 break;
 
                 case TYPE_INTEGER:
-                    
+
                     CurrentValue = ReadInteger(Scanner->process, address, Scanner->data_size);
 
                     if(value != CurrentValue)
@@ -200,15 +203,16 @@ MEMORY_BLOCK *CreateMemoryBlock(HANDLE process, MEMORY_BASIC_INFORMATION *mbi, u
 {
     MEMORY_BLOCK *mb = (MEMORY_BLOCK *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(*mb));
 
-    if(mb)
+    if(null != mb)
     {
         mb->process             = process;
+        mb->data_size           = data_size; 
+        mb->matches             = (uint64)mbi->RegionSize;
         mb->size                = (uint64)mbi->RegionSize;
         mb->address             = (uint8 *)mbi->BaseAddress;
         mb->buffer              = (uint8 *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, mbi->RegionSize);
         mb->match_flag          = (uint8 *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (mbi->RegionSize / 8));
-        mb->matches             = (uint64)mbi->RegionSize;
-        mb->data_size           = data_size; 
+        mb->values              = (real8 *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, mbi->RegionSize * sizeof(*mb->values));
 
         if(mb->match_flag) 
         {
@@ -237,13 +241,13 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
         mblock = null;
         address = 0;
 
-        while(VirtualQueryEx(process, address, &mbi, sizeof(mbi)))
+        while(VirtualQueryEx(process, address, &mbi, sizeof(mbi)) != 0)
         {
-            if((mbi.State & MEM_COMMIT) && (mbi.Protect & WRITABLE_MEMORY))
+            if((mbi.State & MEM_COMMIT) && (mbi.Protect & WRITABLE_MEMORY) && !((mbi.Protect & PAGE_GUARD) || (mbi.Protect & PAGE_NOACCESS)))
             {
                 MEMORY_BLOCK *mb = CreateMemoryBlock(process, &mbi, data_size); 
 
-                if(mb)
+                if(null != mb)
                 {
                     ArrayList = (ArrayList) ? ArrayList : CreateArrayList(sizeof(*mb));
                     ArrayListAdd(ArrayList, mb);
@@ -257,151 +261,6 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
     return ArrayListGet(ArrayList, 0);
 }
 
-/* Filters memory information aquired by CreateMemoryScanner() and subsequent calls to this function. */
-
-void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Type, real8 value)
-{
-    SIZE_T i = 0;
-    MEMORY_BLOCK *mb = mblock;
-
-    WaitForSingleObject(Mutex, INFINITE);
-
-    while(mb)
-    {
-        if(mb->matches)
-        {
-            static int8 buffer[8192];
-
-            static uint64 total_read;
-            static uint64 bytes_left;
-            static uint64 bytes_to_read;
-            static uint64 bytes_read;
-
-            int32 selection_id;
-
-            total_read = 0;
-            mb->matches = 0;
-            bytes_left = mb->size;
-
-            selection_id = (int32)SendMessageA(DataSize, CB_GETCURSEL, 0, 0);
-            mb->data_size = (uint16)StringToInteger(DataSizes[selection_id], FMT_INT_DECIMAL);
-
-            while(bytes_left)
-            {
-                uint64 offset;
-                real8 tmpval, prevval;
-                boolean match;
-
-                bytes_to_read = (bytes_left > sizeof(buffer)) ? sizeof(buffer) : bytes_left;
-
-                ReadProcessMemory(mb->process, mb->address + total_read, buffer, bytes_to_read, (SIZE_T *)&bytes_read);
-
-                if(bytes_read != bytes_to_read) break;
-
-                for(offset = 0; offset < bytes_read; offset += mb->data_size)
-                {
-                    if(AddressNotDiscarded(mb, total_read + offset)) 
-                    {
-                        if(Type == TYPE_INTEGER)
-                        {
-                            switch(mb->data_size)
-                            {
-                                case sizeof(int8):
-
-                                    tmpval = *((int8 *)&buffer[offset]);
-                                    prevval = *((int8 *)&mb->buffer[total_read + offset]);
-
-                                break;
-
-                                case sizeof(int16):
-
-                                    tmpval = *((int16 *)&buffer[offset]);
-                                    prevval = *((int16 *)&mb->buffer[total_read + offset]);
-
-                                break;
-
-                                case sizeof(int32):
-
-                                    tmpval = *((int32 *)&buffer[offset]);
-                                    prevval = *((int32 *)&mb->buffer[total_read + offset]);
-
-                                break;
-
-                                case sizeof(int64):
-
-                                    tmpval = *((int64 *)&buffer[offset]);
-                                    prevval = *((int64 *)&mb->buffer[total_read + offset]);
-
-                                break;
-                            }
-                        }
-
-                        else if(Type == TYPE_FLOAT)
-                        {
-                            if(mb->data_size == sizeof(real4))
-                            {
-                                tmpval = *((real4 *)&buffer[offset]);
-                                prevval = *((real4 *)&mb->buffer[total_read + offset]);
-                            }
-                        }
-
-                        else if(Type == TYPE_DOUBLE)
-                        {
-                            if(mb->data_size == sizeof(real8))
-                            {
-                                tmpval = *((real8 *)&buffer[offset]);
-                                prevval = *((real8 *)&mb->buffer[total_read + offset]);
-                            }
-                        }
-
-                        switch(condition)
-                        {
-                            case SEARCH_EQUALS:
-
-                                match = (tmpval == value);
-
-                            break;
-
-                            case SEARCH_INCREASED:
-
-                                match = (tmpval > prevval);
-
-                            break;
-
-                            case SEARCH_DECREASED:
-
-                                match = (tmpval < prevval);
-                                
-                            break;
-                        }
-
-                        if(match)
-                        {
-                            ++mb->matches;
-                        }
-
-                        else 
-                        {
-                            DiscardAddress(mb, total_read + offset);
-                        }
-                    }
-                }
-
-                MemoryCopy(mb->buffer + total_read, buffer, bytes_read);
-
-                bytes_left -= bytes_read;
-                total_read += bytes_read;
-            }
-
-            mb->size = total_read;
-        }
-
-        mb = ArrayListGet(ArrayList, ++i); 
-    }
-
-    ReleaseMutex(Mutex);
-}
-
 /* Finds the number of matches from the last scan. */
 
 SIZE_T GetMatchCountFromLastScan(MEMORY_BLOCK *mblock)
@@ -410,13 +269,191 @@ SIZE_T GetMatchCountFromLastScan(MEMORY_BLOCK *mblock)
     SIZE_T matches = 0;
     SIZE_T i = 0;
 
-    while(mb)
+    while(null != mb)
     {
         matches += mb->matches;
         mb = ArrayListGet(ArrayList, ++i); 
     }
 
     return matches;
+}
+
+/* Finds the number of blocks in process to scan. */
+
+uint64 GetBlockCount(MEMORY_BLOCK *mblock)
+{
+    MEMORY_BLOCK *mb = mblock;
+    uint64 count = 0;
+    uint64 i = 0;
+
+    while(null != mb)
+    {
+        count += mb->size;
+        mb = ArrayListGet(ArrayList, ++i); 
+    }
+
+    return count;
+}
+
+/* Filters memory information aquired by CreateMemoryScanner() and subsequent calls to this function. */
+
+void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Type, real8 value)
+{
+    SIZE_T i = 0;
+    MEMORY_BLOCK *mb = mblock;
+    static uint64 total_scanned;
+    
+    WaitForSingleObject(Mutex, INFINITE);
+    
+    while(null != mb)
+    {
+        uint64 total_bytes = GetBlockCount(mb);
+
+        if(mb->matches > 0)
+        {
+            static uint8 buffer[4096 * 4096];
+            static uint64 bytes_to_read;
+            static uint64 total_read;
+            static uint64 bytes_left;
+            static uint64 bytes_read;
+
+            bytes_left = mb->size;
+
+            while(bytes_left > 0)
+            {
+                total_read = 0;
+                mb->matches = 0;
+                uint32 current_progress;
+                bytes_to_read = (bytes_left > sizeof(buffer)) ? sizeof(buffer) : bytes_left;
+
+                if(!ReadProcessMemory(mb->process, mb->address + total_read, buffer, bytes_to_read, &bytes_read)) break;
+
+                if(bytes_read == bytes_to_read) 
+                {
+                    uint64 offset;
+
+                    for(offset = 0; offset < bytes_read; offset += mb->data_size)
+                    {
+                        if(AddressNotDiscarded(mb, total_read + offset)) 
+                        {
+                            real8 tmpval;
+                            real8 prevval;
+                            boolean match;
+
+                            if(Type == TYPE_INTEGER)
+                            {
+                                switch(mb->data_size)
+                                {
+                                    case sizeof(int8):
+
+                                        tmpval = *((int8 *)&buffer[offset]);
+                                        mb->values[total_read + offset] = tmpval;
+                                        prevval = *((int8 *)&mb->buffer[total_read + offset]);
+
+                                    break;
+
+                                    case sizeof(int16):
+
+                                        tmpval = *((int16 *)&buffer[offset]);
+                                        mb->values[total_read + offset] = tmpval;
+                                        prevval = *((int16 *)&mb->buffer[total_read + offset]);
+
+                                    break;
+
+                                    case sizeof(int32):
+
+                                        tmpval = *((int32 *)&buffer[offset]);
+                                        mb->values[total_read + offset] = tmpval;
+                                        prevval = *((int32 *)&mb->buffer[total_read + offset]);
+
+                                    break;
+
+                                    case sizeof(int64):
+
+                                        tmpval = *((int64 *)&buffer[offset]);
+                                        mb->values[total_read + offset] = tmpval;
+                                        prevval = *((int64 *)&mb->buffer[total_read + offset]);
+
+                                    break;
+                                }
+                            }
+
+                            else if(Type == TYPE_FLOAT)
+                            {
+                                if(mb->data_size == sizeof(real4))
+                                {
+                                    tmpval = *((real4 *)&buffer[offset]);
+                                    mb->values[total_read + offset] = tmpval;
+                                    prevval = *((real4 *)&mb->buffer[total_read + offset]);
+                                }
+                            }
+
+                            else if(Type == TYPE_DOUBLE)
+                            {
+                                if(mb->data_size == sizeof(real8))
+                                {
+                                    tmpval = *((real8 *)&buffer[offset]);
+                                    mb->values[total_read + offset] = tmpval;
+                                    prevval = *((real8 *)&mb->buffer[total_read + offset]);
+                                }
+                            }
+
+                            switch(condition)
+                            {
+                                case SEARCH_EQUALS:
+
+                                    match = (tmpval == value);
+
+                                break;
+
+                                case SEARCH_INCREASED:
+
+                                    match = (tmpval > prevval);
+
+                                break;
+
+                                case SEARCH_DECREASED:
+
+                                    match = (tmpval < prevval);
+
+                                break;
+
+                                default:
+
+                                    match = false;
+
+                                break;
+                            }
+
+                            if(match)
+                            {
+                                ++mb->matches;
+                            }
+
+                            else 
+                            {
+                                DiscardAddress(mb, total_read + offset);
+                            }                            
+                        }
+                    }
+
+                    MemoryCopy(mb->buffer + total_read, buffer, bytes_read);
+
+                    bytes_left -= bytes_read;
+                    total_read += bytes_read;
+                    total_scanned += bytes_read;
+
+                    Progress = ((real8)total_scanned / (real8)total_bytes) * 100.0;
+                }
+            }
+
+            mb->size = total_read;
+        }
+
+        SendMessageA(ProgressBar, PBM_SETPOS, (WPARAM)Progress, 0);
+        mb = ArrayListGet(ArrayList, ++i); 
+        ReleaseMutex(Mutex);
+    }
 }
 
 /* The function function responsible for performing the scan. */
@@ -453,6 +490,7 @@ DWORD WINAPI CreateNewScan(void)
 
     if((IsNumeric(val)) && ((StringLength(pid) && StringLength(data_size) && StringLength(val) && StringLength(data_size))))
     {
+        Progress = 0;
         Scanner = (Scanner) ? Scanner : CreateMemoryScanner((uint32)StringToInteger(pid, FMT_INT_DECIMAL), (uint16)StringToInteger(data_size, FMT_INT_DECIMAL)); 
 
         if(Scanner)
@@ -596,12 +634,12 @@ DWORD WINAPI CreateNewScan(void)
 
                     StringConcat(IntegerToString(matches, 
                                                  status_message, 
-                                                 sizeof(status_message), 
-                                                 FMT_INT_DECIMAL), " Matches found!");
+                                                   sizeof(status_message), 
+                                                     FMT_INT_DECIMAL), " Matches found!");
 
                     return MessageBoxA(MemoryScannerWindow, 
-                                        status_message, 
-                                        Title, MB_OK);
+                                         status_message, 
+                                           Title, MB_OK);
                 }
             }
         }
@@ -616,7 +654,7 @@ void FreeMemoryScanner(MEMORY_BLOCK *mblock)
 {
     MEMORY_BLOCK *mb = (mblock) ? mblock : ArrayListGet(ArrayList, 0);
 
-    while(mb)
+    while(null != mb)
     {
         if(mb->process)
         {
@@ -628,6 +666,12 @@ void FreeMemoryScanner(MEMORY_BLOCK *mblock)
         {
             HeapFree(GetProcessHeap(), 0, mb->buffer);
             mb->buffer = null;
+        }
+
+        if(mb->values)
+        {
+            HeapFree(GetProcessHeap(), 0, mb->values);
+            mb->values = null;
         }
 
         if(mb->match_flag)
@@ -645,25 +689,31 @@ void FreeMemoryScanner(MEMORY_BLOCK *mblock)
 void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 display_limit)
 {
     SIZE_T i = 0;
+    uint32 limit = 0;
+    real8 total_scanned = 0;
     MEMORY_BLOCK *mb = mblock;
-    uint32 limit = (GetMatchCountFromLastScan(mb) > display_limit) ? display_limit : (uint32)GetMatchCountFromLastScan(mb);
 
-    while(mb)
+    EnableWindow(ListView, false); 
+    WaitForSingleObject(Mutex, INFINITE);
+
+    while(null != mb)
     {
         uint64 offset;
+        uint64 total_bytes = GetBlockCount(mb);
 
         for(offset = 0; offset < mb->size; offset += mb->data_size)
         {
             if(AddressNotDiscarded(mb, offset))
             {
-                int8 address[256];
                 int8 val[256];
+                int8 address[256];
 
+                EnableWindow(ListView, false);
                 IntegerToString((uint64)(uintptr_t)mb->address + offset, address, sizeof(address) - 1, FMT_INT_HEXADECIMAL);
 
                 if(Type == TYPE_INTEGER)
                 {
-                    int64 value = ReadInteger(mb->process, mb->address + offset, mb->data_size);
+                    int64 value = mb->values[offset];
 
                     if(display_format == FMT_INT_DECIMAL)
                     {
@@ -681,33 +731,34 @@ void DisplayScanResults(MEMORY_BLOCK *mblock, INTFMT display_format, uint32 disp
 
                 else if(Type == TYPE_FLOAT)
                 {
-                    real4 value = ReadFloat(mb->process, mb->address + offset);
-                    DoubleToString((real8)value, val, sizeof(val) - 1);
+                    real4 value = (real4)mb->values[offset];
+                    DoubleToString(value, val, sizeof(val) - 1);
                 }
 
                 else if(Type == TYPE_DOUBLE)
                 {
-                    real8 value = ReadDouble(mb->process, mb->address + offset);
+                    real8 value = mb->values[offset];
                     DoubleToString(value, val, sizeof(val) - 1);
                 }
 
-                if(limit)
+                if(limit <= display_limit)
                 {
                     AddItemToListView(address, val);
-                    --limit;
-                }
-
-                else
-                {
-                    EnableWindow(ListView, false);
+                    ++limit;
                 }
             }
+
+            total_scanned += mb->data_size;   
         }
 
+        Progress = ((real8)total_scanned / (real8)total_bytes) * 100.0;
+        SendMessageA(ProgressBar, PBM_SETPOS, (WPARAM)Progress, 0);
         mb = ArrayListGet(ArrayList, ++i); 
     }
 
+    SendMessageA(ProgressBar, PBM_SETPOS, 100, 0);
     EnableWindow(ListView, true); 
+    ReleaseMutex(Mutex);
 }
 
 #endif

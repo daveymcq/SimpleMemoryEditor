@@ -98,6 +98,7 @@ void ProcessSelectProcessButtonEvent(void)
             }
 
             EnableWindow(SearchCondition, true);
+            EnableWindow(ProgressBar, true);
             EnableWindow(DataSize, true);
             EnableWindow(NewScan, false);
             EnableWindow(Value, true);

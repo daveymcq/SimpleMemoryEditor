@@ -9,7 +9,7 @@
 
 DWORD WINAPI MonitorSelectedProcess(void)
 {
-    while(Scanner)
+    while(null != Scanner)
     {
         DWORD code;
         GetExitCodeProcess(Scanner->process, &code);
@@ -53,7 +53,7 @@ boolean GetProcessNameAndID(void)
 
             process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, false, pe.th32ProcessID); 
 
-            if(process)
+            if(null != process)
             {
                 boolean IsProcess32Bit;
                 boolean IsApplication32Bit;

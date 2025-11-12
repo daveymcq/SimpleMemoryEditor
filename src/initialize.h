@@ -35,8 +35,9 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #define ID_HELP_ABOUT (WM_USER + 1015)
 #define ID_FREEZE_VALUE (WM_USER + 1016)
 #define ID_THAW_VALUE (WM_USER + 1017)
+#define ID_PROGRESS_BAR (WM_USER + 1018)
 
-#define FREEZE_LIMIT 10
+#define FREEZE_LIMIT 14
 #define PROCESS_LIMIT 128
 
 #ifndef WM_DPICHANGED
@@ -59,7 +60,7 @@ static LRESULT CALLBACK MainWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK ChangeValueWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK SelectProcessWindowProc(HWND, UINT, WPARAM, LPARAM);
 
-static HWND ListView, Scan, Value, ChoosePid, DataSize, 
+static HWND ListView, Scan, Value, ChoosePid, DataSize, ProgressBar,
             SearchCondition, NewScan, SelectPidWindow, ProcessSelection, ChooseProcess, 
             MemoryScannerWindow, ChangeValueWindow, ChangeValueWindowNewValue, ChangeValueWindowButton;
 
@@ -83,6 +84,7 @@ static INITCOMMONCONTROLSEX CommonControls;
     #define WRITABLE_MEMORY (PAGE_READWRITE | PAGE_WRITECOPY | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)
 #endif
 
+static real8 Progress;
 static real8 CurrentValue;
 
 static int32 SelectedItem;
@@ -124,6 +126,7 @@ typedef struct _MEMORY_BLOCK
     uint8 *match_flag;
     uint16 data_size;
     uint64 matches;
+    real8 *values;
 
 } MEMORY_BLOCK;
 
