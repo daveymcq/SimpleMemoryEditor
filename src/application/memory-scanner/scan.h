@@ -746,6 +746,8 @@ DWORD WINAPI CreateNewScan(void)
                     ScanRunning = false;
                     MessageBeep(MB_OK);
 
+                    SendMessageA(ProgressBar, PBM_SETPOS, 0, 0);
+
                     StringConcat(IntegerToString(matches, 
                                                  status_message, 
                                                    sizeof(status_message), 
