@@ -91,6 +91,7 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
 
     if(reset_pid)
     {
+        SetDlgItemText(MemoryScannerWindow, ID_SELECT_PROCESS, (string)"Select Process");
         SendMessageA(SearchCondition, CB_RESETCONTENT, 0, 0);
         SendMessageA(DataSize, CB_RESETCONTENT, 0, 0);
         EnableWindow(SearchCondition, false);

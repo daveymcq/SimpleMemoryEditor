@@ -87,7 +87,10 @@ void HandleFreezeValueButtonEvent(void)
 
                     if((StringCompare(FrozenAddresses[NumberOfAddressesFrozen], SelectedItemAddress, false)) && (StringCompare(FrozenValues[NumberOfAddressesFrozen], SelectedItemValue, false)))
                     {
-                        ListView_SetItemText(ListView, SelectedItem, 1, StringConcat(SelectedItemValue, (string)" (FROZEN)"));
+                        int8 selected_value[256];
+                        MemoryZero(&selected_value, sizeof(selected_value));
+                        CopyString(selected_value, StringConcat(SelectedItemValue, (string)" (FROZEN)"), sizeof(selected_value));
+                        ListView_SetItemText(ListView, SelectedItem, 1, selected_value);
                         NumberOfAddressesFrozen++;
                     }
                 }
