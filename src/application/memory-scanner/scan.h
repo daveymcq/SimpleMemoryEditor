@@ -128,12 +128,12 @@ DWORD WINAPI FreezeSelectedScannedAddresses(void)
 
         for(i = 0; i < NumberOfAddressesFrozen; i++)
         {
-            INTFMT search_number_format;
             real8 value;
             void *address;
+            INTFMT search_number_format;
 
-            address = (PVOID) (uintptr_t)StringToInteger(FrozenAddresses[i], FMT_INT_HEXADECIMAL);
             value = StringToDouble(FrozenValues[i]);
+            address = (PVOID) (uintptr_t)StringToInteger(FrozenAddresses[i], FMT_INT_HEXADECIMAL);
 
             if((IsNumeric(FrozenValues[i])) && ((FrozenValues[i][0] == '0') && (FrozenValues[i][1] == 'x')))
             {
@@ -233,7 +233,7 @@ MEMORY_BLOCK *CreateMemoryScanner(uint32 pid, uint16 data_size)
     HANDLE process;
     uint8 *address;
 
-    process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, false, pid);
+    process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, true, pid);
 
     if(process)
     {
