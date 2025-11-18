@@ -58,10 +58,11 @@ boolean DiscardAddress(MEMORY_BLOCK *mblock, uint64 offset)
 void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_monitor)
 {
     SIZE_T i = 0;
+    MEMORY_BLOCK *mb = mblock;
+    
     SelectedItem = -1;
     AddressFrozen = false;
     FirstScanNotRun = true;
-    MEMORY_BLOCK *mb = mblock;
     NumberOfAddressesFrozen = 0;
     SelectedProcessOpen = false;
 
@@ -338,21 +339,18 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Ty
 {
     SIZE_T i = 0;
     MEMORY_BLOCK *mb = mblock;
-    static uint64 total_scanned;
-    
+
     WaitForSingleObject(Mutex, INFINITE);
     
     while(null != mb)
     {
-        uint64 total_bytes = GetBlockCount(mb);
-
         if(mb->matches > 0)
         {
             static uint8 buffer[4096 * 4096];
-            static uint64 bytes_to_read;
-            static uint64 total_read;
-            static uint64 bytes_left;
-            static uint64 bytes_read;
+            static SIZE_T bytes_to_read;
+            static SIZE_T total_read;
+            static SIZE_T bytes_left;
+            static SIZE_T bytes_read;
 
             bytes_left = mb->size;
 
@@ -360,7 +358,6 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Ty
             {
                 total_read = 0;
                 mb->matches = 0;
-                uint32 current_progress;
                 bytes_to_read = (bytes_left > sizeof(buffer)) ? sizeof(buffer) : bytes_left;
 
                 if(!ReadProcessMemory(mb->process, mb->address + total_read, buffer, bytes_to_read, &bytes_read)) break;
@@ -478,16 +475,12 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Ty
 
                     bytes_left -= bytes_read;
                     total_read += bytes_read;
-                    total_scanned += bytes_read;
-
-                    Progress = ((real8)total_scanned / (real8)total_bytes) * 100.0;
                 }
             }
 
             mb->size = total_read;
         }
 
-        SendMessageA(ProgressBar, PBM_SETPOS, (WPARAM)Progress, 0);
         mb = ArrayListGet(ArrayList, ++i); 
         ReleaseMutex(Mutex);
     }
@@ -611,9 +604,11 @@ DWORD WINAPI CreateNewScan(void)
         {
             if(MonitorSelectedProcessThread)
             {
+                string pstatus_message;
                 int8 selected_search_condition;
-                NumberOfAddressesFrozen = 0;
+  
                 ScanRunning = true;
+                NumberOfAddressesFrozen = 0;
                 selected_search_condition = (int8)SendMessageA(SearchCondition, CB_GETCURSEL, 0, 0);
 
                 if(selected_search_condition > -1)
@@ -734,6 +729,8 @@ DWORD WINAPI CreateNewScan(void)
                         SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_DECREASED]);
                     }
 
+                    pstatus_message = IntegerToString(matches, status_message, sizeof(status_message), FMT_INT_DECIMAL);
+
                     SetForegroundWindow(MemoryScannerWindow);
                     EnableWindow(MemoryScannerWindow, false);
                     EnableWindow(MemoryScannerWindow, true);
@@ -748,14 +745,9 @@ DWORD WINAPI CreateNewScan(void)
 
                     SendMessageA(ProgressBar, PBM_SETPOS, 0, 0);
 
-                    StringConcat(IntegerToString(matches, 
-                                                 status_message, 
-                                                   sizeof(status_message), 
-                                                     FMT_INT_DECIMAL), " Matches found!");
+                    StringConcat(pstatus_message, " Matches found!");
 
-                    return MessageBoxA(MemoryScannerWindow, 
-                                         status_message, 
-                                           Title, MB_OK);
+                    return MessageBoxA(MemoryScannerWindow, status_message, Title, MB_OK);
                 }
             }
         }

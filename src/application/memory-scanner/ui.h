@@ -7,9 +7,12 @@
 
 /* Add scan results to ListView control. */
 
-void AddItemToListView(string address, string value)
+void AddItemToListView(string addr, string value)
 {
     static LVITEMA item;
+    int8 address[256] = "0x";
+
+    CopyString(address + StringLength(address), addr, sizeof(address) - StringLength(address));
 
     item.mask        = LVIF_TEXT;
     item.iSubItem    = 0;

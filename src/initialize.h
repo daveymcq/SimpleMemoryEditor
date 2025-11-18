@@ -56,6 +56,14 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
     #define LVCFMT_FIXED_WIDTH 0x100
 #endif
 
+#ifndef PBS_MARQUEE
+    #define PBS_MARQUEE 0x08 
+#endif
+
+#ifndef PBM_SETMARQUEE
+    #define PBM_SETMARQUEE 0x040A
+#endif
+
 static LRESULT CALLBACK MainWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK ChangeValueWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK SelectProcessWindowProc(HWND, UINT, WPARAM, LPARAM);
