@@ -104,8 +104,8 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
         x =  ((GetSystemMetrics(SM_CXSCREEN) - width) / 2);
         y =  ((GetSystemMetrics(SM_CYSCREEN) - height) / 2);
 
-        UpdateWindowForDpi(MemoryScannerWindow, x, y, 625, 405);
         MoveWindow(MemoryScannerWindow, x, y, 625, 405, true);
+        UpdateWindow(MemoryScannerWindow);
 
         SetDlgItemText(MemoryScannerWindow, ID_SELECT_PROCESS, (string)"Select Process");
         SendMessageA(SearchCondition, CB_RESETCONTENT, 0, 0);
