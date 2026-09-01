@@ -96,7 +96,7 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
     if(reset_pid)
     {
         GetWindowRect(MemoryScannerWindow, &window_rect);
-        UpdateWindowForDpi(ProgressBar, 10, 376, 600, 20);
+        UpdateWindowForDpi(ProgressBar, 10, 380, 600, 20);
 
         width = (window_rect.right - window_rect.left);
         height = (window_rect.bottom - window_rect.top);
@@ -395,33 +395,33 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Ty
                                 {
                                     case sizeof(int8):
 
-                                    tmpval = *((int8 *)&buffer[offset]);
-                                    mb->values[total_read + offset] = tmpval;
-                                    prevval = *((int8 *)&mb->buffer[total_read + offset]);
+                                        tmpval = *((int8 *)&buffer[offset]);
+                                        mb->values[total_read + offset] = tmpval;
+                                        prevval = *((int8 *)&mb->buffer[total_read + offset]);
 
                                     break;
 
                                     case sizeof(int16):
 
-                                    tmpval = *((int16 *)&buffer[offset]);
-                                    mb->values[total_read + offset] = tmpval;
-                                    prevval = *((int16 *)&mb->buffer[total_read + offset]);
+                                        tmpval = *((int16 *)&buffer[offset]);
+                                        mb->values[total_read + offset] = tmpval;
+                                        prevval = *((int16 *)&mb->buffer[total_read + offset]);
 
                                     break;
 
                                     case sizeof(int32):
 
-                                    tmpval = *((int32 *)&buffer[offset]);
-                                    mb->values[total_read + offset] = tmpval;
-                                    prevval = *((int32 *)&mb->buffer[total_read + offset]);
+                                        tmpval = *((int32 *)&buffer[offset]);
+                                        mb->values[total_read + offset] = tmpval;
+                                        prevval = *((int32 *)&mb->buffer[total_read + offset]);
 
                                     break;
 
                                     case sizeof(int64):
 
-                                    tmpval = *((int64 *)&buffer[offset]);
-                                    mb->values[total_read + offset] = tmpval;
-                                    prevval = *((int64 *)&mb->buffer[total_read + offset]);
+                                        tmpval = *((int64 *)&buffer[offset]);
+                                        mb->values[total_read + offset] = tmpval;
+                                        prevval = *((int64 *)&mb->buffer[total_read + offset]);
 
                                     break;
                                 }
@@ -451,25 +451,25 @@ void UpdateMemoryBlock(MEMORY_BLOCK *mblock, SEARCH_CONDITION condition, TYPE Ty
                             {
                                 case SEARCH_EQUALS:
 
-                                match = (tmpval == value);
+                                    match = (tmpval == value);
 
                                 break;
 
                                 case SEARCH_INCREASED:
 
-                                match = (tmpval > prevval);
+                                    match = (tmpval > prevval);
 
                                 break;
 
                                 case SEARCH_DECREASED:
 
-                                match = (tmpval < prevval);
+                                    match = (tmpval < prevval);
 
                                 break;
 
                                 default:
 
-                                match = false;
+                                    match = false;
 
                                 break;
                             }
@@ -662,22 +662,22 @@ DWORD WINAPI CreateNewScan(void)
                         {
                             case SEARCH_EQUALS:
 
-                            UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_INTEGER, StringToInteger(val, search_number_format)); 
-                            DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
+                                UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_INTEGER, StringToInteger(val, search_number_format)); 
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
 
                             case SEARCH_INCREASED:
 
-                            UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_INTEGER, 0);
-                            DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
+                                UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_INTEGER, 0);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
 
                             case SEARCH_DECREASED:
 
-                            UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_INTEGER, 0);
-                            DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
+                                UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_INTEGER, 0);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
                         }
@@ -689,22 +689,22 @@ DWORD WINAPI CreateNewScan(void)
                         {
                             case SEARCH_EQUALS:
 
-                            UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_FLOAT, (real4)StringToDouble(val));
-                            DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
+                                UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_FLOAT, (real4)StringToDouble(val));
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
 
                             case SEARCH_INCREASED:
 
-                            UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_FLOAT, 0);
-                            DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
+                                UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_FLOAT, 0);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
 
                             case SEARCH_DECREASED:
 
-                            UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_FLOAT, 0);
-                            DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
+                                UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_FLOAT, 0);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
                         }
@@ -716,22 +716,22 @@ DWORD WINAPI CreateNewScan(void)
                         {
                             case SEARCH_EQUALS:
 
-                            UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_DOUBLE, StringToDouble(val));
-                            DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
+                                UpdateMemoryBlock(Scanner, SEARCH_EQUALS, TYPE_DOUBLE, StringToDouble(val));
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
 
                             case SEARCH_INCREASED:
 
-                            UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_DOUBLE, 0);
-                            DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
+                                UpdateMemoryBlock(Scanner, SEARCH_INCREASED, TYPE_DOUBLE, 0);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
 
                             case SEARCH_DECREASED:
 
-                            UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_DOUBLE, 0);
-                            DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
+                                UpdateMemoryBlock(Scanner, SEARCH_DECREASED, TYPE_DOUBLE, 0);
+                                DisplayScanResults(Scanner, search_number_format, FREEZE_LIMIT);
 
                             break;
                         }
