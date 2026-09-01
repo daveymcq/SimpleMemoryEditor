@@ -78,6 +78,11 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
     SendMessageA(SearchCondition, CB_RESETCONTENT, 0, 0);
     SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
 
+
+    UpdateWindowForDpi(ProgressBar, 10, 376, 600, 20);
+    UpdateWindowForDpi(MemoryScannerWindow, CW_USEDEFAULT, CW_USEDEFAULT, 625, 405);
+    CenterWindow(MemoryScannerWindow);
+
     ListView_DeleteAllItems(ListView);
 
     while(null != mb)
@@ -572,12 +577,14 @@ DWORD WINAPI CreateNewScan(void)
     static int8 data_size[256];
     static int8 condition[256];
     static int8 status_message[256];
-
+    
     uint64 matches;
+    RECT window_rect;
     int32 selection_id;
+    uint32 x, y, width, height;
     INTFMT search_number_format;
-
     search_number_format = FMT_INT_DECIMAL;
+
     selection_id = (int32)SendMessageA(DataSize, CB_GETCURSEL, 0, 0);
 
     CopyString(pid, SelectedPid, sizeof(pid) - 1); 
@@ -599,6 +606,18 @@ DWORD WINAPI CreateNewScan(void)
     {
         Progress = 0;
         Scanner = (Scanner) ? Scanner : CreateMemoryScanner((uint32)StringToInteger(pid, FMT_INT_DECIMAL), (uint16)StringToInteger(data_size, FMT_INT_DECIMAL)); 
+
+        GetWindowRect(MemoryScannerWindow, &window_rect);
+        UpdateWindowForDpi(ProgressBar, 10, 370, 600, 20);
+
+        width = (window_rect.right - window_rect.left);
+        height = (window_rect.bottom - window_rect.top);
+
+        x =  ((GetSystemMetrics(SM_CXSCREEN) - width) / 2);
+        y =  ((GetSystemMetrics(SM_CYSCREEN) - height) / 2);
+
+        UpdateWindowForDpi(MemoryScannerWindow, x, y, 625, 430);
+        MoveWindow(MemoryScannerWindow, x, y, width, height, true);
 
         if(Scanner)
         {

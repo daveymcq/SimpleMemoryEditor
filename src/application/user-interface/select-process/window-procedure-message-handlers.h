@@ -31,6 +31,8 @@ void ProcessListboxChangeEvent(void)
 void ProcessSelectProcessButtonEvent(void)
 {
     uint16 index;
+    RECT window_rect;
+    uint32 x, y, width, height;
 
     if(IndexOfSelectedProcess > -1)
     {
@@ -119,6 +121,18 @@ void ProcessSelectProcessButtonEvent(void)
 
         DestroyWindow(SelectPidWindow);
     }
+
+    GetWindowRect(MemoryScannerWindow, &window_rect);
+    UpdateWindowForDpi(ProgressBar, 10, 370, 600, 20);
+
+    width = (window_rect.right - window_rect.left);
+    height = (window_rect.bottom - window_rect.top);
+
+    x =  ((GetSystemMetrics(SM_CXSCREEN) - width) / 2);
+    y =  ((GetSystemMetrics(SM_CYSCREEN) - height) / 2);
+
+    UpdateWindowForDpi(MemoryScannerWindow, x, y, 625, 430);
+    MoveWindow(MemoryScannerWindow, x, y, width, height, true);
     
     SendMessageA(DataSize, CB_RESETCONTENT, 0, 0);
 

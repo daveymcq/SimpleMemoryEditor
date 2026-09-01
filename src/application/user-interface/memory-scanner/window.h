@@ -94,8 +94,8 @@ HWND CreateMemoryScannerWindow(void)
             SendMessageA(Value, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(SearchCondition, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
 
-            UpdateWindowForDpi(MemoryScannerWindow, CW_USEDEFAULT, CW_USEDEFAULT, 625, 430);
-            UpdateWindowForDpi(ProgressBar, 10, 370, 600, 20);
+            UpdateWindowForDpi(MemoryScannerWindow, CW_USEDEFAULT, CW_USEDEFAULT, 625, 405);
+            UpdateWindowForDpi(ProgressBar, 10, 376, 600, 20);
             UpdateWindowForDpi(ChoosePid, 10, 245, 200, 22);
             UpdateWindowForDpi(ListView, 10, 10, 600, 220);
             UpdateWindowForDpi(SearchCondition, 10, 275, 300, 22);
@@ -134,8 +134,9 @@ HWND CreateMemoryScannerWindow(void)
                 
                 ShowWindow(MemoryScannerWindow, SW_SHOW);
                 SetForegroundWindow(MemoryScannerWindow);
-                CenterWindow(MemoryScannerWindow);
                 UpdateWindow(MemoryScannerWindow);
+
+                CenterWindow(MemoryScannerWindow);
 
                 SendMessageA(ProgressBar, PBM_SETPOS, 100, 0);
                 
