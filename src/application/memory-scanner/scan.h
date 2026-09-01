@@ -78,7 +78,6 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
     SendMessageA(SearchCondition, CB_RESETCONTENT, 0, 0);
     SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
 
-
     UpdateWindowForDpi(ProgressBar, 10, 376, 600, 20);
     UpdateWindowForDpi(MemoryScannerWindow, CW_USEDEFAULT, CW_USEDEFAULT, 625, 405);
     CenterWindow(MemoryScannerWindow);
@@ -617,7 +616,7 @@ DWORD WINAPI CreateNewScan(void)
         y =  ((GetSystemMetrics(SM_CYSCREEN) - height) / 2);
 
         UpdateWindowForDpi(MemoryScannerWindow, x, y, 625, 430);
-        MoveWindow(MemoryScannerWindow, x, y, width, height, true);
+        MoveWindow(MemoryScannerWindow, x, y, 625, 430, true);
 
         if(Scanner)
         {
