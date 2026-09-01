@@ -626,8 +626,8 @@ DWORD WINAPI CreateNewScan(void)
         x =  ((GetSystemMetrics(SM_CXSCREEN) - width) / 2);
         y =  ((GetSystemMetrics(SM_CYSCREEN) - height) / 2);
 
-        UpdateWindowForDpi(MemoryScannerWindow, x, y, 625, 430);
-        MoveWindow(MemoryScannerWindow, x, y, 625, 430, true);
+        UpdateWindowForDpi(MemoryScannerWindow, x, y, 625, 435);
+        MoveWindow(MemoryScannerWindow, x, y, 625, 435, true);
 
         if(Scanner)
         {
