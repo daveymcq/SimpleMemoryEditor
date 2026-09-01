@@ -135,6 +135,8 @@ HWND CreateMemoryScannerWindow(void)
                 SetForegroundWindow(MemoryScannerWindow);
                 CenterWindow(MemoryScannerWindow);
                 UpdateWindow(MemoryScannerWindow);
+
+                SendMessageA(ProgressBar, PBM_SETPOS, 100, 0);
                 
                 return MemoryScannerWindow;
             }

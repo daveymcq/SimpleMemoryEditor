@@ -130,6 +130,8 @@ void ProcessSelectProcessButtonEvent(void)
     SendMessageA(SearchCondition, CB_SETCURSEL, (WPARAM)0, 0);
     SendMessageA(DataSize, CB_SETCURSEL, (WPARAM)2, 0);
 
+    SendMessageA(ProgressBar, PBM_SETPOS, 0, 0);
+
     SetForegroundWindow(MemoryScannerWindow);
     EnableWindow(MemoryScannerWindow, true);
 }
