@@ -615,7 +615,7 @@ DWORD WINAPI CreateNewScan(void)
     if((IsNumeric(val)) && ((StringLength(pid) && StringLength(data_size) && StringLength(val) && StringLength(data_size))))
     {
         Progress = 0;
-        Scanner = (Scanner) ? Scanner : CreateMemoryScanner((uint32)StringToInteger(pid, FMT_INT_DECIMAL), (uint16)StringToInteger(data_size, FMT_INT_DECIMAL)); 
+        Scanner = CreateMemoryScanner((uint32)StringToInteger(pid, FMT_INT_DECIMAL), (uint16)StringToInteger(data_size, FMT_INT_DECIMAL)); 
 
         GetWindowRect(MemoryScannerWindow, &window_rect);
         UpdateWindowForDpi(ProgressBar, 10, 370, 600, 25);
