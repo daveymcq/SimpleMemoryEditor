@@ -125,7 +125,7 @@ static boolean AddressFrozen;
 static boolean FirstScanNotRun;
 static boolean SelectedProcessOpen;
 
-/* A linked list of memory region information obtained by VirtualQueryEx(). */
+/* Memory region information obtained by VirtualQueryEx(). */
 
 typedef struct _MEMORY_BLOCK
 {
