@@ -96,7 +96,7 @@ void ResetScan(MEMORY_BLOCK *mblock, boolean reset_pid, boolean disable_process_
     if(reset_pid)
     {
         GetWindowRect(MemoryScannerWindow, &window_rect);
-        UpdateWindowForDpi(ProgressBar, 10, 380, 600, 20);
+        UpdateWindowForDpi(ProgressBar, 10, 380, 600, 25);
 
         width = (window_rect.right - window_rect.left);
         height = (window_rect.bottom - window_rect.top);
@@ -618,7 +618,7 @@ DWORD WINAPI CreateNewScan(void)
         Scanner = (Scanner) ? Scanner : CreateMemoryScanner((uint32)StringToInteger(pid, FMT_INT_DECIMAL), (uint16)StringToInteger(data_size, FMT_INT_DECIMAL)); 
 
         GetWindowRect(MemoryScannerWindow, &window_rect);
-        UpdateWindowForDpi(ProgressBar, 10, 370, 600, 20);
+        UpdateWindowForDpi(ProgressBar, 10, 370, 600, 25);
 
         width = (window_rect.right - window_rect.left);
         height = (window_rect.bottom - window_rect.top);

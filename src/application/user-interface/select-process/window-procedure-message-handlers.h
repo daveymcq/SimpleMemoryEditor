@@ -120,7 +120,7 @@ void ProcessSelectProcessButtonEvent(void)
         }
 
         GetWindowRect(MemoryScannerWindow, &window_rect);
-        UpdateWindowForDpi(ProgressBar, 10, 370, 600, 20);
+        UpdateWindowForDpi(ProgressBar, 10, 370, 600, 25);
 
         width = (window_rect.right - window_rect.left);
         height = (window_rect.bottom - window_rect.top);
