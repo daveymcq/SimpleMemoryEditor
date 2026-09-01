@@ -131,6 +131,10 @@ HWND CreateMemoryScannerWindow(void)
                 EnableWindow(Scan, false);
                 EnableWindow(NewScan, false);
                 EnableWindow(ProgressBar, false);
+                EnableWindow(SearchCondition, false);
+                EnableWindow(ChoosePid, true);
+                EnableWindow(DataSize, false);
+                EnableWindow(Value, false);
                 
                 ShowWindow(MemoryScannerWindow, SW_SHOW);
                 SetForegroundWindow(MemoryScannerWindow);
