@@ -23,8 +23,6 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND window, UINT message, WPARAM wparam,
             ShowWindow(MemoryScannerWindow, SW_SHOW);
             SetForegroundWindow(MemoryScannerWindow);
             CenterWindow(MemoryScannerWindow);
-            UpdateWindow(MemoryScannerWindow);
-            
 
         break;
 
@@ -34,16 +32,6 @@ LRESULT CALLBACK ChangeValueWindowProc(HWND window, UINT message, WPARAM wparam,
             {
                 ProcessUpdateValueEvent();
             }
-
-        break;
-
-        case WM_DPICHANGED:
-
-            UpdateWindowForDpi(ChangeValueWindow, CW_USEDEFAULT, CW_USEDEFAULT, 300, 75);
-            UpdateWindowForDpi(ChangeValueWindowNewValue, 10, 10, 180, 25);
-            UpdateWindowForDpi(ChangeValueWindowButton, 200, 10, 85, 25);
-            ShowWindow(MemoryScannerWindow, SW_HIDE);
-            CenterWindow(ChangeValueWindow);
 
         break;
 

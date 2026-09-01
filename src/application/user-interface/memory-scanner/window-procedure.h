@@ -33,7 +33,7 @@ LRESULT CALLBACK MainWindowProc(HWND window, UINT message, WPARAM wparam, LPARAM
         case WM_CREATE:
 
             hdc = BeginPaint(window, &ps);
-            UpdateWindow(window);
+            CenterWindow(window);
             EndPaint(window, &ps);
 
         break;

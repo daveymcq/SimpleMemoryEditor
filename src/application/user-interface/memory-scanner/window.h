@@ -134,7 +134,6 @@ HWND CreateMemoryScannerWindow(void)
                 
                 ShowWindow(MemoryScannerWindow, SW_SHOW);
                 SetForegroundWindow(MemoryScannerWindow);
-                UpdateWindow(MemoryScannerWindow);
 
                 CenterWindow(MemoryScannerWindow);
 
