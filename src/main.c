@@ -12,7 +12,6 @@ void main(int32 argc, string argv[])
     {
         if(CreateMemoryScannerWindow())
         {
-            MSG message;
             while(GetMessage(&message, null, 0, 0) > 0)
             {
                 TranslateMessage(&message);

@@ -64,6 +64,8 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
     #define PBM_SETMARQUEE 0x040A
 #endif
 
+static MSG message;
+
 static LRESULT CALLBACK MainWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK ChangeValueWindowProc(HWND, UINT, WPARAM, LPARAM);
 static LRESULT CALLBACK SelectProcessWindowProc(HWND, UINT, WPARAM, LPARAM);

@@ -47,11 +47,11 @@ HWND CreateMemoryScannerWindow(void)
                                             (HMENU)ID_SEARCH_CONDITION, 
                                             Instance, null);
 
-            Value = CreateWindowA("edit", null, WS_VISIBLE | WS_CHILD | WS_BORDER, 
+            Value = CreateWindowExA(WS_EX_CLIENTEDGE, "edit", null, WS_VISIBLE | WS_CHILD, 
                                   0, 0, 0, 0, MemoryScannerWindow, (HMENU)ID_VALUE, 
                                   Instance, null);
 
-            NewScan = CreateWindowA("button", "Reset Scan", WS_VISIBLE | WS_CHILD, 
+            NewScan = CreateWindowA("button", "Reset", WS_VISIBLE | WS_CHILD, 
                                     0, 0, 0, 0, MemoryScannerWindow, 
                                     (HMENU)ID_NEW_SCAN, 
                                     Instance, null);
@@ -94,14 +94,14 @@ HWND CreateMemoryScannerWindow(void)
             SendMessageA(Value, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
             SendMessageA(SearchCondition, WM_SETFONT, (WPARAM)Font, MAKELPARAM(true, 0));
 
-            UpdateWindowForDpi(MemoryScannerWindow, CW_USEDEFAULT, CW_USEDEFAULT, 625, 410);
-            UpdateWindowForDpi(ProgressBar, 400, 275, 210, 20);
+            UpdateWindowForDpi(MemoryScannerWindow, CW_USEDEFAULT, CW_USEDEFAULT, 625, 430);
+            UpdateWindowForDpi(ProgressBar, 10, 370, 600, 20);
             UpdateWindowForDpi(ChoosePid, 10, 245, 200, 22);
-            UpdateWindowForDpi(ListView, 10, 10, 600, 225);
-            UpdateWindowForDpi(SearchCondition, 10, 275, 200, 22);
-            UpdateWindowForDpi(Value, 440, 245, 170, 20);
-            UpdateWindowForDpi(NewScan, 220, 245, 210, 22);
-            UpdateWindowForDpi(DataSize, 220, 275, 170, 20);
+            UpdateWindowForDpi(ListView, 10, 10, 600, 220);
+            UpdateWindowForDpi(SearchCondition, 10, 275, 300, 22);
+            UpdateWindowForDpi(Value, 210, 246, 360, 20);
+            UpdateWindowForDpi(NewScan, 570, 245, 40, 22);
+            UpdateWindowForDpi(DataSize, 310, 275, 300, 20);
             UpdateWindowForDpi(Scan, 10, 305, 600, 60);
 
             address_column.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_FMT;
@@ -123,17 +123,13 @@ HWND CreateMemoryScannerWindow(void)
                 SendMessageA(ListView, LVM_INSERTCOLUMN, 0, (LPARAM)&address_column);
                 SendMessageA(ListView, LVM_INSERTCOLUMN, 1, (LPARAM)&value_column);
                 SendMessageA(SearchCondition, CB_ADDSTRING, 0, (LPARAM)SearchConditions[SEARCH_EQUALS]);
-                SendMessageA(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_GRIDLINES);
+                SendMessageA(ListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (LPARAM)LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 
                 SendMessageA(DataSize, CB_SETCURSEL, (WPARAM)2, 0);
                 SendMessageA(SearchCondition, CB_SETCURSEL, (WPARAM)0, 0);
                 
                 EnableWindow(Scan, false);
-                EnableWindow(Value, false);
                 EnableWindow(NewScan, false);
-                EnableWindow(DataSize, false);
-                EnableWindow(ProgressBar, false);
-                EnableWindow(SearchCondition, false);
                 
                 ShowWindow(MemoryScannerWindow, SW_SHOW);
                 SetForegroundWindow(MemoryScannerWindow);
